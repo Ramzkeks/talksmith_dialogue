@@ -1,0 +1,201 @@
+{
+  "schema": 3,
+  "id": "integration_stormfox2_test",
+  "meta": {
+    "title": "Integration test: StormFox 2",
+    "author": "",
+    "created": 0,
+    "modified": 0,
+    "revision": 0
+  },
+  "settings": {
+    "actor_name": "Meteorologist",
+    "actor_subtitle": "StormFox 2 weather, time, and temperature",
+    "actor_model": "models/eli.mdl",
+    "interact_distance": 160,
+    "actor_scale": 1,
+    "actor_skin": 0,
+    "actor_bodygroups": {},
+    "name_offset": 82,
+    "idle_sequence": "",
+    "idle_sequences": [],
+    "theme": "retro",
+    "use_limit": false,
+    "start_random": []
+  },
+  "start": "weather_menu",
+  "nodes": {
+    "weather_menu": {
+      "editor": {
+        "x": 120,
+        "y": 300,
+        "note": "Only responses matching the current StormFox 2 state will appear at the same time."
+      },
+      "text": "The weather station reads the world state directly through StormFox 2.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "It is currently daytime.",
+          "next": "passed",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            {
+              "id": "stormfox2.is_day",
+              "params": {}
+            }
+          ],
+          "actions": []
+        },
+        {
+          "text": "It is currently nighttime.",
+          "next": "passed",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            {
+              "id": "stormfox2.is_night",
+              "params": {}
+            }
+          ],
+          "actions": []
+        },
+        {
+          "text": "It is currently raining.",
+          "next": "passed",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            {
+              "id": "stormfox2.is_raining",
+              "params": {}
+            }
+          ],
+          "actions": []
+        },
+        {
+          "text": "It is currently snowing.",
+          "next": "passed",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            {
+              "id": "stormfox2.is_snowing",
+              "params": {}
+            }
+          ],
+          "actions": []
+        },
+        {
+          "text": "It is currently foggy.",
+          "next": "passed",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            {
+              "id": "stormfox2.is_foggy",
+              "params": {}
+            }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Additional checks.",
+          "next": "details",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "details": {
+      "editor": {
+        "x": 600,
+        "y": 500,
+        "note": "For weather_is, replace Clear with the actual weather name used by your server if necessary."
+      },
+      "text": "Checks for the exact weather name and temperature limits.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "The current weather is named Clear.",
+          "next": "passed",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            {
+              "id": "stormfox2.weather_is",
+              "params": {
+                "weather": "Clear"
+              }
+            }
+          ],
+          "actions": []
+        },
+        {
+          "text": "The temperature is at least 0.",
+          "next": "passed",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            {
+              "id": "stormfox2.temperature_at_least",
+              "params": {
+                "amount": 0
+              }
+            }
+          ],
+          "actions": []
+        },
+        {
+          "text": "The temperature is at most 0.",
+          "next": "passed",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            {
+              "id": "stormfox2.temperature_at_most",
+              "params": {
+                "amount": 0
+              }
+            }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Back.",
+          "next": "weather_menu",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "passed": {
+      "editor": {
+        "x": 1040,
+        "y": 260
+      },
+      "text": "The selected StormFox 2 condition returned true.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Return to the weather checks.",
+          "next": "weather_menu",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    }
+  }
+}

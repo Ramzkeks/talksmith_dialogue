@@ -1,0 +1,142 @@
+{
+  "schema": 3,
+  "id": "integration_advanced_character_creator_test",
+  "meta": {
+    "title": "Integration test: Advanced Character Creator",
+    "author": "",
+    "created": 0,
+    "modified": 0,
+    "revision": 0
+  },
+  "settings": {
+    "actor_name": "ACC2 Registrar",
+    "actor_subtitle": "Selected character diagnostics",
+    "actor_model": "models/mossman.mdl",
+    "interact_distance": 160,
+    "actor_scale": 1,
+    "actor_skin": 0,
+    "actor_bodygroups": {},
+    "name_offset": 82,
+    "idle_sequence": "",
+    "idle_sequences": [],
+    "theme": "default",
+    "use_limit": false,
+    "start_random": []
+  },
+  "start": "menu",
+  "nodes": {
+    "menu": {
+      "editor": {
+        "x": 120,
+        "y": 280,
+        "note": "Test Character, ID 1, job Citizen, and faction 0 are example values. Change the condition parameters to match your ACC2 test character."
+      },
+      "text": "Server-side data for the current ACC2 character:\n\nFull name: {advanced_character_creator.name}\nFirst name: {advanced_character_creator.first_name}\nLast name: {advanced_character_creator.last_name}\nID: {advanced_character_creator.id}\nJob: {advanced_character_creator.job}\nFaction: {advanced_character_creator.faction}\nFaction ID: {advanced_character_creator.faction_id}\n\nOnly checks that returned true are displayed below.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "A character is selected and ready: {advanced_character_creator.name}.",
+          "next": "passed",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            {
+              "id": "advanced_character_creator.ready",
+              "params": {}
+            }
+          ],
+          "actions": []
+        },
+        {
+          "text": "The full character name is Test Character.",
+          "next": "passed",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            {
+              "id": "advanced_character_creator.name_is",
+              "params": {
+                "name": "Test Character"
+              }
+            }
+          ],
+          "actions": []
+        },
+        {
+          "text": "The current character ID is 1.",
+          "next": "passed",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            {
+              "id": "advanced_character_creator.id_is",
+              "params": {
+                "id": 1
+              }
+            }
+          ],
+          "actions": []
+        },
+        {
+          "text": "The current character job is Citizen.",
+          "next": "passed",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            {
+              "id": "advanced_character_creator.job_is",
+              "params": {
+                "job": "Citizen"
+              }
+            }
+          ],
+          "actions": []
+        },
+        {
+          "text": "The current character faction ID is 0.",
+          "next": "passed",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            {
+              "id": "advanced_character_creator.faction_is",
+              "params": {
+                "faction": "0"
+              }
+            }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Finish the test.",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "passed": {
+      "editor": {
+        "x": 720,
+        "y": 280
+      },
+      "text": "The selected ACC2 check passed successfully.\n\nCurrent character: {advanced_character_creator.name}\nID: {advanced_character_creator.id}\nJob: {advanced_character_creator.job}\nFaction: {advanced_character_creator.faction} ({advanced_character_creator.faction_id})",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Return to the other checks.",
+          "next": "menu",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    }
+  }
+}

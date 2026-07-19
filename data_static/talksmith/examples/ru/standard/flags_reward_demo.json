@@ -1,0 +1,191 @@
+{
+  "schema": 3,
+  "id": "flags_reward_demo",
+  "meta": {
+    "title": "Демо: флаги и одноразовая награда",
+    "author": "",
+    "created": 0,
+    "modified": 0,
+    "revision": 0
+  },
+  "settings": {
+    "actor_name": "Куратор Лада",
+    "actor_subtitle": "Флаги, условия и действия",
+    "actor_model": "models/Humans/Group01/female_02.mdl",
+    "interact_distance": 160,
+    "actor_scale": 1,
+    "actor_skin": 0,
+    "actor_bodygroups": {},
+    "name_offset": 82,
+    "idle_sequence": "",
+    "idle_sequences": [],
+    "theme": "default",
+    "use_limit": false,
+    "start_random": []
+  },
+  "start": "greeting",
+  "nodes": {
+    "greeting": {
+      "editor": { "x": 120, "y": 300, "note": "Условия скрывают ответы в зависимости от сохранённого флага." },
+      "text": "Это демонстрационный пост. Здесь можно один раз получить награду, а администратор может сбросить состояние.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Получить первую награду.",
+          "next": "reward_offer",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            { "id": "core.flag_is_not_set", "params": { "key": "demo_reward_claimed" } }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Я уже получал награду.",
+          "next": "repeat_visit",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            { "id": "core.flag_is_set", "params": { "key": "demo_reward_claimed" } }
+          ],
+          "actions": []
+        },
+        {
+          "text": "[Администратор] Сбросить флаг награды.",
+          "next": "admin_reset",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            { "id": "core.is_admin", "params": {} },
+            { "id": "core.flag_is_set", "params": { "key": "demo_reward_claimed" } }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Закончить разговор.",
+          "next": "farewell",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "reward_offer": {
+      "editor": { "x": 560, "y": 120, "note": "Ответ ведёт к узлу с несколькими последовательными действиями." },
+      "text": "Награда добавит 10 здоровья и 15 брони. После выдачи сохранится персональный флаг игрока.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Принять награду.",
+          "next": "reward_granted",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Отказаться.",
+          "next": "farewell",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "reward_granted": {
+      "editor": { "x": 980, "y": 80, "note": "give_health → give_armor → set_flag → emit_event выполняются при входе." },
+      "text": "Готово. Повторный визит покажет другую ветку, потому что флаг уже установлен.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        { "id": "core.give_health", "params": { "amount": 10 } },
+        { "id": "core.give_armor", "params": { "amount": 15 } },
+        { "id": "core.set_flag", "params": { "key": "demo_reward_claimed", "value": true } },
+        { "id": "core.emit_event", "params": { "event": "demo_reward_claimed", "data": "flags_reward_demo" } }
+      ],
+      "options": [
+        {
+          "text": "Вернуться к началу и проверить условия.",
+          "next": "greeting",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Завершить.",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [ { "id": "core.close_dialogue", "params": {} } ]
+        }
+      ]
+    },
+    "repeat_visit": {
+      "editor": { "x": 560, "y": 430, "note": "Эта ветка доступна только при flag_is_set." },
+      "text": "Флаг подтверждает, что награда уже получена. Обычный игрок не может получить её повторно.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Вернуться.",
+          "next": "greeting",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Завершить.",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "admin_reset": {
+      "editor": { "x": 980, "y": 430, "note": "Вход защищён двумя условиями, действие clear_flag сбрасывает прогресс." },
+      "text": "Административный сброс выполнен. Теперь первая ветка снова доступна.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        { "id": "core.clear_flag", "params": { "key": "demo_reward_claimed" } },
+        { "id": "core.emit_event", "params": { "event": "demo_reward_reset", "data": "flags_reward_demo" } }
+      ],
+      "options": [
+        {
+          "text": "Проверить результат.",
+          "next": "greeting",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "farewell": {
+      "editor": { "x": 560, "y": 720 },
+      "text": "Демонстрация завершена.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Закрыть.",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    }
+  }
+}

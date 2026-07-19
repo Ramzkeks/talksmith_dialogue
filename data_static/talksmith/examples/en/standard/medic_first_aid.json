@@ -1,0 +1,342 @@
+{
+  "schema": 3,
+  "id": "medic_first_aid",
+  "meta": {
+    "title": "Medic — examination and protective equipment",
+    "author": "",
+    "created": 0,
+    "modified": 0,
+    "revision": 0
+  },
+  "settings": {
+    "actor_name": "Dr. Alexey Morozov",
+    "actor_subtitle": "First-aid station medic",
+    "actor_model": "models/Humans/Group01/male_02.mdl",
+    "interact_distance": 160,
+    "actor_scale": 1,
+    "actor_skin": 0,
+    "actor_bodygroups": {},
+    "name_offset": 82,
+    "idle_sequence": "",
+    "idle_sequences": [],
+    "theme": "default",
+    "use_limit": false,
+    "start_random": []
+  },
+  "start": "greeting",
+  "nodes": {
+    "greeting": {
+      "editor": {
+        "x": 120,
+        "y": 320,
+        "note": "Dialogue start"
+      },
+      "text": "Hello. I am Dr. Alexey Morozov, the medic at this first-aid station. What seems to be the problem?",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Nothing hurts. I just want a checkup.",
+          "next": "routine_check",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            {
+              "id": "core.flag_is_not_set",
+              "params": {
+                "key": "medic_armor_received"
+              }
+            }
+          ],
+          "actions": []
+        },
+        {
+          "text": "I am in pain and need help.",
+          "next": "pain_assessment",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            {
+              "id": "core.flag_is_not_set",
+              "params": {
+                "key": "medic_armor_received"
+              }
+            }
+          ],
+          "actions": []
+        },
+        {
+          "text": "I have been here before. I wanted to ask about my examination results.",
+          "next": "repeat_visit",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            {
+              "id": "core.flag_is_set",
+              "params": {
+                "key": "medic_armor_received"
+              }
+            }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Sorry, I will come back later.",
+          "next": "farewell",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "routine_check": {
+      "editor": {
+        "x": 560,
+        "y": 80,
+        "note": "Preventive checkup"
+      },
+      "text": "All right, I will perform a quick examination. Your pulse is steady, breathing is clear, and there are no visible injuries. You are fine for now, but extra protection is useful in the city.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "What can you offer?",
+          "next": "armor_offer",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Thank you, the examination is enough for me.",
+          "next": "declined_help",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "pain_assessment": {
+      "editor": {
+        "x": 560,
+        "y": 430,
+        "note": "Assessing the complaint"
+      },
+      "text": "Understood. Do not make any sudden movements. Describe the pain: is it the result of an injury, or more like weakness and dizziness?",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "I was hit in a fight; my side hurts.",
+          "next": "injury_check",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "I feel weak and a little dizzy.",
+          "next": "weakness_check",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "It seems to have passed. I had better go.",
+          "next": "farewell",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "injury_check": {
+      "editor": {
+        "x": 980,
+        "y": 310,
+        "note": "Post-injury examination"
+      },
+      "text": "I examined your side: there is no severe bleeding or sign of a fracture. You need rest, and I can issue a protective vest in case of further danger.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Yes, the protection will be useful.",
+          "next": "armor_offer",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Thank you. I would rather go to a hospital.",
+          "next": "farewell",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "weakness_check": {
+      "editor": {
+        "x": 980,
+        "y": 580,
+        "note": "Weakness examination"
+      },
+      "text": "Your blood pressure and pulse are within acceptable limits. It looks like exhaustion: rest and drink some water. I can issue a protective vest for safety.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "All right, I will take the protection.",
+          "next": "armor_offer",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Understood, doctor. I will go rest.",
+          "next": "farewell",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "armor_offer": {
+      "editor": {
+        "x": 1400,
+        "y": 260,
+        "note": "Confirmation of 50 armor issue"
+      },
+      "text": "I can issue you a protective kit. It adds 50 armor points. Shall I put it on now?",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Yes, please. Thank you, doctor.",
+          "next": "armor_issued",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "No, save the kit for someone who needs it more.",
+          "next": "declined_help",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "armor_issued": {
+      "editor": {
+        "x": 1800,
+        "y": 180,
+        "note": "Grants 50 armor and sets a flag on entry"
+      },
+      "text": "Done. The kit is secured correctly—you received 50 armor points. Take care, and seek help promptly if the pain gets worse.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        {
+          "id": "core.give_armor",
+          "params": {
+            "amount": 50
+          }
+        },
+        {
+          "id": "core.set_flag",
+          "params": {
+            "key": "medic_armor_received",
+            "value": true
+          }
+        }
+      ],
+      "options": [
+        {
+          "text": "Thank you for your help. Goodbye.",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "repeat_visit": {
+      "editor": {
+        "x": 560,
+        "y": 800,
+        "note": "Repeated attempt to receive armor"
+      },
+      "text": "Your results were normal, and I have already issued you a protective kit. Monitor how you feel; if new symptoms appear, go to a hospital.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Understood. Thank you, doctor.",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "declined_help": {
+      "editor": {
+        "x": 1800,
+        "y": 500,
+        "note": "Player declined the armor"
+      },
+      "text": "All right, that is your decision. Come back if you change your mind or feel worse.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Thank you, doctor. See you.",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "farewell": {
+      "editor": {
+        "x": 980,
+        "y": 880,
+        "note": "Dialogue end"
+      },
+      "text": "Goodbye. Take care.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "See you.",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    }
+  }
+}

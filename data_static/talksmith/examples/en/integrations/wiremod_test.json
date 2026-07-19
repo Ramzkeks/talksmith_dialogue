@@ -1,0 +1,270 @@
+{
+  "schema": 3,
+  "id": "integration_wiremod_test",
+  "meta": {
+    "title": "Integration test: Wiremod",
+    "author": "",
+    "created": 0,
+    "modified": 0,
+    "revision": 0
+  },
+  "settings": {
+    "actor_name": "Wiremod Operator",
+    "actor_subtitle": "Inputs, outputs, and signals",
+    "actor_model": "models/eli.mdl",
+    "interact_distance": 160,
+    "actor_scale": 1,
+    "actor_skin": 0,
+    "actor_bodygroups": {},
+    "name_offset": 82,
+    "idle_sequence": "",
+    "idle_sequences": [],
+    "theme": "default",
+    "use_limit": false,
+    "start_random": []
+  },
+  "start": "menu",
+  "nodes": {
+    "menu": {
+      "editor": {
+        "x": 120,
+        "y": 300,
+        "note": "Talksmith Actor automatically receives 8 ExternalValue inputs and 8 CustomOutput outputs when Wiremod is active."
+      },
+      "text": "Connect Wiremod to this Actor and choose an input or output test.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Test ExternalValue1.",
+          "next": "input_menu",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Test CustomOutput1–4.",
+          "next": "output_menu",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Finish the test.",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "input_menu": {
+      "editor": {
+        "x": 560,
+        "y": 120
+      },
+      "text": "Visible responses reflect the current numeric value of ExternalValue1.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "ExternalValue1 equals 0.",
+          "next": "condition_passed",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            {
+              "id": "wiremod.input_equals",
+              "params": {
+                "input": 1,
+                "value": 0
+              }
+            }
+          ],
+          "actions": []
+        },
+        {
+          "text": "ExternalValue1 is greater than 0.",
+          "next": "condition_passed",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            {
+              "id": "wiremod.input_greater",
+              "params": {
+                "input": 1,
+                "value": 0
+              }
+            }
+          ],
+          "actions": []
+        },
+        {
+          "text": "ExternalValue1 is active.",
+          "next": "condition_passed",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            {
+              "id": "wiremod.input_active",
+              "params": {
+                "input": 1
+              }
+            }
+          ],
+          "actions": []
+        },
+        {
+          "text": "ExternalValue1 is inactive.",
+          "next": "condition_passed",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            {
+              "id": "wiremod.input_inactive",
+              "params": {
+                "input": 1
+              }
+            }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Back.",
+          "next": "menu",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "output_menu": {
+      "editor": {
+        "x": 560,
+        "y": 580,
+        "note": "pass_selected_answer runs as a response action, so it sends the actual index of the selected row."
+      },
+      "text": "Connect monitors to CustomOutput1–4 and choose a command.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Set CustomOutput1 to 42.",
+          "next": "output_done",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [
+            {
+              "id": "wiremod.set_output",
+              "params": {
+                "output": 1,
+                "value": 42
+              }
+            }
+          ]
+        },
+        {
+          "text": "Send a pulse to CustomOutput2.",
+          "next": "output_done",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [
+            {
+              "id": "wiremod.pulse_output",
+              "params": {
+                "output": 2
+              }
+            }
+          ]
+        },
+        {
+          "text": "Send a string to CustomOutput3.",
+          "next": "output_done",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [
+            {
+              "id": "wiremod.send_string",
+              "params": {
+                "output": 3,
+                "text": "Talksmith Wiremod test"
+              }
+            }
+          ]
+        },
+        {
+          "text": "Send this response index to CustomOutput4.",
+          "next": "output_done",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [
+            {
+              "id": "wiremod.pass_selected_answer",
+              "params": {
+                "output": 4
+              }
+            }
+          ]
+        },
+        {
+          "text": "Back.",
+          "next": "menu",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "condition_passed": {
+      "editor": {
+        "x": 1040,
+        "y": 220
+      },
+      "text": "The selected Wiremod condition returned true.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Test the input again.",
+          "next": "input_menu",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "output_done": {
+      "editor": {
+        "x": 1040,
+        "y": 650
+      },
+      "text": "The Wiremod action was executed. Check the corresponding CustomOutput.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Test another output.",
+          "next": "output_menu",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    }
+  }
+}

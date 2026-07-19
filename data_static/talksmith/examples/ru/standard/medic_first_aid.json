@@ -1,0 +1,342 @@
+{
+  "schema": 3,
+  "id": "medic_first_aid",
+  "meta": {
+    "title": "Медик — осмотр и защитное снаряжение",
+    "author": "",
+    "created": 0,
+    "modified": 0,
+    "revision": 0
+  },
+  "settings": {
+    "actor_name": "Доктор Алексей Морозов",
+    "actor_subtitle": "Медик пункта первой помощи",
+    "actor_model": "models/Humans/Group01/male_02.mdl",
+    "interact_distance": 160,
+    "actor_scale": 1,
+    "actor_skin": 0,
+    "actor_bodygroups": {},
+    "name_offset": 82,
+    "idle_sequence": "",
+    "idle_sequences": [],
+    "theme": "default",
+    "use_limit": false,
+    "start_random": []
+  },
+  "start": "greeting",
+  "nodes": {
+    "greeting": {
+      "editor": {
+        "x": 120,
+        "y": 320,
+        "note": "Начало диалога"
+      },
+      "text": "Здравствуйте. Я доктор Алексей Морозов, медик этого пункта первой помощи. Что вас беспокоит?",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "У меня ничего не болит. Я просто хочу пройти осмотр.",
+          "next": "routine_check",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            {
+              "id": "core.flag_is_not_set",
+              "params": {
+                "key": "medic_armor_received"
+              }
+            }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Мне больно, нужна помощь.",
+          "next": "pain_assessment",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            {
+              "id": "core.flag_is_not_set",
+              "params": {
+                "key": "medic_armor_received"
+              }
+            }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Я уже был у вас. Хотел уточнить результаты осмотра.",
+          "next": "repeat_visit",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            {
+              "id": "core.flag_is_set",
+              "params": {
+                "key": "medic_armor_received"
+              }
+            }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Извините, я зайду позже.",
+          "next": "farewell",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "routine_check": {
+      "editor": {
+        "x": 560,
+        "y": 80,
+        "note": "Профилактический осмотр"
+      },
+      "text": "Хорошо, проведём короткий осмотр. Пульс ровный, дыхание чистое, видимых травм нет. Сейчас вы в порядке, но в городе лучше иметь дополнительную защиту.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Что вы можете предложить?",
+          "next": "armor_offer",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Спасибо, мне достаточно осмотра.",
+          "next": "declined_help",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "pain_assessment": {
+      "editor": {
+        "x": 560,
+        "y": 430,
+        "note": "Уточнение жалобы"
+      },
+      "text": "Понял. Не делайте резких движений. Опишите боль: это последствие ранения или скорее слабость и головокружение?",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Меня задело в драке, болит бок.",
+          "next": "injury_check",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Слабость и немного кружится голова.",
+          "next": "weakness_check",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Кажется, уже прошло. Лучше я пойду.",
+          "next": "farewell",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "injury_check": {
+      "editor": {
+        "x": 980,
+        "y": 310,
+        "note": "Осмотр после ранения"
+      },
+      "text": "Я осмотрел бок: сильного кровотечения и признаков перелома нет. Вам нужен покой, а на случай повторной опасности я могу выдать защитный жилет.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Да, защита мне пригодится.",
+          "next": "armor_offer",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Спасибо. Я лучше обращусь в больницу.",
+          "next": "farewell",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "weakness_check": {
+      "editor": {
+        "x": 980,
+        "y": 580,
+        "note": "Осмотр при слабости"
+      },
+      "text": "Давление и пульс в допустимых пределах. Похоже на переутомление: отдохните и выпейте воды. Для безопасности могу выдать вам защитный жилет.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Хорошо, я возьму защиту.",
+          "next": "armor_offer",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Понял, доктор. Пойду отдохну.",
+          "next": "farewell",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "armor_offer": {
+      "editor": {
+        "x": 1400,
+        "y": 260,
+        "note": "Подтверждение выдачи 50 брони"
+      },
+      "text": "Я выдам вам защитный комплект. Он добавит 50 единиц брони. Надеть его сейчас?",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Да, надевайте. Спасибо, доктор.",
+          "next": "armor_issued",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Нет, оставьте комплект тому, кому он нужнее.",
+          "next": "declined_help",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "armor_issued": {
+      "editor": {
+        "x": 1800,
+        "y": 180,
+        "note": "При входе выдаёт 50 брони и ставит флаг"
+      },
+      "text": "Готово. Комплект закреплён правильно — вы получили 50 единиц брони. Берегите себя и не затягивайте с обращением, если боль усилится.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        {
+          "id": "core.give_armor",
+          "params": {
+            "amount": 50
+          }
+        },
+        {
+          "id": "core.set_flag",
+          "params": {
+            "key": "medic_armor_received",
+            "value": true
+          }
+        }
+      ],
+      "options": [
+        {
+          "text": "Спасибо за помощь. До свидания.",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "repeat_visit": {
+      "editor": {
+        "x": 560,
+        "y": 800,
+        "note": "Повторная попытка получить броню"
+      },
+      "text": "Результаты были нормальными, а защитный комплект я вам уже выдал. Следите за самочувствием; если появятся новые симптомы, обратитесь в больницу.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Понял. Спасибо, доктор.",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "declined_help": {
+      "editor": {
+        "x": 1800,
+        "y": 500,
+        "note": "Игрок отказался от брони"
+      },
+      "text": "Хорошо, это ваше решение. Если передумаете или самочувствие ухудшится, возвращайтесь.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Спасибо, доктор. До встречи.",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "farewell": {
+      "editor": {
+        "x": 980,
+        "y": 880,
+        "note": "Завершение диалога"
+      },
+      "text": "До свидания. Берегите себя.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "До встречи.",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    }
+  }
+}

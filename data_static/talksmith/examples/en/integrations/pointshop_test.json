@@ -1,0 +1,494 @@
+{
+  "schema": 3,
+  "id": "integration_pointshop_test",
+  "meta": {
+    "title": "Integration test: PointShop 1",
+    "author": "",
+    "created": 0,
+    "modified": 0,
+    "revision": 0
+  },
+  "settings": {
+    "actor_name": "PointShop 1 Vendor",
+    "actor_subtitle": "Points, items, and shop",
+    "actor_model": "models/gman_high.mdl",
+    "interact_distance": 160,
+    "actor_scale": 1,
+    "actor_skin": 0,
+    "actor_bodygroups": {},
+    "name_offset": 82,
+    "idle_sequence": "",
+    "idle_sequences": [],
+    "theme": "retro",
+    "use_limit": false,
+    "start_random": []
+  },
+  "start": "menu",
+  "nodes": {
+    "menu": {
+      "editor": {
+        "x": 120,
+        "y": 300,
+        "note": "Tests direct pointshop.* calls and generic currency.* / inventory.* calls with provider=pointshop."
+      },
+      "text": "PointShop 1 test. Deduction operations intentionally use small values.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Add 100 points through a direct action.",
+          "next": "points_added",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Deduct 25 points through a direct action.",
+          "next": "points_taken",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            {
+              "id": "pointshop.points_at_least",
+              "params": {
+                "amount": 25
+              }
+            }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Test the generic currency provider.",
+          "next": "currency_menu",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Test PointShop 1 items.",
+          "next": "item_menu",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Open the PointShop 1 store.",
+          "next": "shop_opened",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [
+            {
+              "id": "pointshop.open_shop",
+              "params": {}
+            }
+          ]
+        },
+        {
+          "text": "Finish the test.",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "currency_menu": {
+      "editor": {
+        "x": 560,
+        "y": 120
+      },
+      "text": "Generic currency actions are explicitly routed to provider=pointshop.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Add 10 points through currency.add.",
+          "next": "currency_added",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Deduct 5 points through currency.take.",
+          "next": "currency_taken",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            {
+              "id": "currency.has_amount",
+              "params": {
+                "provider": "pointshop",
+                "currency": "points",
+                "amount": 5
+              }
+            }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Back.",
+          "next": "menu",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "item_menu": {
+      "editor": {
+        "x": 560,
+        "y": 560,
+        "note": "Replace example_item with a registered item name from your PointShop 1 before testing item operations."
+      },
+      "text": "Item checks use the example name example_item.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Give example_item through a direct action.",
+          "next": "item_given",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Remove example_item through a direct action.",
+          "next": "item_taken",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            {
+              "id": "pointshop.has_item",
+              "params": {
+                "item": "example_item"
+              }
+            }
+          ],
+          "actions": []
+        },
+        {
+          "text": "example_item is currently equipped.",
+          "next": "condition_passed",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            {
+              "id": "pointshop.item_equipped",
+              "params": {
+                "item": "example_item"
+              }
+            }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Give example_item through provider=pointshop.",
+          "next": "generic_item_given",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Remove example_item through provider=pointshop.",
+          "next": "generic_item_taken",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            {
+              "id": "inventory.has_item",
+              "params": {
+                "provider": "pointshop",
+                "item": "example_item",
+                "amount": 1
+              }
+            }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Back.",
+          "next": "menu",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "points_added": {
+      "editor": {
+        "x": 1040,
+        "y": 20
+      },
+      "text": "Added 100 points through pointshop.add_points.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        {
+          "id": "pointshop.add_points",
+          "params": {
+            "amount": 100
+          }
+        }
+      ],
+      "options": [
+        {
+          "text": "Back.",
+          "next": "menu",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "points_taken": {
+      "editor": {
+        "x": 1040,
+        "y": 180
+      },
+      "text": "Deducted 25 points through pointshop.take_points.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        {
+          "id": "pointshop.take_points",
+          "params": {
+            "amount": 25
+          }
+        }
+      ],
+      "options": [
+        {
+          "text": "Back.",
+          "next": "menu",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "currency_added": {
+      "editor": {
+        "x": 1040,
+        "y": 340
+      },
+      "text": "Added 10 points through the generic PointShop 1 currency provider.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        {
+          "id": "currency.add",
+          "params": {
+            "provider": "pointshop",
+            "currency": "points",
+            "amount": 10
+          }
+        }
+      ],
+      "options": [
+        {
+          "text": "Back.",
+          "next": "currency_menu",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "currency_taken": {
+      "editor": {
+        "x": 1040,
+        "y": 500
+      },
+      "text": "Deducted 5 points through the generic PointShop 1 currency provider.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        {
+          "id": "currency.take",
+          "params": {
+            "provider": "pointshop",
+            "currency": "points",
+            "amount": 5
+          }
+        }
+      ],
+      "options": [
+        {
+          "text": "Back.",
+          "next": "currency_menu",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "item_given": {
+      "editor": {
+        "x": 1040,
+        "y": 660
+      },
+      "text": "Executed pointshop.give_item for example_item.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        {
+          "id": "pointshop.give_item",
+          "params": {
+            "item": "example_item"
+          }
+        }
+      ],
+      "options": [
+        {
+          "text": "Back.",
+          "next": "item_menu",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "item_taken": {
+      "editor": {
+        "x": 1040,
+        "y": 820
+      },
+      "text": "Executed pointshop.take_item for example_item.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        {
+          "id": "pointshop.take_item",
+          "params": {
+            "item": "example_item"
+          }
+        }
+      ],
+      "options": [
+        {
+          "text": "Back.",
+          "next": "item_menu",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "generic_item_given": {
+      "editor": {
+        "x": 1460,
+        "y": 650
+      },
+      "text": "Executed inventory.give_item with provider=pointshop.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        {
+          "id": "inventory.give_item",
+          "params": {
+            "provider": "pointshop",
+            "item": "example_item",
+            "amount": 1
+          }
+        }
+      ],
+      "options": [
+        {
+          "text": "Back.",
+          "next": "item_menu",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "generic_item_taken": {
+      "editor": {
+        "x": 1460,
+        "y": 820
+      },
+      "text": "Executed inventory.take_item with provider=pointshop.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        {
+          "id": "inventory.take_item",
+          "params": {
+            "provider": "pointshop",
+            "item": "example_item",
+            "amount": 1
+          }
+        }
+      ],
+      "options": [
+        {
+          "text": "Back.",
+          "next": "item_menu",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "condition_passed": {
+      "editor": {
+        "x": 1460,
+        "y": 980
+      },
+      "text": "The PointShop 1 equipped-item condition returned true.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Back.",
+          "next": "item_menu",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "shop_opened": {
+      "editor": {
+        "x": 560,
+        "y": 900
+      },
+      "text": "The command to open PointShop 1 was sent to the player.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Back.",
+          "next": "menu",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    }
+  }
+}

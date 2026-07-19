@@ -1,0 +1,218 @@
+{
+  "schema": 3,
+  "id": "random_event_router_demo",
+  "meta": {
+    "title": "Demo: randomness, events, and transitions",
+    "author": "",
+    "created": 0,
+    "modified": 0,
+    "revision": 0
+  },
+  "settings": {
+    "actor_name": "Operator Zero",
+    "actor_subtitle": "Random routes and events",
+    "actor_model": "models/gman_high.mdl",
+    "interact_distance": 160,
+    "actor_scale": 1,
+    "actor_skin": 0,
+    "actor_bodygroups": {},
+    "name_offset": 82,
+    "idle_sequence": "",
+    "idle_sequences": [],
+    "theme": "default",
+    "use_limit": false,
+    "start_random": [ "intro_alpha", "intro_beta" ]
+  },
+  "start": "intro_alpha",
+  "nodes": {
+    "intro_alpha": {
+      "editor": { "x": 100, "y": 150, "note": "One of the two random starting nodes in settings.start_random." },
+      "text": "Channel Alpha was selected as the random start. From here you can test probability, random transitions, and cross-dialogue routing.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Open the router.",
+          "next": "router",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "intro_beta": {
+      "editor": { "x": 100, "y": 430, "note": "The second random start; the validator considers both nodes reachable." },
+      "text": "Channel Beta was selected as the random start. A single document can begin from several configured nodes.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Open the router.",
+          "next": "router",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "router": {
+      "editor": { "x": 520, "y": 300, "note": "random_chance is cached while one response is displayed and selected. open_dialogue requires a saved target ID." },
+      "text": "Choose a mechanism. The rare signal appears with a 25% chance; the regular route selects one of three nodes.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Accept the rare signal.",
+          "next": "rare_event",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            { "id": "core.random_chance", "params": { "chance": 0.25 } }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Start a random route.",
+          "next": "random_route",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Switch to the medic dialogue.",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [
+            { "id": "core.open_dialogue", "params": { "dialogue": "medic_first_aid" } }
+          ]
+        },
+        {
+          "text": "Switch to the flags demo.",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [
+            { "id": "core.open_dialogue", "params": { "dialogue": "flags_reward_demo" } }
+          ]
+        },
+        {
+          "text": "Close the dialogue with an action.",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [
+            { "id": "core.close_dialogue", "params": {} }
+          ]
+        }
+      ]
+    },
+    "rare_event": {
+      "editor": { "x": 1000, "y": 20, "note": "The sound must be listed in allowed_sounds; button14.wav is allowed by default." },
+      "text": "Rare channel activated. The client heard an allowed sound, and the server received the Talksmith.Event event.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        { "id": "core.play_sound", "params": { "sound": "buttons/button14.wav" } },
+        { "id": "core.emit_event", "params": { "event": "rare_signal_received", "data": "chance_0_25" } }
+      ],
+      "options": [
+        {
+          "text": "Return to the router.",
+          "next": "router",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "random_route": {
+      "editor": { "x": 1000, "y": 260, "note": "next_random takes precedence over regular next and selects one existing target." },
+      "text": "The next response sends you to one of three nodes through next_random.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Start the selection.",
+          "next_random": [ "route_red", "route_blue", "route_green" ],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Cancel.",
+          "next": "router",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "route_red": {
+      "editor": { "x": 1460, "y": 180 },
+      "text": "Red route selected.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        { "id": "core.emit_event", "params": { "event": "random_route_selected", "data": "red" } }
+      ],
+      "options": [
+        {
+          "text": "Go back.",
+          "next": "router",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "route_blue": {
+      "editor": { "x": 1460, "y": 380 },
+      "text": "Blue route selected.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        { "id": "core.emit_event", "params": { "event": "random_route_selected", "data": "blue" } }
+      ],
+      "options": [
+        {
+          "text": "Go back.",
+          "next": "router",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "route_green": {
+      "editor": { "x": 1460, "y": 580 },
+      "text": "Green route selected.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        { "id": "core.emit_event", "params": { "event": "random_route_selected", "data": "green" } }
+      ],
+      "options": [
+        {
+          "text": "Go back.",
+          "next": "router",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    }
+  }
+}

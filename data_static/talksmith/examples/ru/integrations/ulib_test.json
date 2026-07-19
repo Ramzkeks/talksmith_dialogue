@@ -1,0 +1,105 @@
+{
+  "schema": 3,
+  "id": "integration_ulib_test",
+  "meta": {
+    "title": "Тест интеграции: ULib",
+    "author": "",
+    "created": 0,
+    "modified": 0,
+    "revision": 0
+  },
+  "settings": {
+    "actor_name": "Инспектор ULib",
+    "actor_subtitle": "Права доступа и группы пользователей",
+    "actor_model": "models/breen.mdl",
+    "interact_distance": 160,
+    "actor_scale": 1,
+    "actor_skin": 0,
+    "actor_bodygroups": {},
+    "name_offset": 82,
+    "idle_sequence": "",
+    "idle_sequences": [],
+    "theme": "default",
+    "use_limit": false,
+    "start_random": []
+  },
+  "start": "menu",
+  "nodes": {
+    "menu": {
+      "editor": { "x": 120, "y": 260, "note": "Каждый видимый ответ означает, что соответствующее условие ULib вернуло true." },
+      "text": "Проверка ULib UCL. Список ответов ниже автоматически отражает ваши права и точную группу пользователя.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Есть доступ talksmith_editor.",
+          "next": "access_ok",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            { "id": "ulib.has_access", "params": { "access": "talksmith_editor" } }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Моя группа — superadmin.",
+          "next": "group_ok",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            { "id": "ulib.usergroup_is", "params": { "group": "superadmin" } }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Моя группа — admin.",
+          "next": "group_ok",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            { "id": "ulib.usergroup_is", "params": { "group": "admin" } }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Моя группа — user.",
+          "next": "group_ok",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            { "id": "ulib.usergroup_is", "params": { "group": "user" } }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Завершить тест.",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "access_ok": {
+      "editor": { "x": 620, "y": 140 },
+      "text": "ULib подтвердил доступ к привилегии talksmith_editor.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        { "text": "Назад.", "next": "menu", "next_random": [], "gesture": "", "conditions": [], "actions": [] }
+      ]
+    },
+    "group_ok": {
+      "editor": { "x": 620, "y": 360 },
+      "text": "ULib подтвердил точное совпадение группы пользователя.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        { "text": "Назад.", "next": "menu", "next_random": [], "gesture": "", "conditions": [], "actions": [] }
+      ]
+    }
+  }
+}

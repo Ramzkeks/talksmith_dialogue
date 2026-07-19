@@ -1,0 +1,275 @@
+{
+  "schema": 3,
+  "id": "integration_barney_test",
+  "meta": {
+    "title": "Integration test: Barney Inventory 2.0",
+    "author": "",
+    "created": 0,
+    "modified": 0,
+    "revision": 0
+  },
+  "settings": {
+    "actor_name": "Barney Quartermaster",
+    "actor_subtitle": "Items, weight, and ammunition",
+    "actor_model": "models/barney.mdl",
+    "interact_distance": 160,
+    "actor_scale": 1,
+    "actor_skin": 0,
+    "actor_bodygroups": {},
+    "name_offset": 82,
+    "idle_sequence": "",
+    "idle_sequences": [],
+    "theme": "default",
+    "use_limit": false,
+    "start_random": []
+  },
+  "start": "menu",
+  "nodes": {
+    "menu": {
+      "editor": {
+        "x": 120,
+        "y": 300,
+        "note": "Item actions use the generic inventory.* API with provider=barney; ammunition uses direct integration actions."
+      },
+      "text": "Barney Inventory 2.0 test. The test item is weapon_crowbar and the ammunition type is Pistol.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Give one weapon_crowbar to the inventory.",
+          "next": "item_given",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            {
+              "id": "barney.item_allowed",
+              "params": {
+                "item": "weapon_crowbar"
+              }
+            },
+            {
+              "id": "barney.has_free_weight",
+              "params": {
+                "amount": 1
+              }
+            },
+            {
+              "id": "inventory.has_space",
+              "params": {
+                "provider": "barney",
+                "item": "weapon_crowbar",
+                "amount": 1
+              }
+            }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Remove one weapon_crowbar from the inventory.",
+          "next": "item_taken",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            {
+              "id": "barney.has_item",
+              "params": {
+                "item": "weapon_crowbar",
+                "amount": 1
+              }
+            },
+            {
+              "id": "inventory.has_item",
+              "params": {
+                "provider": "barney",
+                "item": "weapon_crowbar",
+                "amount": 1
+              }
+            }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Give 10 rounds of Pistol ammunition.",
+          "next": "ammo_given",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Remove one round of Pistol ammunition.",
+          "next": "ammo_taken",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            {
+              "id": "barney.has_ammo",
+              "params": {
+                "ammo": "Pistol",
+                "amount": 1
+              }
+            }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Open Barney Inventory through the selected provider.",
+          "next": "inventory_opened",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [
+            {
+              "id": "inventory.open",
+              "params": {
+                "provider": "barney"
+              }
+            }
+          ]
+        },
+        {
+          "text": "Finish the test.",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "item_given": {
+      "editor": {
+        "x": 650,
+        "y": 40
+      },
+      "text": "Requested weapon_crowbar through the barney provider.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        {
+          "id": "inventory.give_item",
+          "params": {
+            "provider": "barney",
+            "item": "weapon_crowbar",
+            "amount": 1
+          }
+        }
+      ],
+      "options": [
+        {
+          "text": "Check the result.",
+          "next": "menu",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "item_taken": {
+      "editor": {
+        "x": 650,
+        "y": 210
+      },
+      "text": "Requested removal of weapon_crowbar through the barney provider.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        {
+          "id": "inventory.take_item",
+          "params": {
+            "provider": "barney",
+            "item": "weapon_crowbar",
+            "amount": 1
+          }
+        }
+      ],
+      "options": [
+        {
+          "text": "Check the result.",
+          "next": "menu",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "ammo_given": {
+      "editor": {
+        "x": 650,
+        "y": 380
+      },
+      "text": "Gave 10 rounds of Pistol ammunition through barney.give_ammo.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        {
+          "id": "barney.give_ammo",
+          "params": {
+            "ammo": "Pistol",
+            "amount": 10
+          }
+        }
+      ],
+      "options": [
+        {
+          "text": "Back.",
+          "next": "menu",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "ammo_taken": {
+      "editor": {
+        "x": 650,
+        "y": 550
+      },
+      "text": "Removed one round of Pistol ammunition through barney.take_ammo.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        {
+          "id": "barney.take_ammo",
+          "params": {
+            "ammo": "Pistol",
+            "amount": 1
+          }
+        }
+      ],
+      "options": [
+        {
+          "text": "Back.",
+          "next": "menu",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "inventory_opened": {
+      "editor": {
+        "x": 650,
+        "y": 720
+      },
+      "text": "The command to open Barney Inventory was sent to the selected provider.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Back.",
+          "next": "menu",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    }
+  }
+}

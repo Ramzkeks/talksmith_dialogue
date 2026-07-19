@@ -1,0 +1,190 @@
+{
+  "schema": 3,
+  "id": "armory_allowlist_demo",
+  "meta": {
+    "title": "Demo: weapons and allowlist",
+    "author": "",
+    "created": 0,
+    "modified": 0,
+    "revision": 0
+  },
+  "settings": {
+    "actor_name": "Quartermaster Rain",
+    "actor_subtitle": "Weapon issue and returns",
+    "actor_model": "models/combine_soldier.mdl",
+    "interact_distance": 160,
+    "actor_scale": 1,
+    "actor_skin": 0,
+    "actor_bodygroups": {},
+    "name_offset": 82,
+    "idle_sequence": "",
+    "idle_sequences": [],
+    "theme": "default",
+    "use_limit": true,
+    "start_random": []
+  },
+  "start": "armory",
+  "nodes": {
+    "armory": {
+      "editor": { "x": 120, "y": 300, "note": "Exactly 6 responses — the default max_options limit." },
+      "text": "The armory only accepts classes listed in Talksmith.Config.allowed_weapons. By default, weapon_pistol and weapon_crowbar are allowed.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Give me a pistol.",
+          "next": "issue_pistol",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            { "id": "core.does_not_have_weapon", "params": { "class": "weapon_pistol" } }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Return the pistol.",
+          "next": "return_pistol",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            { "id": "core.has_weapon", "params": { "class": "weapon_pistol" } }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Give me a crowbar.",
+          "next": "issue_crowbar",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            { "id": "core.does_not_have_weapon", "params": { "class": "weapon_crowbar" } }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Return the crowbar.",
+          "next": "return_crowbar",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            { "id": "core.has_weapon", "params": { "class": "weapon_crowbar" } }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Explain the armory restrictions.",
+          "next": "limitations",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Leave.",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "issue_pistol": {
+      "editor": { "x": 600, "y": 40, "note": "give_weapon only accepts classes from allowed_weapons." },
+      "text": "Pistol issued. After you return it, the conditions on the starting node will swap.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        { "id": "core.give_weapon", "params": { "class": "weapon_pistol" } },
+        { "id": "core.emit_event", "params": { "event": "armory_weapon_issued", "data": "weapon_pistol" } }
+      ],
+      "options": [
+        {
+          "text": "Return to the armory.",
+          "next": "armory",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "return_pistol": {
+      "editor": { "x": 600, "y": 220 },
+      "text": "The pistol has been returned to the armory.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        { "id": "core.take_weapon", "params": { "class": "weapon_pistol" } },
+        { "id": "core.emit_event", "params": { "event": "armory_weapon_returned", "data": "weapon_pistol" } }
+      ],
+      "options": [
+        {
+          "text": "Return to the armory.",
+          "next": "armory",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "issue_crowbar": {
+      "editor": { "x": 600, "y": 420 },
+      "text": "Crowbar issued. This is the second class in the default allowlist.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        { "id": "core.give_weapon", "params": { "class": "weapon_crowbar" } },
+        { "id": "core.emit_event", "params": { "event": "armory_weapon_issued", "data": "weapon_crowbar" } }
+      ],
+      "options": [
+        {
+          "text": "Return to the armory.",
+          "next": "armory",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "return_crowbar": {
+      "editor": { "x": 600, "y": 600 },
+      "text": "The crowbar has been returned to the armory.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        { "id": "core.take_weapon", "params": { "class": "weapon_crowbar" } },
+        { "id": "core.emit_event", "params": { "event": "armory_weapon_returned", "data": "weapon_crowbar" } }
+      ],
+      "options": [
+        {
+          "text": "Return to the armory.",
+          "next": "armory",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "limitations": {
+      "editor": { "x": 1080, "y": 300, "note": "A disallowed class passes parameter validation, but the action returns false on the server." },
+      "text": "Security restriction: arbitrary weapons cannot be issued. An administrator must add the class to allowed_weapons first. A node may contain no more than six responses.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Understood. Go back.",
+          "next": "armory",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    }
+  }
+}

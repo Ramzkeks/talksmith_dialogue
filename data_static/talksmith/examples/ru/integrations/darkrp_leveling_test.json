@@ -1,0 +1,99 @@
+{
+  "schema": 3,
+  "id": "integration_darkrp_leveling_test",
+  "meta": {
+    "title": "Тест интеграции: DarkRP Leveling System",
+    "author": "",
+    "created": 0,
+    "modified": 0,
+    "revision": 0
+  },
+  "settings": {
+    "actor_name": "Инструктор уровней",
+    "actor_subtitle": "Опыт, уровни и границы прогресса",
+    "actor_model": "models/kleiner.mdl",
+    "interact_distance": 160,
+    "actor_scale": 1,
+    "actor_skin": 0,
+    "actor_bodygroups": {},
+    "name_offset": 82,
+    "idle_sequence": "",
+    "idle_sequences": [],
+    "theme": "retro",
+    "use_limit": false,
+    "start_random": []
+  },
+  "start": "menu",
+  "nodes": {
+    "menu": {
+      "editor": { "x": 120, "y": 300, "note": "set_level и take_xp — опасные действия. Значения выбраны минимальными для теста." },
+      "text": "Проверка DarkRP Leveling System. Выберите действие или откройте диагностику условий.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        { "text": "Добавить 100 XP.", "next": "xp_added", "next_random": [], "gesture": "", "conditions": [], "actions": [] },
+        {
+          "text": "Списать 1 XP.",
+          "next": "xp_taken",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [ { "id": "darkrp_leveling.xp_at_least", "params": { "amount": 1 } } ],
+          "actions": []
+        },
+        { "text": "Добавить один уровень.", "next": "level_added", "next_random": [], "gesture": "", "conditions": [], "actions": [] },
+        { "text": "Установить уровень 1.", "next": "level_set", "next_random": [], "gesture": "", "conditions": [], "actions": [] },
+        { "text": "Проверить условия уровня и XP.", "next": "conditions_menu", "next_random": [], "gesture": "", "conditions": [], "actions": [] },
+        { "text": "Завершить тест.", "next_random": [], "gesture": "", "conditions": [], "actions": [] }
+      ]
+    },
+    "conditions_menu": {
+      "editor": { "x": 560, "y": 620 },
+      "text": "Каждый видимый ответ означает, что условие прогрессии вернуло true.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        { "text": "Уровень не ниже 1.", "next": "condition_passed", "next_random": [], "gesture": "", "conditions": [ { "id": "darkrp_leveling.level_at_least", "params": { "amount": 1 } } ], "actions": [] },
+        { "text": "Уровень не выше 10.", "next": "condition_passed", "next_random": [], "gesture": "", "conditions": [ { "id": "darkrp_leveling.level_at_most", "params": { "amount": 10 } } ], "actions": [] },
+        { "text": "Накоплен хотя бы 1 XP.", "next": "condition_passed", "next_random": [], "gesture": "", "conditions": [ { "id": "darkrp_leveling.xp_at_least", "params": { "amount": 1 } } ], "actions": [] },
+        { "text": "XP достаточно для повышения уровня.", "next": "condition_passed", "next_random": [], "gesture": "", "conditions": [ { "id": "darkrp_leveling.can_level_up", "params": {} } ], "actions": [] },
+        { "text": "Назад.", "next": "menu", "next_random": [], "gesture": "", "conditions": [], "actions": [] }
+      ]
+    },
+    "xp_added": {
+      "editor": { "x": 980, "y": 40 },
+      "text": "Добавлено 100 XP через darkrp_leveling.add_xp.",
+      "sound": "", "gesture": "",
+      "actions": [ { "id": "darkrp_leveling.add_xp", "params": { "amount": 100, "notify": true } } ],
+      "options": [ { "text": "Назад.", "next": "menu", "next_random": [], "gesture": "", "conditions": [], "actions": [] } ]
+    },
+    "xp_taken": {
+      "editor": { "x": 980, "y": 210 },
+      "text": "Списан 1 XP через darkrp_leveling.take_xp.",
+      "sound": "", "gesture": "",
+      "actions": [ { "id": "darkrp_leveling.take_xp", "params": { "amount": 1 } } ],
+      "options": [ { "text": "Назад.", "next": "menu", "next_random": [], "gesture": "", "conditions": [], "actions": [] } ]
+    },
+    "level_added": {
+      "editor": { "x": 980, "y": 380 },
+      "text": "Добавлен один уровень через darkrp_leveling.add_levels.",
+      "sound": "", "gesture": "",
+      "actions": [ { "id": "darkrp_leveling.add_levels", "params": { "amount": 1 } } ],
+      "options": [ { "text": "Назад.", "next": "menu", "next_random": [], "gesture": "", "conditions": [], "actions": [] } ]
+    },
+    "level_set": {
+      "editor": { "x": 980, "y": 550, "note": "Это действие сбрасывает текущий уровень тестового игрока до 1." },
+      "text": "Уровень установлен в 1 через darkrp_leveling.set_level.",
+      "sound": "", "gesture": "",
+      "actions": [ { "id": "darkrp_leveling.set_level", "params": { "amount": 1 } } ],
+      "options": [ { "text": "Назад.", "next": "menu", "next_random": [], "gesture": "", "conditions": [], "actions": [] } ]
+    },
+    "condition_passed": {
+      "editor": { "x": 980, "y": 760 },
+      "text": "Выбранное условие DarkRP Leveling System вернуло true.",
+      "sound": "", "gesture": "", "actions": [],
+      "options": [ { "text": "Проверить остальные условия.", "next": "conditions_menu", "next_random": [], "gesture": "", "conditions": [], "actions": [] } ]
+    }
+  }
+}

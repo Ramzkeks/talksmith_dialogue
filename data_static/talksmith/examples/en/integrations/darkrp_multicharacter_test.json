@@ -1,0 +1,127 @@
+{
+  "schema": 3,
+  "id": "integration_darkrp_multicharacter_test",
+  "meta": {
+    "title": "Integration test: DarkRP Multi Character",
+    "author": "",
+    "created": 0,
+    "modified": 0,
+    "revision": 0
+  },
+  "settings": {
+    "actor_name": "Character Registrar",
+    "actor_subtitle": "Identity, index, and job",
+    "actor_model": "models/mossman.mdl",
+    "interact_distance": 160,
+    "actor_scale": 1,
+    "actor_skin": 0,
+    "actor_bodygroups": {},
+    "name_offset": 82,
+    "idle_sequence": "",
+    "idle_sequences": [],
+    "theme": "default",
+    "use_limit": false,
+    "start_random": []
+  },
+  "start": "menu",
+  "nodes": {
+    "menu": {
+      "editor": {
+        "x": 120,
+        "y": 280,
+        "note": "The name and job values are examples; replace them with the actual data of your test character."
+      },
+      "text": "Visible responses show which checks for the current character returned true.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "A character is selected and ready.",
+          "next": "passed",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            {
+              "id": "darkrp_multicharacter.ready",
+              "params": {}
+            }
+          ],
+          "actions": []
+        },
+        {
+          "text": "The character name is Test Character.",
+          "next": "passed",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            {
+              "id": "darkrp_multicharacter.name_is",
+              "params": {
+                "name": "Test Character"
+              }
+            }
+          ],
+          "actions": []
+        },
+        {
+          "text": "The first character slot is active.",
+          "next": "passed",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            {
+              "id": "darkrp_multicharacter.index_is",
+              "params": {
+                "index": 1
+              }
+            }
+          ],
+          "actions": []
+        },
+        {
+          "text": "The character job is Citizen.",
+          "next": "passed",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            {
+              "id": "darkrp_multicharacter.job_is",
+              "params": {
+                "job": "Citizen"
+              }
+            }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Finish the test.",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "passed": {
+      "editor": {
+        "x": 650,
+        "y": 280
+      },
+      "text": "The selected DarkRP Multi Character check passed.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Check the other conditions.",
+          "next": "menu",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    }
+  }
+}

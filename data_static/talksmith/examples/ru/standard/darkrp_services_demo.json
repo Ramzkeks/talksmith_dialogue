@@ -1,0 +1,242 @@
+{
+  "schema": 3,
+  "id": "darkrp_services_demo",
+  "meta": {
+    "title": "Демо: услуги DarkRP",
+    "author": "",
+    "created": 0,
+    "modified": 0,
+    "revision": 0
+  },
+  "settings": {
+    "actor_name": "Городской регистратор",
+    "actor_subtitle": "DarkRP: деньги, профессии и полиция",
+    "actor_model": "models/breen.mdl",
+    "interact_distance": 160,
+    "actor_scale": 1,
+    "actor_skin": 0,
+    "actor_bodygroups": {},
+    "name_offset": 82,
+    "idle_sequence": "",
+    "idle_sequences": [],
+    "theme": "default",
+    "use_limit": true,
+    "start_random": []
+  },
+  "start": "desk",
+  "nodes": {
+    "desk": {
+      "editor": { "x": 120, "y": 330, "note": "Этот пресет импортируется только когда DarkRP-действия и условия зарегистрированы на сервере." },
+      "text": "Городской терминал демонстрирует баланс, профессию и статус гражданской защиты. Команда профессии citizen должна существовать в конфигурации DarkRP.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Получить разовую выплату гражданина.",
+          "next": "citizen_bonus",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            { "id": "darkrp.is_job", "params": { "job": "citizen" } },
+            { "id": "core.flag_is_not_set", "params": { "key": "demo_citizen_bonus" } }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Оплатить лицензионный сбор: 100.",
+          "next": "license_offer",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            { "id": "darkrp.has_money", "params": { "amount": 100 } }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Получить выплату сотрудника CP.",
+          "next": "cp_allowance",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            { "id": "darkrp.is_cp", "params": {} },
+            { "id": "core.flag_is_not_set", "params": { "key": "demo_cp_allowance" } }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Перейти на профессию citizen.",
+          "next": "job_offer",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Объяснить ограничения DarkRP.",
+          "next": "limitations",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Закрыть терминал.",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [ { "id": "core.close_dialogue", "params": {} } ]
+        }
+      ]
+    },
+    "citizen_bonus": {
+      "editor": { "x": 650, "y": 20, "note": "give_money ограничивается darkrp_max_money_action, затем устанавливается одноразовый флаг." },
+      "text": "Гражданская выплата 250 начислена. Второй раз этот ответ не появится.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        { "id": "darkrp.give_money", "params": { "amount": 250 } },
+        { "id": "core.set_flag", "params": { "key": "demo_citizen_bonus", "value": true } },
+        { "id": "core.emit_event", "params": { "event": "darkrp_citizen_bonus", "data": 250 } }
+      ],
+      "options": [
+        {
+          "text": "Вернуться к терминалу.",
+          "next": "desk",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "license_offer": {
+      "editor": { "x": 650, "y": 240, "note": "has_money лишь скрывает ответ; take_money дополнительно не снимает больше текущего баланса." },
+      "text": "Подтвердите списание 100. Условие has_money проверило доступный баланс до перехода.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Подтверждаю оплату.",
+          "next": "license_paid",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Отмена.",
+          "next": "desk",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "license_paid": {
+      "editor": { "x": 1120, "y": 240 },
+      "text": "Сбор оплачен. Событие можно обработать другим серверным аддоном.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        { "id": "darkrp.take_money", "params": { "amount": 100 } },
+        { "id": "core.emit_event", "params": { "event": "darkrp_license_paid", "data": 100 } }
+      ],
+      "options": [
+        {
+          "text": "Вернуться к терминалу.",
+          "next": "desk",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "cp_allowance": {
+      "editor": { "x": 650, "y": 480, "note": "is_cp использует DarkRP player:isCP(); ветка одноразовая благодаря флагу." },
+      "text": "Статус гражданской защиты подтверждён. Служебная выплата 500 начислена.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        { "id": "darkrp.give_money", "params": { "amount": 500 } },
+        { "id": "core.set_flag", "params": { "key": "demo_cp_allowance", "value": true } },
+        { "id": "core.emit_event", "params": { "event": "darkrp_cp_allowance", "data": "500" } }
+      ],
+      "options": [
+        {
+          "text": "Вернуться к терминалу.",
+          "next": "desk",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "job_offer": {
+      "editor": { "x": 650, "y": 700, "note": "set_job принимает команду профессии, не отображаемое имя. Несуществующая команда завершит действие с false." },
+      "text": "Будет вызвана команда профессии citizen. Если такой команды нет в RPExtraTeams, смена завершится ошибкой.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Сменить профессию.",
+          "next": "job_changed",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Отмена.",
+          "next": "desk",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "job_changed": {
+      "editor": { "x": 1120, "y": 700 },
+      "text": "Профессия изменена на citizen.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        { "id": "darkrp.change_job", "params": { "job": "citizen" } },
+        { "id": "core.emit_event", "params": { "event": "darkrp_job_changed", "data": "citizen" } }
+      ],
+      "options": [
+        {
+          "text": "Вернуться к терминалу.",
+          "next": "desk",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "limitations": {
+      "editor": { "x": 1120, "y": 470, "note": "DarkRP-реестр отсутствует в Sandbox. Generic change_team также требует allowed_teams и player:changeTeam." },
+      "text": "Ограничения: пресет требует DarkRP; суммы ограничены darkrp_max_money_action; профессия задаётся её command; generic change_team по умолчанию отключён пустым allowed_teams.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Вернуться.",
+          "next": "desk",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    }
+  }
+}

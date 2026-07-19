@@ -1,0 +1,166 @@
+{
+  "schema": 3,
+  "id": "integration_gws_test",
+  "meta": {
+    "title": "Тест интеграции: GWS Inventory System",
+    "author": "",
+    "created": 0,
+    "modified": 0,
+    "revision": 0
+  },
+  "settings": {
+    "actor_name": "Кладовщик GWS",
+    "actor_subtitle": "Инвентарь, оружие и боеприпасы",
+    "actor_model": "models/combine_soldier.mdl",
+    "interact_distance": 160,
+    "actor_scale": 1,
+    "actor_skin": 0,
+    "actor_bodygroups": {},
+    "name_offset": 82,
+    "idle_sequence": "",
+    "idle_sequences": [],
+    "theme": "default",
+    "use_limit": false,
+    "start_random": []
+  },
+  "start": "menu",
+  "nodes": {
+    "menu": {
+      "editor": { "x": 120, "y": 300, "note": "Оружие weapon_pistol входит в стандартный allowed_weapons Talksmith." },
+      "text": "Выберите группу проверок GWS Inventory System.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        { "text": "Проверить предметы GWS.", "next": "inventory_menu", "next_random": [], "gesture": "", "conditions": [], "actions": [] },
+        { "text": "Проверить оружие и патроны.", "next": "combat_menu", "next_random": [], "gesture": "", "conditions": [], "actions": [] },
+        {
+          "text": "Открыть GWS Inventory через провайдер.",
+          "next": "opened",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [ { "id": "inventory.open", "params": { "provider": "gws" } } ]
+        },
+        { "text": "Завершить тест.", "next_random": [], "gesture": "", "conditions": [], "actions": [] }
+      ]
+    },
+    "inventory_menu": {
+      "editor": { "x": 560, "y": 100 },
+      "text": "Предметные операции направляются только в provider=gws.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Положить weapon_crowbar в инвентарь GWS.",
+          "next": "item_given",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            { "id": "gws.has_space", "params": { "amount": 1 } },
+            { "id": "gws.item_allowed", "params": { "item": "weapon_crowbar" } },
+            { "id": "inventory.has_space", "params": { "provider": "gws", "item": "weapon_crowbar", "amount": 1 } }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Забрать weapon_crowbar из инвентаря GWS.",
+          "next": "item_taken",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            { "id": "gws.has_item", "params": { "item": "weapon_crowbar", "amount": 1 } },
+            { "id": "inventory.has_item", "params": { "provider": "gws", "item": "weapon_crowbar", "amount": 1 } }
+          ],
+          "actions": []
+        },
+        { "text": "Назад.", "next": "menu", "next_random": [], "gesture": "", "conditions": [], "actions": [] }
+      ]
+    },
+    "combat_menu": {
+      "editor": { "x": 560, "y": 500 },
+      "text": "Прямые действия GWS с weapon_pistol и патронами Pistol.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        { "text": "Выдать weapon_pistol.", "next": "weapon_given", "next_random": [], "gesture": "", "conditions": [], "actions": [] },
+        {
+          "text": "Забрать weapon_pistol.",
+          "next": "weapon_taken",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [ { "id": "gws.has_weapon", "params": { "item": "weapon_pistol" } } ],
+          "actions": []
+        },
+        { "text": "Выдать 12 патронов Pistol.", "next": "ammo_given", "next_random": [], "gesture": "", "conditions": [], "actions": [] },
+        {
+          "text": "Забрать один патрон Pistol.",
+          "next": "ammo_taken",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [ { "id": "gws.has_ammo", "params": { "ammo": "Pistol", "amount": 1 } } ],
+          "actions": []
+        },
+        { "text": "Назад.", "next": "menu", "next_random": [], "gesture": "", "conditions": [], "actions": [] }
+      ]
+    },
+    "item_given": {
+      "editor": { "x": 1040, "y": 40 },
+      "text": "Запрошена выдача weapon_crowbar через provider=gws.",
+      "sound": "",
+      "gesture": "",
+      "actions": [ { "id": "inventory.give_item", "params": { "provider": "gws", "item": "weapon_crowbar", "amount": 1 } } ],
+      "options": [ { "text": "Проверить инвентарь.", "next": "inventory_menu", "next_random": [], "gesture": "", "conditions": [], "actions": [] } ]
+    },
+    "item_taken": {
+      "editor": { "x": 1040, "y": 210 },
+      "text": "Запрошено удаление weapon_crowbar через provider=gws.",
+      "sound": "",
+      "gesture": "",
+      "actions": [ { "id": "inventory.take_item", "params": { "provider": "gws", "item": "weapon_crowbar", "amount": 1 } } ],
+      "options": [ { "text": "Проверить инвентарь.", "next": "inventory_menu", "next_random": [], "gesture": "", "conditions": [], "actions": [] } ]
+    },
+    "weapon_given": {
+      "editor": { "x": 1040, "y": 380 },
+      "text": "Выдан weapon_pistol через gws.give_weapon.",
+      "sound": "",
+      "gesture": "",
+      "actions": [ { "id": "gws.give_weapon", "params": { "item": "weapon_pistol" } } ],
+      "options": [ { "text": "Назад.", "next": "combat_menu", "next_random": [], "gesture": "", "conditions": [], "actions": [] } ]
+    },
+    "weapon_taken": {
+      "editor": { "x": 1040, "y": 550 },
+      "text": "weapon_pistol удалён через gws.strip_weapon.",
+      "sound": "",
+      "gesture": "",
+      "actions": [ { "id": "gws.strip_weapon", "params": { "item": "weapon_pistol" } } ],
+      "options": [ { "text": "Назад.", "next": "combat_menu", "next_random": [], "gesture": "", "conditions": [], "actions": [] } ]
+    },
+    "ammo_given": {
+      "editor": { "x": 1040, "y": 720 },
+      "text": "Выдано 12 патронов Pistol через gws.give_ammo.",
+      "sound": "",
+      "gesture": "",
+      "actions": [ { "id": "gws.give_ammo", "params": { "ammo": "Pistol", "amount": 12 } } ],
+      "options": [ { "text": "Назад.", "next": "combat_menu", "next_random": [], "gesture": "", "conditions": [], "actions": [] } ]
+    },
+    "ammo_taken": {
+      "editor": { "x": 1040, "y": 890 },
+      "text": "Удалён один патрон Pistol через gws.take_ammo.",
+      "sound": "",
+      "gesture": "",
+      "actions": [ { "id": "gws.take_ammo", "params": { "ammo": "Pistol", "amount": 1 } } ],
+      "options": [ { "text": "Назад.", "next": "combat_menu", "next_random": [], "gesture": "", "conditions": [], "actions": [] } ]
+    },
+    "opened": {
+      "editor": { "x": 560, "y": 800 },
+      "text": "Команда открытия GWS Inventory отправлена игроку.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [ { "text": "Назад.", "next": "menu", "next_random": [], "gesture": "", "conditions": [], "actions": [] } ]
+    }
+  }
+}

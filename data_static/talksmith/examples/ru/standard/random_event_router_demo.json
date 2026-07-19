@@ -1,0 +1,218 @@
+{
+  "schema": 3,
+  "id": "random_event_router_demo",
+  "meta": {
+    "title": "Демо: случайность, события и переходы",
+    "author": "",
+    "created": 0,
+    "modified": 0,
+    "revision": 0
+  },
+  "settings": {
+    "actor_name": "Оператор Ноль",
+    "actor_subtitle": "Случайные маршруты и события",
+    "actor_model": "models/gman_high.mdl",
+    "interact_distance": 160,
+    "actor_scale": 1,
+    "actor_skin": 0,
+    "actor_bodygroups": {},
+    "name_offset": 82,
+    "idle_sequence": "",
+    "idle_sequences": [],
+    "theme": "default",
+    "use_limit": false,
+    "start_random": [ "intro_alpha", "intro_beta" ]
+  },
+  "start": "intro_alpha",
+  "nodes": {
+    "intro_alpha": {
+      "editor": { "x": 100, "y": 150, "note": "Один из двух случайных стартовых узлов settings.start_random." },
+      "text": "Канал Альфа выбран случайным стартом. Дальше доступны вероятность, случайный переход и междиалоговая маршрутизация.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Открыть маршрутизатор.",
+          "next": "router",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "intro_beta": {
+      "editor": { "x": 100, "y": 430, "note": "Второй случайный старт; оба узла считаются достижимыми валидатором." },
+      "text": "Канал Бета выбран случайным стартом. Один документ может начинаться с нескольких заданных узлов.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Открыть маршрутизатор.",
+          "next": "router",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "router": {
+      "editor": { "x": 520, "y": 300, "note": "random_chance кэшируется для показа и выбора одного ответа. open_dialogue требует сохранённый целевой ID." },
+      "text": "Выберите механизм. Редкий сигнал появляется с шансом 25%; обычный маршрут выберет один из трёх узлов.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Принять редкий сигнал.",
+          "next": "rare_event",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            { "id": "core.random_chance", "params": { "chance": 0.25 } }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Запустить случайный маршрут.",
+          "next": "random_route",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Переключиться на диалог медика.",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [
+            { "id": "core.open_dialogue", "params": { "dialogue": "medic_first_aid" } }
+          ]
+        },
+        {
+          "text": "Переключиться на демо флагов.",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [
+            { "id": "core.open_dialogue", "params": { "dialogue": "flags_reward_demo" } }
+          ]
+        },
+        {
+          "text": "Закрыть диалог действием.",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [
+            { "id": "core.close_dialogue", "params": {} }
+          ]
+        }
+      ]
+    },
+    "rare_event": {
+      "editor": { "x": 1000, "y": 20, "note": "Звук должен присутствовать в allowed_sounds; button14.wav разрешён по умолчанию." },
+      "text": "Редкий канал активирован. Клиент услышал разрешённый звук, а сервер получил событие Talksmith.Event.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        { "id": "core.play_sound", "params": { "sound": "buttons/button14.wav" } },
+        { "id": "core.emit_event", "params": { "event": "rare_signal_received", "data": "chance_0_25" } }
+      ],
+      "options": [
+        {
+          "text": "Вернуться к маршрутизатору.",
+          "next": "router",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "random_route": {
+      "editor": { "x": 1000, "y": 260, "note": "next_random имеет приоритет над обычным next и выбирает одну существующую цель." },
+      "text": "Следующий ответ отправит вас в один из трёх узлов через next_random.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Запустить выбор.",
+          "next_random": [ "route_red", "route_blue", "route_green" ],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Отмена.",
+          "next": "router",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "route_red": {
+      "editor": { "x": 1460, "y": 180 },
+      "text": "Выбран красный маршрут.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        { "id": "core.emit_event", "params": { "event": "random_route_selected", "data": "red" } }
+      ],
+      "options": [
+        {
+          "text": "Вернуться.",
+          "next": "router",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "route_blue": {
+      "editor": { "x": 1460, "y": 380 },
+      "text": "Выбран синий маршрут.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        { "id": "core.emit_event", "params": { "event": "random_route_selected", "data": "blue" } }
+      ],
+      "options": [
+        {
+          "text": "Вернуться.",
+          "next": "router",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "route_green": {
+      "editor": { "x": 1460, "y": 580 },
+      "text": "Выбран зелёный маршрут.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        { "id": "core.emit_event", "params": { "event": "random_route_selected", "data": "green" } }
+      ],
+      "options": [
+        {
+          "text": "Вернуться.",
+          "next": "router",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    }
+  }
+}

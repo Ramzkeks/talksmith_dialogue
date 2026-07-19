@@ -1,0 +1,117 @@
+{
+  "schema": 3,
+  "id": "integration_ulx_test",
+  "meta": {
+    "title": "Integration test: ULX",
+    "author": "",
+    "created": 0,
+    "modified": 0,
+    "revision": 0
+  },
+  "settings": {
+    "actor_name": "ULX Inspector",
+    "actor_subtitle": "Command permissions and editor access",
+    "actor_model": "models/police.mdl",
+    "interact_distance": 160,
+    "actor_scale": 1,
+    "actor_skin": 0,
+    "actor_bodygroups": {},
+    "name_offset": 82,
+    "idle_sequence": "",
+    "idle_sequences": [],
+    "theme": "default",
+    "use_limit": false,
+    "start_random": []
+  },
+  "start": "menu",
+  "nodes": {
+    "menu": {
+      "editor": {
+        "x": 120,
+        "y": 260,
+        "note": "Tests both ULX conditions. ULib is also required."
+      },
+      "text": "This terminal checks access to the Talksmith editor CAMI privilege through ULX and ULib.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "ULX grants command access to talksmith_editor.",
+          "next": "access_ok",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            {
+              "id": "ulx.has_access",
+              "params": {
+                "access": "talksmith_editor"
+              }
+            }
+          ],
+          "actions": []
+        },
+        {
+          "text": "I can edit dialogues.",
+          "next": "editor_ok",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            {
+              "id": "ulx.can_edit_dialogues",
+              "params": {}
+            }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Finish the test.",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "access_ok": {
+      "editor": {
+        "x": 600,
+        "y": 160
+      },
+      "text": "The ulx.has_access condition successfully confirmed access.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Back.",
+          "next": "menu",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "editor_ok": {
+      "editor": {
+        "x": 600,
+        "y": 360
+      },
+      "text": "The ulx.can_edit_dialogues condition successfully confirmed editor permission.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Back.",
+          "next": "menu",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,149 @@
+{
+  "schema": 3,
+  "id": "integration_ulib_test",
+  "meta": {
+    "title": "Integration test: ULib",
+    "author": "",
+    "created": 0,
+    "modified": 0,
+    "revision": 0
+  },
+  "settings": {
+    "actor_name": "ULib Inspector",
+    "actor_subtitle": "Permissions and user groups",
+    "actor_model": "models/breen.mdl",
+    "interact_distance": 160,
+    "actor_scale": 1,
+    "actor_skin": 0,
+    "actor_bodygroups": {},
+    "name_offset": 82,
+    "idle_sequence": "",
+    "idle_sequences": [],
+    "theme": "default",
+    "use_limit": false,
+    "start_random": []
+  },
+  "start": "menu",
+  "nodes": {
+    "menu": {
+      "editor": {
+        "x": 120,
+        "y": 260,
+        "note": "Each visible response means that the corresponding ULib condition returned true."
+      },
+      "text": "ULib UCL test. The responses below automatically reflect your permissions and exact user group.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Has access to talksmith_editor.",
+          "next": "access_ok",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            {
+              "id": "ulib.has_access",
+              "params": {
+                "access": "talksmith_editor"
+              }
+            }
+          ],
+          "actions": []
+        },
+        {
+          "text": "My group is superadmin.",
+          "next": "group_ok",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            {
+              "id": "ulib.usergroup_is",
+              "params": {
+                "group": "superadmin"
+              }
+            }
+          ],
+          "actions": []
+        },
+        {
+          "text": "My group is admin.",
+          "next": "group_ok",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            {
+              "id": "ulib.usergroup_is",
+              "params": {
+                "group": "admin"
+              }
+            }
+          ],
+          "actions": []
+        },
+        {
+          "text": "My group is user.",
+          "next": "group_ok",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            {
+              "id": "ulib.usergroup_is",
+              "params": {
+                "group": "user"
+              }
+            }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Finish the test.",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "access_ok": {
+      "editor": {
+        "x": 620,
+        "y": 140
+      },
+      "text": "ULib confirmed access to the talksmith_editor privilege.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Back.",
+          "next": "menu",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "group_ok": {
+      "editor": {
+        "x": 620,
+        "y": 360
+      },
+      "text": "ULib confirmed an exact user-group match.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Back.",
+          "next": "menu",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    }
+  }
+}

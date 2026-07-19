@@ -1,0 +1,408 @@
+{
+  "schema": 3,
+  "id": "integration_gws_test",
+  "meta": {
+    "title": "Integration test: GWS Inventory System",
+    "author": "",
+    "created": 0,
+    "modified": 0,
+    "revision": 0
+  },
+  "settings": {
+    "actor_name": "GWS Quartermaster",
+    "actor_subtitle": "Inventory, weapons, and ammunition",
+    "actor_model": "models/combine_soldier.mdl",
+    "interact_distance": 160,
+    "actor_scale": 1,
+    "actor_skin": 0,
+    "actor_bodygroups": {},
+    "name_offset": 82,
+    "idle_sequence": "",
+    "idle_sequences": [],
+    "theme": "default",
+    "use_limit": false,
+    "start_random": []
+  },
+  "start": "menu",
+  "nodes": {
+    "menu": {
+      "editor": {
+        "x": 120,
+        "y": 300,
+        "note": "The weapon_pistol class is included in Talksmith's default allowed_weapons list."
+      },
+      "text": "Choose a group of GWS Inventory System tests.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Test GWS items.",
+          "next": "inventory_menu",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Test weapons and ammunition.",
+          "next": "combat_menu",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Open GWS Inventory through the provider.",
+          "next": "opened",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [
+            {
+              "id": "inventory.open",
+              "params": {
+                "provider": "gws"
+              }
+            }
+          ]
+        },
+        {
+          "text": "Finish the test.",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "inventory_menu": {
+      "editor": {
+        "x": 560,
+        "y": 100
+      },
+      "text": "Item operations are routed exclusively to provider=gws.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Put weapon_crowbar into the GWS inventory.",
+          "next": "item_given",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            {
+              "id": "gws.has_space",
+              "params": {
+                "amount": 1
+              }
+            },
+            {
+              "id": "gws.item_allowed",
+              "params": {
+                "item": "weapon_crowbar"
+              }
+            },
+            {
+              "id": "inventory.has_space",
+              "params": {
+                "provider": "gws",
+                "item": "weapon_crowbar",
+                "amount": 1
+              }
+            }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Remove weapon_crowbar from the GWS inventory.",
+          "next": "item_taken",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            {
+              "id": "gws.has_item",
+              "params": {
+                "item": "weapon_crowbar",
+                "amount": 1
+              }
+            },
+            {
+              "id": "inventory.has_item",
+              "params": {
+                "provider": "gws",
+                "item": "weapon_crowbar",
+                "amount": 1
+              }
+            }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Back.",
+          "next": "menu",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "combat_menu": {
+      "editor": {
+        "x": 560,
+        "y": 500
+      },
+      "text": "Direct GWS actions using weapon_pistol and Pistol ammunition.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Give weapon_pistol.",
+          "next": "weapon_given",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Remove weapon_pistol.",
+          "next": "weapon_taken",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            {
+              "id": "gws.has_weapon",
+              "params": {
+                "item": "weapon_pistol"
+              }
+            }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Give 12 rounds of Pistol ammunition.",
+          "next": "ammo_given",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Remove one round of Pistol ammunition.",
+          "next": "ammo_taken",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            {
+              "id": "gws.has_ammo",
+              "params": {
+                "ammo": "Pistol",
+                "amount": 1
+              }
+            }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Back.",
+          "next": "menu",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "item_given": {
+      "editor": {
+        "x": 1040,
+        "y": 40
+      },
+      "text": "Requested weapon_crowbar through provider=gws.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        {
+          "id": "inventory.give_item",
+          "params": {
+            "provider": "gws",
+            "item": "weapon_crowbar",
+            "amount": 1
+          }
+        }
+      ],
+      "options": [
+        {
+          "text": "Check the inventory.",
+          "next": "inventory_menu",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "item_taken": {
+      "editor": {
+        "x": 1040,
+        "y": 210
+      },
+      "text": "Requested removal of weapon_crowbar through provider=gws.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        {
+          "id": "inventory.take_item",
+          "params": {
+            "provider": "gws",
+            "item": "weapon_crowbar",
+            "amount": 1
+          }
+        }
+      ],
+      "options": [
+        {
+          "text": "Check the inventory.",
+          "next": "inventory_menu",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "weapon_given": {
+      "editor": {
+        "x": 1040,
+        "y": 380
+      },
+      "text": "Gave weapon_pistol through gws.give_weapon.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        {
+          "id": "gws.give_weapon",
+          "params": {
+            "item": "weapon_pistol"
+          }
+        }
+      ],
+      "options": [
+        {
+          "text": "Back.",
+          "next": "combat_menu",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "weapon_taken": {
+      "editor": {
+        "x": 1040,
+        "y": 550
+      },
+      "text": "Removed weapon_pistol through gws.strip_weapon.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        {
+          "id": "gws.strip_weapon",
+          "params": {
+            "item": "weapon_pistol"
+          }
+        }
+      ],
+      "options": [
+        {
+          "text": "Back.",
+          "next": "combat_menu",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "ammo_given": {
+      "editor": {
+        "x": 1040,
+        "y": 720
+      },
+      "text": "Gave 12 rounds of Pistol ammunition through gws.give_ammo.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        {
+          "id": "gws.give_ammo",
+          "params": {
+            "ammo": "Pistol",
+            "amount": 12
+          }
+        }
+      ],
+      "options": [
+        {
+          "text": "Back.",
+          "next": "combat_menu",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "ammo_taken": {
+      "editor": {
+        "x": 1040,
+        "y": 890
+      },
+      "text": "Removed one round of Pistol ammunition through gws.take_ammo.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        {
+          "id": "gws.take_ammo",
+          "params": {
+            "ammo": "Pistol",
+            "amount": 1
+          }
+        }
+      ],
+      "options": [
+        {
+          "text": "Back.",
+          "next": "combat_menu",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "opened": {
+      "editor": {
+        "x": 560,
+        "y": 800
+      },
+      "text": "The command to open GWS Inventory was sent to the player.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Back.",
+          "next": "menu",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "schema": 3,
+  "id": "integration_stormfox2_test",
+  "meta": {
+    "title": "Тест интеграции: StormFox 2",
+    "author": "",
+    "created": 0,
+    "modified": 0,
+    "revision": 0
+  },
+  "settings": {
+    "actor_name": "Метеоролог",
+    "actor_subtitle": "Погода, время и температура StormFox 2",
+    "actor_model": "models/eli.mdl",
+    "interact_distance": 160,
+    "actor_scale": 1,
+    "actor_skin": 0,
+    "actor_bodygroups": {},
+    "name_offset": 82,
+    "idle_sequence": "",
+    "idle_sequences": [],
+    "theme": "retro",
+    "use_limit": false,
+    "start_random": []
+  },
+  "start": "weather_menu",
+  "nodes": {
+    "weather_menu": {
+      "editor": { "x": 120, "y": 300, "note": "Одновременно появятся только ответы, соответствующие текущему состоянию StormFox 2." },
+      "text": "Метеостанция считывает состояние мира напрямую через StormFox 2.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        { "text": "Сейчас день.", "next": "passed", "next_random": [], "gesture": "", "conditions": [ { "id": "stormfox2.is_day", "params": {} } ], "actions": [] },
+        { "text": "Сейчас ночь.", "next": "passed", "next_random": [], "gesture": "", "conditions": [ { "id": "stormfox2.is_night", "params": {} } ], "actions": [] },
+        { "text": "Сейчас идёт дождь.", "next": "passed", "next_random": [], "gesture": "", "conditions": [ { "id": "stormfox2.is_raining", "params": {} } ], "actions": [] },
+        { "text": "Сейчас идёт снег.", "next": "passed", "next_random": [], "gesture": "", "conditions": [ { "id": "stormfox2.is_snowing", "params": {} } ], "actions": [] },
+        { "text": "Сейчас туман.", "next": "passed", "next_random": [], "gesture": "", "conditions": [ { "id": "stormfox2.is_foggy", "params": {} } ], "actions": [] },
+        { "text": "Дополнительные проверки.", "next": "details", "next_random": [], "gesture": "", "conditions": [], "actions": [] }
+      ]
+    },
+    "details": {
+      "editor": { "x": 600, "y": 500, "note": "Для weather_is при необходимости замените Clear на фактическое имя погоды вашего сервера." },
+      "text": "Проверки точного имени погоды и температурных границ.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        { "text": "Текущая погода называется Clear.", "next": "passed", "next_random": [], "gesture": "", "conditions": [ { "id": "stormfox2.weather_is", "params": { "weather": "Clear" } } ], "actions": [] },
+        { "text": "Температура не ниже 0.", "next": "passed", "next_random": [], "gesture": "", "conditions": [ { "id": "stormfox2.temperature_at_least", "params": { "amount": 0 } } ], "actions": [] },
+        { "text": "Температура не выше 0.", "next": "passed", "next_random": [], "gesture": "", "conditions": [ { "id": "stormfox2.temperature_at_most", "params": { "amount": 0 } } ], "actions": [] },
+        { "text": "Назад.", "next": "weather_menu", "next_random": [], "gesture": "", "conditions": [], "actions": [] }
+      ]
+    },
+    "passed": {
+      "editor": { "x": 1040, "y": 260 },
+      "text": "Выбранное условие StormFox 2 вернуло true.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        { "text": "Вернуться к погоде.", "next": "weather_menu", "next_random": [], "gesture": "", "conditions": [], "actions": [] }
+      ]
+    }
+  }
+}

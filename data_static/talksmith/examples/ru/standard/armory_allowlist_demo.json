@@ -1,0 +1,190 @@
+{
+  "schema": 3,
+  "id": "armory_allowlist_demo",
+  "meta": {
+    "title": "Демо: оружие и allowlist",
+    "author": "",
+    "created": 0,
+    "modified": 0,
+    "revision": 0
+  },
+  "settings": {
+    "actor_name": "Кладовщик Рейн",
+    "actor_subtitle": "Выдача и возврат оружия",
+    "actor_model": "models/combine_soldier.mdl",
+    "interact_distance": 160,
+    "actor_scale": 1,
+    "actor_skin": 0,
+    "actor_bodygroups": {},
+    "name_offset": 82,
+    "idle_sequence": "",
+    "idle_sequences": [],
+    "theme": "default",
+    "use_limit": true,
+    "start_random": []
+  },
+  "start": "armory",
+  "nodes": {
+    "armory": {
+      "editor": { "x": 120, "y": 300, "note": "Ровно 6 ответов — стандартный максимум max_options." },
+      "text": "Склад работает только с классами из Talksmith.Config.allowed_weapons. По умолчанию разрешены weapon_pistol и weapon_crowbar.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Получить пистолет.",
+          "next": "issue_pistol",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            { "id": "core.does_not_have_weapon", "params": { "class": "weapon_pistol" } }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Вернуть пистолет.",
+          "next": "return_pistol",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            { "id": "core.has_weapon", "params": { "class": "weapon_pistol" } }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Получить лом.",
+          "next": "issue_crowbar",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            { "id": "core.does_not_have_weapon", "params": { "class": "weapon_crowbar" } }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Вернуть лом.",
+          "next": "return_crowbar",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            { "id": "core.has_weapon", "params": { "class": "weapon_crowbar" } }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Объяснить ограничения склада.",
+          "next": "limitations",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Уйти.",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "issue_pistol": {
+      "editor": { "x": 600, "y": 40, "note": "give_weapon допускает только классы из allowed_weapons." },
+      "text": "Пистолет выдан. После возврата условия на стартовом узле поменяются местами.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        { "id": "core.give_weapon", "params": { "class": "weapon_pistol" } },
+        { "id": "core.emit_event", "params": { "event": "armory_weapon_issued", "data": "weapon_pistol" } }
+      ],
+      "options": [
+        {
+          "text": "Вернуться к складу.",
+          "next": "armory",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "return_pistol": {
+      "editor": { "x": 600, "y": 220 },
+      "text": "Пистолет принят на склад.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        { "id": "core.take_weapon", "params": { "class": "weapon_pistol" } },
+        { "id": "core.emit_event", "params": { "event": "armory_weapon_returned", "data": "weapon_pistol" } }
+      ],
+      "options": [
+        {
+          "text": "Вернуться к складу.",
+          "next": "armory",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "issue_crowbar": {
+      "editor": { "x": 600, "y": 420 },
+      "text": "Лом выдан. Это второй класс из стандартного allowlist.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        { "id": "core.give_weapon", "params": { "class": "weapon_crowbar" } },
+        { "id": "core.emit_event", "params": { "event": "armory_weapon_issued", "data": "weapon_crowbar" } }
+      ],
+      "options": [
+        {
+          "text": "Вернуться к складу.",
+          "next": "armory",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "return_crowbar": {
+      "editor": { "x": 600, "y": 600 },
+      "text": "Лом принят на склад.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        { "id": "core.take_weapon", "params": { "class": "weapon_crowbar" } },
+        { "id": "core.emit_event", "params": { "event": "armory_weapon_returned", "data": "weapon_crowbar" } }
+      ],
+      "options": [
+        {
+          "text": "Вернуться к складу.",
+          "next": "armory",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "limitations": {
+      "editor": { "x": 1080, "y": 300, "note": "Неразрешённый класс проходит проверку параметров, но действие вернёт false на сервере." },
+      "text": "Ограничение безопасности: произвольное оружие выдать нельзя. Администратор должен заранее добавить его класс в allowed_weapons. В одном узле допускается не больше шести ответов.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Понятно. Вернуться.",
+          "next": "armory",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    }
+  }
+}

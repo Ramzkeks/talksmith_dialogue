@@ -1,0 +1,304 @@
+{
+  "schema": 3,
+  "id": "integration_darkrp_leveling_test",
+  "meta": {
+    "title": "Integration test: DarkRP Leveling System",
+    "author": "",
+    "created": 0,
+    "modified": 0,
+    "revision": 0
+  },
+  "settings": {
+    "actor_name": "Leveling Instructor",
+    "actor_subtitle": "Experience, levels, and progression limits",
+    "actor_model": "models/kleiner.mdl",
+    "interact_distance": 160,
+    "actor_scale": 1,
+    "actor_skin": 0,
+    "actor_bodygroups": {},
+    "name_offset": 82,
+    "idle_sequence": "",
+    "idle_sequences": [],
+    "theme": "retro",
+    "use_limit": false,
+    "start_random": []
+  },
+  "start": "menu",
+  "nodes": {
+    "menu": {
+      "editor": {
+        "x": 120,
+        "y": 300,
+        "note": "set_level and take_xp are destructive actions. The values are intentionally minimal for testing."
+      },
+      "text": "DarkRP Leveling System test. Choose an action or open the condition diagnostics.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Add 100 XP.",
+          "next": "xp_added",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Remove 1 XP.",
+          "next": "xp_taken",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            {
+              "id": "darkrp_leveling.xp_at_least",
+              "params": {
+                "amount": 1
+              }
+            }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Add one level.",
+          "next": "level_added",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Set level to 1.",
+          "next": "level_set",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Check level and XP conditions.",
+          "next": "conditions_menu",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Finish the test.",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "conditions_menu": {
+      "editor": {
+        "x": 560,
+        "y": 620
+      },
+      "text": "Each visible response means that its progression condition returned true.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Level is at least 1.",
+          "next": "condition_passed",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            {
+              "id": "darkrp_leveling.level_at_least",
+              "params": {
+                "amount": 1
+              }
+            }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Level is at most 10.",
+          "next": "condition_passed",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            {
+              "id": "darkrp_leveling.level_at_most",
+              "params": {
+                "amount": 10
+              }
+            }
+          ],
+          "actions": []
+        },
+        {
+          "text": "At least 1 XP has been accumulated.",
+          "next": "condition_passed",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            {
+              "id": "darkrp_leveling.xp_at_least",
+              "params": {
+                "amount": 1
+              }
+            }
+          ],
+          "actions": []
+        },
+        {
+          "text": "There is enough XP to level up.",
+          "next": "condition_passed",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            {
+              "id": "darkrp_leveling.can_level_up",
+              "params": {}
+            }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Back.",
+          "next": "menu",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "xp_added": {
+      "editor": {
+        "x": 980,
+        "y": 40
+      },
+      "text": "Added 100 XP through darkrp_leveling.add_xp.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        {
+          "id": "darkrp_leveling.add_xp",
+          "params": {
+            "amount": 100,
+            "notify": true
+          }
+        }
+      ],
+      "options": [
+        {
+          "text": "Back.",
+          "next": "menu",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "xp_taken": {
+      "editor": {
+        "x": 980,
+        "y": 210
+      },
+      "text": "Removed 1 XP through darkrp_leveling.take_xp.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        {
+          "id": "darkrp_leveling.take_xp",
+          "params": {
+            "amount": 1
+          }
+        }
+      ],
+      "options": [
+        {
+          "text": "Back.",
+          "next": "menu",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "level_added": {
+      "editor": {
+        "x": 980,
+        "y": 380
+      },
+      "text": "Added one level through darkrp_leveling.add_levels.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        {
+          "id": "darkrp_leveling.add_levels",
+          "params": {
+            "amount": 1
+          }
+        }
+      ],
+      "options": [
+        {
+          "text": "Back.",
+          "next": "menu",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "level_set": {
+      "editor": {
+        "x": 980,
+        "y": 550,
+        "note": "This action resets the test player's current level to 1."
+      },
+      "text": "Set the level to 1 through darkrp_leveling.set_level.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        {
+          "id": "darkrp_leveling.set_level",
+          "params": {
+            "amount": 1
+          }
+        }
+      ],
+      "options": [
+        {
+          "text": "Back.",
+          "next": "menu",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "condition_passed": {
+      "editor": {
+        "x": 980,
+        "y": 760
+      },
+      "text": "The selected DarkRP Leveling System condition returned true.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Check the other conditions.",
+          "next": "conditions_menu",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    }
+  }
+}

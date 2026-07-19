@@ -1,0 +1,242 @@
+{
+  "schema": 3,
+  "id": "darkrp_services_demo",
+  "meta": {
+    "title": "Demo: DarkRP services",
+    "author": "",
+    "created": 0,
+    "modified": 0,
+    "revision": 0
+  },
+  "settings": {
+    "actor_name": "City Registrar",
+    "actor_subtitle": "DarkRP: money, jobs, and Civil Protection",
+    "actor_model": "models/breen.mdl",
+    "interact_distance": 160,
+    "actor_scale": 1,
+    "actor_skin": 0,
+    "actor_bodygroups": {},
+    "name_offset": 82,
+    "idle_sequence": "",
+    "idle_sequences": [],
+    "theme": "default",
+    "use_limit": true,
+    "start_random": []
+  },
+  "start": "desk",
+  "nodes": {
+    "desk": {
+      "editor": { "x": 120, "y": 330, "note": "This preset can only be imported when the DarkRP actions and conditions are registered on the server." },
+      "text": "The city terminal demonstrates balance, job, and Civil Protection status. The citizen job command must exist in the DarkRP configuration.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Claim the one-time citizen payment.",
+          "next": "citizen_bonus",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            { "id": "darkrp.is_job", "params": { "job": "citizen" } },
+            { "id": "core.flag_is_not_set", "params": { "key": "demo_citizen_bonus" } }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Pay the license fee: 100.",
+          "next": "license_offer",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            { "id": "darkrp.has_money", "params": { "amount": 100 } }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Claim the Civil Protection allowance.",
+          "next": "cp_allowance",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            { "id": "darkrp.is_cp", "params": {} },
+            { "id": "core.flag_is_not_set", "params": { "key": "demo_cp_allowance" } }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Switch to the citizen job.",
+          "next": "job_offer",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Explain the DarkRP restrictions.",
+          "next": "limitations",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Close the terminal.",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [ { "id": "core.close_dialogue", "params": {} } ]
+        }
+      ]
+    },
+    "citizen_bonus": {
+      "editor": { "x": 650, "y": 20, "note": "give_money is limited by darkrp_max_money_action, then a one-time flag is set." },
+      "text": "The citizen payment of 250 has been credited. This response will not appear again.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        { "id": "darkrp.give_money", "params": { "amount": 250 } },
+        { "id": "core.set_flag", "params": { "key": "demo_citizen_bonus", "value": true } },
+        { "id": "core.emit_event", "params": { "event": "darkrp_citizen_bonus", "data": 250 } }
+      ],
+      "options": [
+        {
+          "text": "Return to the terminal.",
+          "next": "desk",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "license_offer": {
+      "editor": { "x": 650, "y": 240, "note": "has_money only hides the response; take_money additionally will not deduct more than the current balance." },
+      "text": "Confirm the deduction of 100. The has_money condition checked the available balance before the transition.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Confirm payment.",
+          "next": "license_paid",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Cancel.",
+          "next": "desk",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "license_paid": {
+      "editor": { "x": 1120, "y": 240 },
+      "text": "The fee has been paid. Another server addon can handle the emitted event.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        { "id": "darkrp.take_money", "params": { "amount": 100 } },
+        { "id": "core.emit_event", "params": { "event": "darkrp_license_paid", "data": 100 } }
+      ],
+      "options": [
+        {
+          "text": "Return to the terminal.",
+          "next": "desk",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "cp_allowance": {
+      "editor": { "x": 650, "y": 480, "note": "is_cp uses DarkRP player:isCP(); this branch is one-time because of the flag." },
+      "text": "Civil Protection status confirmed. The service allowance of 500 has been credited.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        { "id": "darkrp.give_money", "params": { "amount": 500 } },
+        { "id": "core.set_flag", "params": { "key": "demo_cp_allowance", "value": true } },
+        { "id": "core.emit_event", "params": { "event": "darkrp_cp_allowance", "data": "500" } }
+      ],
+      "options": [
+        {
+          "text": "Return to the terminal.",
+          "next": "desk",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "job_offer": {
+      "editor": { "x": 650, "y": 700, "note": "set_job accepts the job command, not its display name. A nonexistent command makes the action return false." },
+      "text": "The citizen job command will be invoked. If that command does not exist in RPExtraTeams, the change will fail.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Change job.",
+          "next": "job_changed",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Cancel.",
+          "next": "desk",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "job_changed": {
+      "editor": { "x": 1120, "y": 700 },
+      "text": "Job changed to citizen.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        { "id": "darkrp.change_job", "params": { "job": "citizen" } },
+        { "id": "core.emit_event", "params": { "event": "darkrp_job_changed", "data": "citizen" } }
+      ],
+      "options": [
+        {
+          "text": "Return to the terminal.",
+          "next": "desk",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "limitations": {
+      "editor": { "x": 1120, "y": 470, "note": "The DarkRP registry is absent in Sandbox. Generic change_team also requires allowed_teams and player:changeTeam." },
+      "text": "Restrictions: this preset requires DarkRP; amounts are limited by darkrp_max_money_action; a job is addressed by its command; generic change_team is disabled by default because allowed_teams is empty.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Go back.",
+          "next": "desk",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    }
+  }
+}

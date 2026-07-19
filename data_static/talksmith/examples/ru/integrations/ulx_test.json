@@ -1,0 +1,85 @@
+{
+  "schema": 3,
+  "id": "integration_ulx_test",
+  "meta": {
+    "title": "Тест интеграции: ULX",
+    "author": "",
+    "created": 0,
+    "modified": 0,
+    "revision": 0
+  },
+  "settings": {
+    "actor_name": "Инспектор ULX",
+    "actor_subtitle": "Командные права и доступ к редактору",
+    "actor_model": "models/police.mdl",
+    "interact_distance": 160,
+    "actor_scale": 1,
+    "actor_skin": 0,
+    "actor_bodygroups": {},
+    "name_offset": 82,
+    "idle_sequence": "",
+    "idle_sequences": [],
+    "theme": "default",
+    "use_limit": false,
+    "start_random": []
+  },
+  "start": "menu",
+  "nodes": {
+    "menu": {
+      "editor": { "x": 120, "y": 260, "note": "Проверяются оба условия ULX. Для работы требуется также ULib." },
+      "text": "Этот терминал проверяет доступ к CAMI-привилегии редактора Talksmith через ULX и ULib.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "ULX разрешает командный доступ talksmith_editor.",
+          "next": "access_ok",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            { "id": "ulx.has_access", "params": { "access": "talksmith_editor" } }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Я могу редактировать диалоги.",
+          "next": "editor_ok",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            { "id": "ulx.can_edit_dialogues", "params": {} }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Завершить тест.",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "access_ok": {
+      "editor": { "x": 600, "y": 160 },
+      "text": "Условие ulx.has_access успешно подтвердило доступ.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        { "text": "Назад.", "next": "menu", "next_random": [], "gesture": "", "conditions": [], "actions": [] }
+      ]
+    },
+    "editor_ok": {
+      "editor": { "x": 600, "y": 360 },
+      "text": "Условие ulx.can_edit_dialogues успешно подтвердило право редактора.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        { "text": "Назад.", "next": "menu", "next_random": [], "gesture": "", "conditions": [], "actions": [] }
+      ]
+    }
+  }
+}

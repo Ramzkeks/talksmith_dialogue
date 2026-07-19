@@ -1,0 +1,213 @@
+{
+  "schema": 3,
+  "id": "medical_limits_demo",
+  "meta": {
+    "title": "Demo: health, armor, and value limits",
+    "author": "",
+    "created": 0,
+    "modified": 0,
+    "revision": 0
+  },
+  "settings": {
+    "actor_name": "Professor Kleiner",
+    "actor_subtitle": "Health and armor testing",
+    "actor_model": "models/kleiner.mdl",
+    "interact_distance": 160,
+    "actor_scale": 1,
+    "actor_skin": 0,
+    "actor_bodygroups": {},
+    "name_offset": 82,
+    "idle_sequence": "",
+    "idle_sequences": [],
+    "theme": "retro",
+    "use_limit": false,
+    "start_random": []
+  },
+  "start": "triage",
+  "nodes": {
+    "triage": {
+      "editor": { "x": 120, "y": 320, "note": "The ranges use strict above/below conditions; all response conditions are combined with AND." },
+      "text": "The scanner shows different responses for health below 50, from 50 to 99, and from 100 upward. The armor cap can be tested separately.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "I need urgent help.",
+          "next": "critical_treatment",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            { "id": "core.health_below", "params": { "value": 50 } }
+          ],
+          "actions": []
+        },
+        {
+          "text": "I only need a small bandage.",
+          "next": "moderate_treatment",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            { "id": "core.health_above", "params": { "value": 49 } },
+            { "id": "core.health_below", "params": { "value": 100 } }
+          ],
+          "actions": []
+        },
+        {
+          "text": "I am healthy; show me the scan result.",
+          "next": "healthy_result",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            { "id": "core.health_above", "params": { "value": 99 } }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Test the armor limit.",
+          "next": "armor_test",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Leave.",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "critical_treatment": {
+      "editor": { "x": 600, "y": 40, "note": "A large increase is automatically capped by GetMaxHealth()." },
+      "text": "Administering an enhanced restorative compound. Even a 100-point increase will not raise health above the player's maximum.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        { "id": "core.give_health", "params": { "amount": 100 } },
+        { "id": "core.emit_event", "params": { "event": "medical_treatment", "data": "critical" } }
+      ],
+      "options": [
+        {
+          "text": "Run the scan again.",
+          "next": "triage",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "moderate_treatment": {
+      "editor": { "x": 600, "y": 250 },
+      "text": "The bandage is complete. Up to 30 health was added, but the result is still capped by the player's maximum.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        { "id": "core.give_health", "params": { "amount": 30 } },
+        { "id": "core.emit_event", "params": { "event": "medical_treatment", "data": "moderate" } }
+      ],
+      "options": [
+        {
+          "text": "Run the scan again.",
+          "next": "triage",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "healthy_result": {
+      "editor": { "x": 600, "y": 470 },
+      "text": "Readings are normal. The player_health_above condition uses a strict comparison, so a value of 100 passes the threshold of 99.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Go back.",
+          "next": "triage",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "armor_test": {
+      "editor": { "x": 600, "y": 690, "note": "give_armor accepts a nonnegative number; the final value is strictly clamped to 255." },
+      "text": "The armor module can add the normal 25 points or an intentionally huge 300. In the second case, the final value is capped at 255.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Add 25 armor.",
+          "next": "armor_small",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Try to add 300 armor.",
+          "next": "armor_capped",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Back.",
+          "next": "triage",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "armor_small": {
+      "editor": { "x": 1080, "y": 600 },
+      "text": "25 armor added.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        { "id": "core.give_armor", "params": { "amount": 25 } }
+      ],
+      "options": [
+        {
+          "text": "Return to the test.",
+          "next": "armor_test",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "armor_capped": {
+      "editor": { "x": 1080, "y": 800, "note": "Final armor will not exceed 255." },
+      "text": "The command requested +300, but the server capped final armor at 255.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        { "id": "core.give_armor", "params": { "amount": 300 } },
+        { "id": "core.emit_event", "params": { "event": "armor_cap_tested", "data": 255 } }
+      ],
+      "options": [
+        {
+          "text": "Return to the test.",
+          "next": "armor_test",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    }
+  }
+}

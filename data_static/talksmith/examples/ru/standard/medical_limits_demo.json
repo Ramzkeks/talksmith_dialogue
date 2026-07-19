@@ -1,0 +1,213 @@
+{
+  "schema": 3,
+  "id": "medical_limits_demo",
+  "meta": {
+    "title": "Демо: здоровье, броня и границы значений",
+    "author": "",
+    "created": 0,
+    "modified": 0,
+    "revision": 0
+  },
+  "settings": {
+    "actor_name": "Профессор Кляйн",
+    "actor_subtitle": "Проверка здоровья и брони",
+    "actor_model": "models/kleiner.mdl",
+    "interact_distance": 160,
+    "actor_scale": 1,
+    "actor_skin": 0,
+    "actor_bodygroups": {},
+    "name_offset": 82,
+    "idle_sequence": "",
+    "idle_sequences": [],
+    "theme": "retro",
+    "use_limit": false,
+    "start_random": []
+  },
+  "start": "triage",
+  "nodes": {
+    "triage": {
+      "editor": { "x": 120, "y": 320, "note": "Диапазоны собраны из строгих условий above/below; все условия ответа объединяются через AND." },
+      "text": "Сканер покажет разные ответы для здоровья ниже 50, от 50 до 99 и от 100. Отдельно можно проверить предел брони.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Мне нужна срочная помощь.",
+          "next": "critical_treatment",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            { "id": "core.health_below", "params": { "value": 50 } }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Мне нужна небольшая перевязка.",
+          "next": "moderate_treatment",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            { "id": "core.health_above", "params": { "value": 49 } },
+            { "id": "core.health_below", "params": { "value": 100 } }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Я здоров, покажите результат проверки.",
+          "next": "healthy_result",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            { "id": "core.health_above", "params": { "value": 99 } }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Проверить ограничение брони.",
+          "next": "armor_test",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Уйти.",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "critical_treatment": {
+      "editor": { "x": 600, "y": 40, "note": "Большая прибавка автоматически ограничивается GetMaxHealth()." },
+      "text": "Ввожу усиленный восстановительный состав. Даже прибавка 100 не поднимет здоровье выше максимума игрока.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        { "id": "core.give_health", "params": { "amount": 100 } },
+        { "id": "core.emit_event", "params": { "event": "medical_treatment", "data": "critical" } }
+      ],
+      "options": [
+        {
+          "text": "Повторить сканирование.",
+          "next": "triage",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "moderate_treatment": {
+      "editor": { "x": 600, "y": 250 },
+      "text": "Перевязка завершена. Добавлено до 30 здоровья, но итог всё равно ограничен максимумом игрока.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        { "id": "core.give_health", "params": { "amount": 30 } },
+        { "id": "core.emit_event", "params": { "event": "medical_treatment", "data": "moderate" } }
+      ],
+      "options": [
+        {
+          "text": "Повторить сканирование.",
+          "next": "triage",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "healthy_result": {
+      "editor": { "x": 600, "y": 470 },
+      "text": "Показатели нормальные. Условие player_health_above использует строгое сравнение, поэтому значение 100 проходит порог 99.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Вернуться.",
+          "next": "triage",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "armor_test": {
+      "editor": { "x": 600, "y": 690, "note": "give_armor принимает неотрицательное число, итог жёстко clamp-ится до 255." },
+      "text": "Модуль брони может добавить обычные 25 единиц или намеренно огромные 300. Во втором случае итог будет ограничен значением 255.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Добавить 25 брони.",
+          "next": "armor_small",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Попробовать добавить 300 брони.",
+          "next": "armor_capped",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Назад.",
+          "next": "triage",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "armor_small": {
+      "editor": { "x": 1080, "y": 600 },
+      "text": "Добавлено 25 брони.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        { "id": "core.give_armor", "params": { "amount": 25 } }
+      ],
+      "options": [
+        {
+          "text": "Вернуться к тесту.",
+          "next": "armor_test",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "armor_capped": {
+      "editor": { "x": 1080, "y": 800, "note": "Итоговая броня не превысит 255." },
+      "text": "Команда запросила +300, но сервер ограничил итоговую броню значением 255.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        { "id": "core.give_armor", "params": { "amount": 300 } },
+        { "id": "core.emit_event", "params": { "event": "armor_cap_tested", "data": 255 } }
+      ],
+      "options": [
+        {
+          "text": "Вернуться к тесту.",
+          "next": "armor_test",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    }
+  }
+}

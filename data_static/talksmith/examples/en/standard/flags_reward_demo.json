@@ -1,0 +1,191 @@
+{
+  "schema": 3,
+  "id": "flags_reward_demo",
+  "meta": {
+    "title": "Demo: flags and a one-time reward",
+    "author": "",
+    "created": 0,
+    "modified": 0,
+    "revision": 0
+  },
+  "settings": {
+    "actor_name": "Curator Lada",
+    "actor_subtitle": "Flags, conditions, and actions",
+    "actor_model": "models/Humans/Group01/female_02.mdl",
+    "interact_distance": 160,
+    "actor_scale": 1,
+    "actor_skin": 0,
+    "actor_bodygroups": {},
+    "name_offset": 82,
+    "idle_sequence": "",
+    "idle_sequences": [],
+    "theme": "default",
+    "use_limit": false,
+    "start_random": []
+  },
+  "start": "greeting",
+  "nodes": {
+    "greeting": {
+      "editor": { "x": 120, "y": 300, "note": "Conditions hide responses based on the saved flag." },
+      "text": "This is a demonstration post. A reward can be claimed here once, and an administrator can reset its state.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Claim the first reward.",
+          "next": "reward_offer",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            { "id": "core.flag_is_not_set", "params": { "key": "demo_reward_claimed" } }
+          ],
+          "actions": []
+        },
+        {
+          "text": "I have already claimed the reward.",
+          "next": "repeat_visit",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            { "id": "core.flag_is_set", "params": { "key": "demo_reward_claimed" } }
+          ],
+          "actions": []
+        },
+        {
+          "text": "[Administrator] Reset the reward flag.",
+          "next": "admin_reset",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            { "id": "core.is_admin", "params": {} },
+            { "id": "core.flag_is_set", "params": { "key": "demo_reward_claimed" } }
+          ],
+          "actions": []
+        },
+        {
+          "text": "End the conversation.",
+          "next": "farewell",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "reward_offer": {
+      "editor": { "x": 560, "y": 120, "note": "The response leads to a node with several sequential actions." },
+      "text": "The reward adds 10 health and 15 armor. A personal player flag will be saved after it is granted.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Accept the reward.",
+          "next": "reward_granted",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Decline.",
+          "next": "farewell",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "reward_granted": {
+      "editor": { "x": 980, "y": 80, "note": "give_health → give_armor → set_flag → emit_event run on entry." },
+      "text": "Done. A return visit will show a different branch because the flag is now set.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        { "id": "core.give_health", "params": { "amount": 10 } },
+        { "id": "core.give_armor", "params": { "amount": 15 } },
+        { "id": "core.set_flag", "params": { "key": "demo_reward_claimed", "value": true } },
+        { "id": "core.emit_event", "params": { "event": "demo_reward_claimed", "data": "flags_reward_demo" } }
+      ],
+      "options": [
+        {
+          "text": "Return to the beginning and check the conditions.",
+          "next": "greeting",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Finish.",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [ { "id": "core.close_dialogue", "params": {} } ]
+        }
+      ]
+    },
+    "repeat_visit": {
+      "editor": { "x": 560, "y": 430, "note": "This branch is only available when flag_is_set." },
+      "text": "The flag confirms that the reward has already been claimed. A regular player cannot claim it again.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Go back.",
+          "next": "greeting",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Finish.",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "admin_reset": {
+      "editor": { "x": 980, "y": 430, "note": "Entry is protected by two conditions; clear_flag resets the progress." },
+      "text": "Administrative reset complete. The first branch is available again.",
+      "sound": "",
+      "gesture": "",
+      "actions": [
+        { "id": "core.clear_flag", "params": { "key": "demo_reward_claimed" } },
+        { "id": "core.emit_event", "params": { "event": "demo_reward_reset", "data": "flags_reward_demo" } }
+      ],
+      "options": [
+        {
+          "text": "Check the result.",
+          "next": "greeting",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "farewell": {
+      "editor": { "x": 560, "y": 720 },
+      "text": "The demonstration is complete.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Close.",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    }
+  }
+}

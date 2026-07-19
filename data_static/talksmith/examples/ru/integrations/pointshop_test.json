@@ -1,0 +1,181 @@
+{
+  "schema": 3,
+  "id": "integration_pointshop_test",
+  "meta": {
+    "title": "Тест интеграции: PointShop 1",
+    "author": "",
+    "created": 0,
+    "modified": 0,
+    "revision": 0
+  },
+  "settings": {
+    "actor_name": "Продавец PointShop 1",
+    "actor_subtitle": "Очки, предметы и магазин",
+    "actor_model": "models/gman_high.mdl",
+    "interact_distance": 160,
+    "actor_scale": 1,
+    "actor_skin": 0,
+    "actor_bodygroups": {},
+    "name_offset": 82,
+    "idle_sequence": "",
+    "idle_sequences": [],
+    "theme": "retro",
+    "use_limit": false,
+    "start_random": []
+  },
+  "start": "menu",
+  "nodes": {
+    "menu": {
+      "editor": { "x": 120, "y": 300, "note": "Проверяются прямые pointshop.* вызовы и общие currency.* / inventory.* с provider=pointshop." },
+      "text": "Тест PointShop 1. Операции списания намеренно используют небольшие значения.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        { "text": "Добавить 100 очков прямым действием.", "next": "points_added", "next_random": [], "gesture": "", "conditions": [], "actions": [] },
+        {
+          "text": "Списать 25 очков прямым действием.",
+          "next": "points_taken",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [ { "id": "pointshop.points_at_least", "params": { "amount": 25 } } ],
+          "actions": []
+        },
+        { "text": "Проверить общий провайдер валюты.", "next": "currency_menu", "next_random": [], "gesture": "", "conditions": [], "actions": [] },
+        { "text": "Проверить предметы PointShop 1.", "next": "item_menu", "next_random": [], "gesture": "", "conditions": [], "actions": [] },
+        {
+          "text": "Открыть магазин PointShop 1.",
+          "next": "shop_opened",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [ { "id": "pointshop.open_shop", "params": {} } ]
+        },
+        { "text": "Завершить тест.", "next_random": [], "gesture": "", "conditions": [], "actions": [] }
+      ]
+    },
+    "currency_menu": {
+      "editor": { "x": 560, "y": 120 },
+      "text": "Общие действия валюты явно направлены в provider=pointshop.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        { "text": "Добавить 10 очков через currency.add.", "next": "currency_added", "next_random": [], "gesture": "", "conditions": [], "actions": [] },
+        {
+          "text": "Списать 5 очков через currency.take.",
+          "next": "currency_taken",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [ { "id": "currency.has_amount", "params": { "provider": "pointshop", "currency": "points", "amount": 5 } } ],
+          "actions": []
+        },
+        { "text": "Назад.", "next": "menu", "next_random": [], "gesture": "", "conditions": [], "actions": [] }
+      ]
+    },
+    "item_menu": {
+      "editor": { "x": 560, "y": 560, "note": "Замените example_item на зарегистрированное имя предмета вашего PointShop 1 перед проверкой предметных операций." },
+      "text": "Предметные проверки используют демонстрационное имя example_item.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        { "text": "Выдать example_item прямым действием.", "next": "item_given", "next_random": [], "gesture": "", "conditions": [], "actions": [] },
+        {
+          "text": "Забрать example_item прямым действием.",
+          "next": "item_taken",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [ { "id": "pointshop.has_item", "params": { "item": "example_item" } } ],
+          "actions": []
+        },
+        {
+          "text": "example_item сейчас экипирован.",
+          "next": "condition_passed",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [ { "id": "pointshop.item_equipped", "params": { "item": "example_item" } } ],
+          "actions": []
+        },
+        { "text": "Выдать example_item через provider=pointshop.", "next": "generic_item_given", "next_random": [], "gesture": "", "conditions": [], "actions": [] },
+        {
+          "text": "Забрать example_item через provider=pointshop.",
+          "next": "generic_item_taken",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [ { "id": "inventory.has_item", "params": { "provider": "pointshop", "item": "example_item", "amount": 1 } } ],
+          "actions": []
+        },
+        { "text": "Назад.", "next": "menu", "next_random": [], "gesture": "", "conditions": [], "actions": [] }
+      ]
+    },
+    "points_added": {
+      "editor": { "x": 1040, "y": 20 },
+      "text": "Добавлено 100 очков через pointshop.add_points.",
+      "sound": "", "gesture": "",
+      "actions": [ { "id": "pointshop.add_points", "params": { "amount": 100 } } ],
+      "options": [ { "text": "Назад.", "next": "menu", "next_random": [], "gesture": "", "conditions": [], "actions": [] } ]
+    },
+    "points_taken": {
+      "editor": { "x": 1040, "y": 180 },
+      "text": "Списано 25 очков через pointshop.take_points.",
+      "sound": "", "gesture": "",
+      "actions": [ { "id": "pointshop.take_points", "params": { "amount": 25 } } ],
+      "options": [ { "text": "Назад.", "next": "menu", "next_random": [], "gesture": "", "conditions": [], "actions": [] } ]
+    },
+    "currency_added": {
+      "editor": { "x": 1040, "y": 340 },
+      "text": "Добавлено 10 очков через общий провайдер валюты PointShop 1.",
+      "sound": "", "gesture": "",
+      "actions": [ { "id": "currency.add", "params": { "provider": "pointshop", "currency": "points", "amount": 10 } } ],
+      "options": [ { "text": "Назад.", "next": "currency_menu", "next_random": [], "gesture": "", "conditions": [], "actions": [] } ]
+    },
+    "currency_taken": {
+      "editor": { "x": 1040, "y": 500 },
+      "text": "Списано 5 очков через общий провайдер валюты PointShop 1.",
+      "sound": "", "gesture": "",
+      "actions": [ { "id": "currency.take", "params": { "provider": "pointshop", "currency": "points", "amount": 5 } } ],
+      "options": [ { "text": "Назад.", "next": "currency_menu", "next_random": [], "gesture": "", "conditions": [], "actions": [] } ]
+    },
+    "item_given": {
+      "editor": { "x": 1040, "y": 660 },
+      "text": "Выполнено pointshop.give_item для example_item.",
+      "sound": "", "gesture": "",
+      "actions": [ { "id": "pointshop.give_item", "params": { "item": "example_item" } } ],
+      "options": [ { "text": "Назад.", "next": "item_menu", "next_random": [], "gesture": "", "conditions": [], "actions": [] } ]
+    },
+    "item_taken": {
+      "editor": { "x": 1040, "y": 820 },
+      "text": "Выполнено pointshop.take_item для example_item.",
+      "sound": "", "gesture": "",
+      "actions": [ { "id": "pointshop.take_item", "params": { "item": "example_item" } } ],
+      "options": [ { "text": "Назад.", "next": "item_menu", "next_random": [], "gesture": "", "conditions": [], "actions": [] } ]
+    },
+    "generic_item_given": {
+      "editor": { "x": 1460, "y": 650 },
+      "text": "Выполнено inventory.give_item с provider=pointshop.",
+      "sound": "", "gesture": "",
+      "actions": [ { "id": "inventory.give_item", "params": { "provider": "pointshop", "item": "example_item", "amount": 1 } } ],
+      "options": [ { "text": "Назад.", "next": "item_menu", "next_random": [], "gesture": "", "conditions": [], "actions": [] } ]
+    },
+    "generic_item_taken": {
+      "editor": { "x": 1460, "y": 820 },
+      "text": "Выполнено inventory.take_item с provider=pointshop.",
+      "sound": "", "gesture": "",
+      "actions": [ { "id": "inventory.take_item", "params": { "provider": "pointshop", "item": "example_item", "amount": 1 } } ],
+      "options": [ { "text": "Назад.", "next": "item_menu", "next_random": [], "gesture": "", "conditions": [], "actions": [] } ]
+    },
+    "condition_passed": {
+      "editor": { "x": 1460, "y": 980 },
+      "text": "Условие экипировки PointShop 1 вернуло true.",
+      "sound": "", "gesture": "", "actions": [],
+      "options": [ { "text": "Назад.", "next": "item_menu", "next_random": [], "gesture": "", "conditions": [], "actions": [] } ]
+    },
+    "shop_opened": {
+      "editor": { "x": 560, "y": 900 },
+      "text": "Команда открытия PointShop 1 отправлена игроку.",
+      "sound": "", "gesture": "", "actions": [],
+      "options": [ { "text": "Назад.", "next": "menu", "next_random": [], "gesture": "", "conditions": [], "actions": [] } ]
+    }
+  }
+}

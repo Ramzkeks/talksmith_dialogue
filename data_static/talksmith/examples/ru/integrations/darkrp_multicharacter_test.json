@@ -1,0 +1,95 @@
+{
+  "schema": 3,
+  "id": "integration_darkrp_multicharacter_test",
+  "meta": {
+    "title": "Тест интеграции: DarkRP Multi Character",
+    "author": "",
+    "created": 0,
+    "modified": 0,
+    "revision": 0
+  },
+  "settings": {
+    "actor_name": "Регистратор персонажей",
+    "actor_subtitle": "Личность, индекс и профессия",
+    "actor_model": "models/mossman.mdl",
+    "interact_distance": 160,
+    "actor_scale": 1,
+    "actor_skin": 0,
+    "actor_bodygroups": {},
+    "name_offset": 82,
+    "idle_sequence": "",
+    "idle_sequences": [],
+    "theme": "default",
+    "use_limit": false,
+    "start_random": []
+  },
+  "start": "menu",
+  "nodes": {
+    "menu": {
+      "editor": { "x": 120, "y": 280, "note": "Значения имени и профессии демонстрационные: замените их на реальные данные вашего тестового персонажа." },
+      "text": "Видимые ответы показывают, какие проверки текущего персонажа вернули true.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Персонаж выбран и готов.",
+          "next": "passed",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            { "id": "darkrp_multicharacter.ready", "params": {} }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Имя персонажа — Test Character.",
+          "next": "passed",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            { "id": "darkrp_multicharacter.name_is", "params": { "name": "Test Character" } }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Используется первая запись персонажа.",
+          "next": "passed",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            { "id": "darkrp_multicharacter.index_is", "params": { "index": 1 } }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Профессия персонажа — Citizen.",
+          "next": "passed",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            { "id": "darkrp_multicharacter.job_is", "params": { "job": "Citizen" } }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Завершить тест.",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "passed": {
+      "editor": { "x": 650, "y": 280 },
+      "text": "Выбранная проверка DarkRP Multi Character успешно выполнена.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        { "text": "Проверить остальные условия.", "next": "menu", "next_random": [], "gesture": "", "conditions": [], "actions": [] }
+      ]
+    }
+  }
+}

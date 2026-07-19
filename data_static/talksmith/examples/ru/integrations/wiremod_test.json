@@ -1,0 +1,93 @@
+{
+  "schema": 3,
+  "id": "integration_wiremod_test",
+  "meta": {
+    "title": "Тест интеграции: Wiremod",
+    "author": "",
+    "created": 0,
+    "modified": 0,
+    "revision": 0
+  },
+  "settings": {
+    "actor_name": "Оператор Wiremod",
+    "actor_subtitle": "Входы, выходы и сигналы",
+    "actor_model": "models/eli.mdl",
+    "interact_distance": 160,
+    "actor_scale": 1,
+    "actor_skin": 0,
+    "actor_bodygroups": {},
+    "name_offset": 82,
+    "idle_sequence": "",
+    "idle_sequences": [],
+    "theme": "default",
+    "use_limit": false,
+    "start_random": []
+  },
+  "start": "menu",
+  "nodes": {
+    "menu": {
+      "editor": { "x": 120, "y": 300, "note": "Talksmith Actor автоматически получает 8 ExternalValue-входов и 8 CustomOutput-выходов при активном Wiremod." },
+      "text": "Подключите Wiremod к этому Actor и выберите проверку входов или выходов.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        { "text": "Проверить ExternalValue1.", "next": "input_menu", "next_random": [], "gesture": "", "conditions": [], "actions": [] },
+        { "text": "Проверить CustomOutput1–4.", "next": "output_menu", "next_random": [], "gesture": "", "conditions": [], "actions": [] },
+        { "text": "Завершить тест.", "next_random": [], "gesture": "", "conditions": [], "actions": [] }
+      ]
+    },
+    "input_menu": {
+      "editor": { "x": 560, "y": 120 },
+      "text": "Видимые ответы отражают текущее числовое значение ExternalValue1.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        { "text": "ExternalValue1 равен 0.", "next": "condition_passed", "next_random": [], "gesture": "", "conditions": [ { "id": "wiremod.input_equals", "params": { "input": 1, "value": 0 } } ], "actions": [] },
+        { "text": "ExternalValue1 больше 0.", "next": "condition_passed", "next_random": [], "gesture": "", "conditions": [ { "id": "wiremod.input_greater", "params": { "input": 1, "value": 0 } } ], "actions": [] },
+        { "text": "ExternalValue1 активен.", "next": "condition_passed", "next_random": [], "gesture": "", "conditions": [ { "id": "wiremod.input_active", "params": { "input": 1 } } ], "actions": [] },
+        { "text": "ExternalValue1 неактивен.", "next": "condition_passed", "next_random": [], "gesture": "", "conditions": [ { "id": "wiremod.input_inactive", "params": { "input": 1 } } ], "actions": [] },
+        { "text": "Назад.", "next": "menu", "next_random": [], "gesture": "", "conditions": [], "actions": [] }
+      ]
+    },
+    "output_menu": {
+      "editor": { "x": 560, "y": 580, "note": "pass_selected_answer вызывается в действии ответа, поэтому передаёт фактический индекс выбранной строки." },
+      "text": "Подключите наблюдатели к CustomOutput1–4 и выберите команду.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Установить CustomOutput1 в 42.", "next": "output_done", "next_random": [], "gesture": "", "conditions": [],
+          "actions": [ { "id": "wiremod.set_output", "params": { "output": 1, "value": 42 } } ]
+        },
+        {
+          "text": "Отправить импульс в CustomOutput2.", "next": "output_done", "next_random": [], "gesture": "", "conditions": [],
+          "actions": [ { "id": "wiremod.pulse_output", "params": { "output": 2 } } ]
+        },
+        {
+          "text": "Отправить строку в CustomOutput3.", "next": "output_done", "next_random": [], "gesture": "", "conditions": [],
+          "actions": [ { "id": "wiremod.send_string", "params": { "output": 3, "text": "Talksmith Wiremod test" } } ]
+        },
+        {
+          "text": "Передать индекс этого ответа в CustomOutput4.", "next": "output_done", "next_random": [], "gesture": "", "conditions": [],
+          "actions": [ { "id": "wiremod.pass_selected_answer", "params": { "output": 4 } } ]
+        },
+        { "text": "Назад.", "next": "menu", "next_random": [], "gesture": "", "conditions": [], "actions": [] }
+      ]
+    },
+    "condition_passed": {
+      "editor": { "x": 1040, "y": 220 },
+      "text": "Выбранное условие Wiremod вернуло true.",
+      "sound": "", "gesture": "", "actions": [],
+      "options": [ { "text": "Проверить вход снова.", "next": "input_menu", "next_random": [], "gesture": "", "conditions": [], "actions": [] } ]
+    },
+    "output_done": {
+      "editor": { "x": 1040, "y": 650 },
+      "text": "Действие Wiremod выполнено. Проверьте соответствующий CustomOutput.",
+      "sound": "", "gesture": "", "actions": [],
+      "options": [ { "text": "Проверить другой выход.", "next": "output_menu", "next_random": [], "gesture": "", "conditions": [], "actions": [] } ]
+    }
+  }
+}

@@ -1,0 +1,124 @@
+{
+  "schema": 3,
+  "id": "integration_finventory_test",
+  "meta": {
+    "title": "Тест интеграции: Finventory",
+    "author": "",
+    "created": 0,
+    "modified": 0,
+    "revision": 0
+  },
+  "settings": {
+    "actor_name": "Кладовщик Finventory",
+    "actor_subtitle": "Ячейки, предметы и запрещённые классы",
+    "actor_model": "models/eli.mdl",
+    "interact_distance": 160,
+    "actor_scale": 1,
+    "actor_skin": 0,
+    "actor_bodygroups": {},
+    "name_offset": 82,
+    "idle_sequence": "",
+    "idle_sequences": [],
+    "theme": "default",
+    "use_limit": false,
+    "start_random": []
+  },
+  "start": "menu",
+  "nodes": {
+    "menu": {
+      "editor": { "x": 120, "y": 300, "note": "Тестовый класс weapon_crowbar должен быть разрешён в finventoryConfig.illegalEntities." },
+      "text": "Проверка Finventory и явного выбора provider=finventory.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Выдать один weapon_crowbar через провайдер.",
+          "next": "item_given",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            { "id": "finventory.has_space", "params": { "amount": 1 } },
+            { "id": "finventory.item_allowed", "params": { "item": "weapon_crowbar" } },
+            { "id": "inventory.has_space", "params": { "provider": "finventory", "item": "weapon_crowbar", "amount": 1 } }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Забрать один weapon_crowbar через провайдер.",
+          "next": "item_taken",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [
+            { "id": "finventory.has_item", "params": { "item": "weapon_crowbar", "amount": 1 } },
+            { "id": "inventory.has_item", "params": { "provider": "finventory", "item": "weapon_crowbar", "amount": 1 } }
+          ],
+          "actions": []
+        },
+        {
+          "text": "Открыть Finventory через общий провайдер.",
+          "next": "inventory_opened",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [ { "id": "inventory.open", "params": { "provider": "finventory" } } ]
+        },
+        {
+          "text": "Открыть Finventory прямым действием.",
+          "next": "inventory_opened",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [ { "id": "finventory.open_inventory", "params": {} } ]
+        },
+        {
+          "text": "Инвентарь полностью заполнен.",
+          "next": "full",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [ { "id": "finventory.is_full", "params": {} } ],
+          "actions": []
+        },
+        {
+          "text": "Завершить тест.",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ]
+    },
+    "item_given": {
+      "editor": { "x": 650, "y": 100 },
+      "text": "Запрошена выдача weapon_crowbar через provider=finventory.",
+      "sound": "",
+      "gesture": "",
+      "actions": [ { "id": "inventory.give_item", "params": { "provider": "finventory", "item": "weapon_crowbar", "amount": 1 } } ],
+      "options": [ { "text": "Проверить результат.", "next": "menu", "next_random": [], "gesture": "", "conditions": [], "actions": [] } ]
+    },
+    "item_taken": {
+      "editor": { "x": 650, "y": 300 },
+      "text": "Запрошено удаление weapon_crowbar через provider=finventory.",
+      "sound": "",
+      "gesture": "",
+      "actions": [ { "id": "inventory.take_item", "params": { "provider": "finventory", "item": "weapon_crowbar", "amount": 1 } } ],
+      "options": [ { "text": "Проверить результат.", "next": "menu", "next_random": [], "gesture": "", "conditions": [], "actions": [] } ]
+    },
+    "inventory_opened": {
+      "editor": { "x": 650, "y": 500 },
+      "text": "Команда открытия Finventory отправлена игроку.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [ { "text": "Назад.", "next": "menu", "next_random": [], "gesture": "", "conditions": [], "actions": [] } ]
+    },
+    "full": {
+      "editor": { "x": 650, "y": 700 },
+      "text": "Условие finventory.is_full подтвердило, что свободных ячеек нет.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [ { "text": "Назад.", "next": "menu", "next_random": [], "gesture": "", "conditions": [], "actions": [] } ]
+    }
+  }
+}
