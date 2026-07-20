@@ -2,6 +2,8 @@
 
 **English** | [Русский](README.ru.md)
 
+**[Documentation](https://ramzkeks.github.io/talksmith-docs/)**
+
 ### Advanced NPC dialogue system for Garry's Mod
 
 Create lively nonlinear conversations, configure characters, and connect dialogues to game systems through a convenient visual editor.
