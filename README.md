@@ -437,6 +437,16 @@ This depends on the dialogue setting. You can allow parallel conversations or en
 
 Include reproduction steps, a screenshot, console or server log errors, the map name, and the list of involved integrations. If the problem affects a specific dialogue, include its exported JSON.
 
+## License
+
+Talksmith is free source-available software.
+
+You may use and modify Talksmith on personal, public and commercial Garry’s Mod servers. GitHub forks, pull requests and independent integrations are welcome.
+
+You may not re-upload, redistribute, resell, rebrand or publish the original or modified Talksmith addon as a separate product.
+
+See [LICENSE.md](LICENSE.md) for the complete terms.
+
 ## Developer documentation
 
 For architecture, API, integration lifecycle, parameters, permissions, hooks, and complete server adapter examples, open the [Talksmith developer documentation](https://ramzkeks.github.io/talksmith-docs/).
