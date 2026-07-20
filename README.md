@@ -305,10 +305,10 @@ All twelve optional integrations are disabled by default. Administrators enable 
 
 ### 1. Open Studio
 
-Join the server with the required permissions and run this console command:
+Join the server with the required permissions and enter this command in chat:
 
 ```text
-talksmith_editor
+!talksmith_menu
 ```
 
 Server-side tools are available to `superadmin` by default.
@@ -346,7 +346,7 @@ Approach the Actor and press `E`.
 1. Add Talksmith to the server collection.
 2. Make sure the addon is downloaded by the server and clients.
 3. Restart the server.
-4. Open Studio with `talksmith_editor`.
+4. Open Studio by entering `!talksmith_menu` in chat.
 
 ### Manual installation
 

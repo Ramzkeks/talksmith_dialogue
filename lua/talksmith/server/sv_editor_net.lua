@@ -1,6 +1,7 @@
 local TS = Talksmith
 local MAX_EDITOR_CATALOG_BYTES = 2097152
 local MAX_NET_PAYLOAD = 60000
+local EDITOR_CHAT_COMMAND = "!talksmith_menu"
 for _, s in ipairs({
     "ts_editor_open",
     "ts_editor_docs",
@@ -111,9 +112,10 @@ local function catalog()
     }
 end
 
-concommand.Add("talksmith_editor", function(p)
+local function openEditor(p)
     if
         not IsValid(p)
+        or not p:IsPlayer()
         or not TS.Network.Allow(p, "editor_open", 1)
         or not TS.Permissions.CanUseEditor(p)
     then
@@ -133,6 +135,15 @@ concommand.Add("talksmith_editor", function(p)
     net.WriteUInt(#raw, 18)
     net.WriteData(raw, #raw)
     net.Send(p)
+end
+
+hook.Add("PlayerSay", "Talksmith.EditorChatCommand", function(p, text)
+    if not isstring(text) or string.lower(string.Trim(text)) ~= EDITOR_CHAT_COMMAND then
+        return
+    end
+
+    openEditor(p)
+    return ""
 end)
 
 local function sendDocList(p)
