@@ -420,12 +420,7 @@ Include reproduction steps, a screenshot, console or server log errors, the map 
 
 ## Developer documentation
 
-If you want to connect your own addon or register actions, conditions, variables, or a provider, use the separate technical guides:
-
-- [Developer Guide in English](docs/developer-guide.en.md)
-- [Руководство разработчика на русском](docs/developer-guide.ru.md)
-
-They cover the architecture, API, integration lifecycle, parameters, permissions, hooks, and complete server adapter examples.
+For architecture, API, integration lifecycle, parameters, permissions, hooks, and complete server adapter examples, open the [Talksmith developer documentation](https://ramzkeks.github.io/talksmith-docs/).
 
 ---
 
