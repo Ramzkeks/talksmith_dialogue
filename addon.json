@@ -1,6 +1,0 @@
-{
-  "title": "Talksmith - Advanced NPC Dialogue Framework",
-  "type": "servercontent",
-  "tags": ["roleplay", "fun"],
-  "ignore": ["*.md", "OFL.txt", "docs/*", "tests/*"]
-}
