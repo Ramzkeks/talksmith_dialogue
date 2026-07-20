@@ -13,7 +13,9 @@
 
 ---
 
-> **Место для изображения:** `[ОБЛОЖКА: Actor в игровом мире и открытый диалог Talksmith]`
+<p align="center">
+  <img src="https://hm258634.webhm.pro/talksmith/photo7.jpg" alt="Talksmith dialogue with selectable player responses" width="100%">
+</p>
 
 ## Что такое Talksmith
 
@@ -64,7 +66,9 @@ Talksmith - это полноценный конструктор диалого�
 | Русский и English | Язык Studio меняется сразу, без повторного открытия игры |
 | Разделение прав | Отдельно управляйте доступом к редактору, публикации, Actor, интеграциям и опасным действиям |
 
-> **Место для изображения:** `[СКРИНШОТ: Общий вид Talksmith Studio - библиотека слева, граф по центру и свойства справа]`
+<p align="center">
+  <img src="https://hm258634.webhm.pro/talksmith/photo9.jpg" alt="Talksmith Studio overview" width="100%">
+</p>
 
 ## Как выглядит работа с диалогом
 
@@ -123,7 +127,9 @@ Talksmith Studio - основной интерфейс создания и уп�
 - холст можно перемещать и масштабировать;
 - несколько узлов можно выделять, копировать, вставлять и двигать вместе.
 
-> **Место для изображения:** `[СКРИНШОТ: Пример разветвлённого графа с обычными и случайными переходами]`
+<p align="center">
+  <img src="https://hm258634.webhm.pro/talksmith/photo8.jpg" alt="Branching dialogue graph in Talksmith Studio" width="100%">
+</p>
 
 ### Редактор свойств
 
@@ -176,7 +182,9 @@ Actor - это персонаж Talksmith, размещённый на карт�
 
 Уже размещённый Actor получает обновлённые настройки после сохранения документа. Расстановка может сохраняться автоматически для каждой карты.
 
-> **Место для изображения:** `[СКРИНШОТ: Actor в мире с отдельно отображаемыми именем, описанием и подсказкой взаимодействия]`
+<p align="center">
+  <img src="https://hm258634.webhm.pro/talksmith/photo1.jpg" alt="Talksmith Actor with name, description, and interaction hint" width="100%">
+</p>
 
 Во время разговора игрок может:
 
@@ -255,7 +263,14 @@ Preview не выполняет настоящие действия: вмест�
 
 Скорость появления текста настраивается глобально. Выбранная тема используется и в игре, и в Preview.
 
-> **Место для изображения:** `[СКРИНШОТ: Коллаж из четырёх тем - Кинематографичная, Ретро-терминал, Панорамное стекло и Открытый кадр]`
+<p align="center">
+  <img src="https://hm258634.webhm.pro/talksmith/photo6.jpg" alt="Cinematic dialogue theme" width="49%">
+  <img src="https://hm258634.webhm.pro/talksmith/photo5.jpg" alt="Retro Terminal dialogue theme" width="49%">
+</p>
+<p align="center">
+  <img src="https://hm258634.webhm.pro/talksmith/photo4.jpg" alt="Panoramic Glass dialogue theme" width="49%">
+  <img src="https://hm258634.webhm.pro/talksmith/photo2.jpg" alt="Open Frame dialogue theme" width="49%">
+</p>
 
 ## Интеграции
 
@@ -282,7 +297,9 @@ Preview не выполняет настоящие действия: вмест�
 
 Все двенадцать дополнительных интеграций выключены по умолчанию. Администратор включает только нужные в разделе **Настройки → Интеграции**. Статус и список доступных действий обновляются в уже открытой Studio без переподключения.
 
-> **Место для изображения:** `[СКРИНШОТ: Страница «Настройки → Интеграции» со статусами установленных аддонов]`
+<p align="center">
+  <img src="https://hm258634.webhm.pro/talksmith/photo10.jpg" alt="Talksmith integration settings" width="100%">
+</p>
 
 ## Быстрый старт
 
@@ -370,7 +387,9 @@ Talksmith рассчитан на работу на публичном серв�
 - интеграций;
 - экономики, инвентаря, профессий и других чувствительных действий.
 
-> **Место для изображения:** `[СКРИНШОТ: Страница настройки прав Talksmith]`
+<p align="center">
+  <img src="https://hm258634.webhm.pro/talksmith/photo11.jpg" alt="Talksmith permission settings" width="100%">
+</p>
 
 ## Импорт, экспорт и перенос
 
@@ -427,4 +446,6 @@ Talksmith рассчитан на работу на публичном серв�
 
 **Talksmith превращает обычного NPC в полноценного участника игрового мира.**
 
-> **Место для изображения:** `[СКРИНШОТ: Финальный атмосферный кадр разговора с Actor]`
+<p align="center">
+  <img src="https://hm258634.webhm.pro/talksmith/photo13.jpg" alt="Talksmith conversation in the game world" width="100%">
+</p>

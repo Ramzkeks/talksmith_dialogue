@@ -13,7 +13,9 @@ Create lively nonlinear conversations, configure characters, and connect dialogu
 
 ---
 
-> **Image placeholder:** `[COVER: Actor in the game world with an open Talksmith dialogue]`
+<p align="center">
+  <img src="https://hm258634.webhm.pro/talksmith/photo7.jpg" alt="Talksmith dialogue with selectable player responses" width="100%">
+</p>
 
 ## What is Talksmith?
 
@@ -64,7 +66,9 @@ Dialogues are created in **Talksmith Studio** as a visual graph: every card is a
 | Russian and English | Change the Studio language immediately without reconnecting |
 | Separated permissions | Control access to Studio, publishing, Actors, integrations, and sensitive actions independently |
 
-> **Image placeholder:** `[SCREENSHOT: Talksmith Studio overview with the library on the left, graph in the center, and properties on the right]`
+<p align="center">
+  <img src="https://hm258634.webhm.pro/talksmith/photo9.jpg" alt="Talksmith Studio overview" width="100%">
+</p>
 
 ## How dialogue creation works
 
@@ -123,7 +127,9 @@ The central area contains the working canvas:
 - the canvas can be panned and zoomed;
 - multiple nodes can be selected, copied, pasted, and moved together.
 
-> **Image placeholder:** `[SCREENSHOT: Branching graph with direct and randomized transitions]`
+<p align="center">
+  <img src="https://hm258634.webhm.pro/talksmith/photo8.jpg" alt="Branching dialogue graph in Talksmith Studio" width="100%">
+</p>
 
 ### Property editor
 
@@ -176,7 +182,9 @@ You can configure:
 
 An already placed Actor receives updated settings after the document is saved. Actor placement can be saved automatically for each map.
 
-> **Image placeholder:** `[SCREENSHOT: Actor in the game world with separately displayed name, description, and interaction hint]`
+<p align="center">
+  <img src="https://hm258634.webhm.pro/talksmith/photo1.jpg" alt="Talksmith Actor with name, description, and interaction hint" width="100%">
+</p>
 
 During a conversation, the player can:
 
@@ -255,7 +263,14 @@ Four runtime themes are included:
 
 Text reveal speed is configured globally. The selected theme is used both in the game and in Preview.
 
-> **Image placeholder:** `[SCREENSHOT: Four-theme collage with Cinematic, Retro Terminal, Panoramic Glass, and Open Frame]`
+<p align="center">
+  <img src="https://hm258634.webhm.pro/talksmith/photo6.jpg" alt="Cinematic dialogue theme" width="49%">
+  <img src="https://hm258634.webhm.pro/talksmith/photo5.jpg" alt="Retro Terminal dialogue theme" width="49%">
+</p>
+<p align="center">
+  <img src="https://hm258634.webhm.pro/talksmith/photo4.jpg" alt="Panoramic Glass dialogue theme" width="49%">
+  <img src="https://hm258634.webhm.pro/talksmith/photo2.jpg" alt="Open Frame dialogue theme" width="49%">
+</p>
 
 ## Integrations
 
@@ -282,7 +297,9 @@ Basic DarkRP features are connected automatically when DarkRP is installed. Ulti
 
 All twelve optional integrations are disabled by default. Administrators enable only the required integrations under **Settings - Integrations**. Integration status and the available action catalog update in an already open Studio window without reconnecting.
 
-> **Image placeholder:** `[SCREENSHOT: Settings - Integrations page showing installed addon statuses]`
+<p align="center">
+  <img src="https://hm258634.webhm.pro/talksmith/photo10.jpg" alt="Talksmith integration settings" width="100%">
+</p>
 
 ## Quick start
 
@@ -370,7 +387,9 @@ Server permissions are assigned to `superadmin` by default. When ULX or sAdmin i
 - integrations;
 - economy, inventory, jobs, and other sensitive actions.
 
-> **Image placeholder:** `[SCREENSHOT: Talksmith permission settings page]`
+<p align="center">
+  <img src="https://hm258634.webhm.pro/talksmith/photo11.jpg" alt="Talksmith permission settings" width="100%">
+</p>
 
 ## Import, export, and migration
 
@@ -426,4 +445,6 @@ For architecture, API, integration lifecycle, parameters, permissions, hooks, an
 
 **Talksmith turns an ordinary NPC into a complete participant in the game world.**
 
-> **Image placeholder:** `[SCREENSHOT: Final atmospheric conversation scene with an Actor]`
+<p align="center">
+  <img src="https://hm258634.webhm.pro/talksmith/photo13.jpg" alt="Talksmith conversation in the game world" width="100%">
+</p>
