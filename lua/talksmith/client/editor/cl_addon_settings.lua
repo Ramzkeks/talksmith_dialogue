@@ -100,6 +100,13 @@ local function sendPermissionSetting(right, group)
     net.SendToServer()
 end
 
+local function sendWeaponAllowlist(class, allowed)
+    net.Start("ts_weapon_allowlist_update")
+    net.WriteBool(allowed == true)
+    net.WriteString(class or "")
+    net.SendToServer()
+end
+
 function TS.Editor.RequestSettings()
     net.Start("ts_settings_request")
     net.SendToServer()
@@ -373,6 +380,236 @@ local function addSpeedPreview(parent, speed)
     return preview
 end
 
+local function clientWeaponClass(value)
+    if not isstring(value) then
+        return nil
+    end
+    local class = string.Trim(value)
+    if #class <= 0 or #class > 64 or not string.match(class, "^[a-z][a-z0-9_]*$") then
+        return nil
+    end
+    return class
+end
+
+local function openWeaponAllowlist(settingsFrame)
+    if IsValid(TS.Editor.WeaponAllowlistFrame) then
+        local existing = TS.Editor.WeaponAllowlistFrame
+        existing:ApplyData(settingsFrame.SettingsData or {})
+        existing:MakePopup()
+        existing:MoveToFront()
+        return
+    end
+
+    local T = TS.Editor.Theme
+    local modal = vgui.Create("DFrame")
+    TS.Editor.WeaponAllowlistFrame = modal
+    modal:SetTitle("")
+    modal:ShowCloseButton(false)
+    modal:SetDraggable(false)
+    modal:SetSizable(false)
+    modal:SetDeleteOnClose(true)
+    modal:SetBackgroundBlur(true)
+    modal:SetDrawOnTop(true)
+    modal:SetSize(math.min(ScrW() - 40, 680), math.min(ScrH() - 40, 560))
+    modal:Center()
+    modal:DockPadding(0, 0, 0, 0)
+    modal.Paint = function(self, width, height)
+        Derma_DrawBackgroundBlur(self, self.m_fCreateTime)
+        draw.RoundedBox(7, 0, 0, width, height, T.side)
+        surface.SetDrawColor(T.line)
+        surface.DrawOutlinedRect(0, 0, width, height, 1)
+    end
+
+    local header = modal:Add("DPanel")
+    header:Dock(TOP)
+    header:SetTall(72)
+    header.Paint = function(_, width, height)
+        draw.RoundedBox(2, 20, 19, 3, 34, T.blue)
+        draw.SimpleText(TS.L("addon_weapons_window_title"), "Talksmith_E_Title", 34, 27, T.text, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+        draw.SimpleText(TS.L("addon_weapons_window_subtitle"), "Talksmith_E_Small", 34, 50, T.muted, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+        surface.SetDrawColor(T.line)
+        surface.DrawRect(0, height - 1, width, 1)
+    end
+
+    local close = header:Add("DButton")
+    close:Dock(RIGHT)
+    close:SetWide(44)
+    close:DockMargin(0, 17, 12, 17)
+    TS.Editor.StyleButton(close, { label = "", quiet = true, icon = "x" })
+    TS.Editor.SetTooltip(close, TS.L("close"))
+    close.DoClick = function()
+        modal:Remove()
+    end
+
+    local body = modal:Add("DPanel")
+    body:Dock(FILL)
+    body:DockPadding(20, 18, 20, 20)
+    body.Paint = function() end
+
+    local status = body:Add("DPanel")
+    status:Dock(TOP)
+    status:SetTall(58)
+    status:DockMargin(0, 0, 0, 12)
+    status.Paint = function(self, width, height)
+        local locked = modal.AllowlistLocked == true
+        local editable = modal.CanEdit == true
+        local color = locked and T.yellow or (editable and T.blue or T.muted)
+        local icon = locked and "warning" or (editable and "check-circle" or "warning")
+        local key = locked and "addon_weapons_lua_override"
+            or (editable and "addon_weapons_menu_source" or "addon_weapons_read_only")
+        draw.RoundedBox(4, 0, 0, width, height, locked and Color(210, 162, 72, 12) or T.field)
+        surface.SetDrawColor(locked and T.yellow or T.lineSoft)
+        surface.DrawOutlinedRect(0, 0, width, height, 1)
+        TS.Editor.DrawIcon(icon, 14, height / 2 - 9, 18, color)
+        draw.SimpleText(TS.L(key), "Talksmith_E_Small", 43, height / 2, color, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+    end
+
+    local form = body:Add("DPanel")
+    form:Dock(TOP)
+    form:SetTall(38)
+    form:DockMargin(0, 0, 0, 14)
+    form.Paint = function() end
+
+    local addButton = form:Add("DButton")
+    addButton:Dock(RIGHT)
+    addButton:SetWide(132)
+    TS.Editor.StyleButton(addButton, {
+        label = TS.L("addon_weapons_add"),
+        accent = true,
+        icon = "plus",
+        font = "Talksmith_E_Small",
+    })
+
+    local entry = form:Add("DTextEntry")
+    entry:Dock(FILL)
+    entry:DockMargin(0, 0, 10, 0)
+    entry:SetPlaceholderText(TS.L("addon_weapons_placeholder"))
+    entry:SetUpdateOnType(true)
+    TS.Editor.StyleEntry(entry)
+
+    local listHeading = body:Add("DLabel")
+    listHeading:Dock(TOP)
+    listHeading:SetTall(28)
+    listHeading:SetFont("Talksmith_E_Head")
+    listHeading:SetTextColor(T.text)
+
+    local list = body:Add("DScrollPanel")
+    list:Dock(FILL)
+    styleScroll(list)
+
+    local function submit()
+        if modal.CanEdit ~= true then
+            return
+        end
+        local class = clientWeaponClass(entry:GetValue())
+        if not class then
+            TS.Runtime.Notify(TS.L("addon_weapons_invalid_class"), NOTIFY_ERROR, 4)
+            return
+        end
+        sendWeaponAllowlist(class, true)
+        entry:SetText("")
+        entry:RequestFocus()
+    end
+
+    addButton.DoClick = submit
+    entry.OnEnter = submit
+
+    function modal:ApplyData(data)
+        self.SettingsData = data or {}
+        self.AllowlistLocked = self.SettingsData.allowed_weapons_source == "lua"
+        self.CanEdit = self.SettingsData.can_manage_settings == true and not self.AllowlistLocked
+        self.WeaponLimit = math.Clamp(math.floor(tonumber(self.SettingsData.allowed_weapons_limit) or 256), 1, 256)
+
+        local weapons = {}
+        for _, class in ipairs(self.SettingsData.allowed_weapons or {}) do
+            if isstring(class) then
+                weapons[#weapons + 1] = class
+            end
+        end
+        table.sort(weapons)
+
+        entry:SetEnabled(self.CanEdit)
+        addButton:SetEnabled(self.CanEdit and #weapons < self.WeaponLimit)
+        listHeading:SetText(string.format(TS.L("addon_weapons_list_count"), #weapons, self.WeaponLimit))
+
+        local canvas = list:GetCanvas()
+        canvas:Clear()
+        if #weapons == 0 then
+            local empty = canvas:Add("DLabel")
+            empty:Dock(TOP)
+            empty:SetTall(74)
+            empty:SetFont("Talksmith_E_Body")
+            empty:SetTextColor(T.dim)
+            empty:SetContentAlignment(5)
+            empty:SetText(TS.L("addon_weapons_empty"))
+            return
+        end
+
+        for _, class in ipairs(weapons) do
+            local weaponClass = class
+            local row = canvas:Add("DPanel")
+            row:Dock(TOP)
+            row:DockMargin(0, 0, 0, 6)
+            row:SetTall(44)
+            row.Paint = function(self, width, height)
+                draw.RoundedBox(4, 0, 0, width, height, self:IsHovered() and T.card or T.field)
+                surface.SetDrawColor(T.lineSoft)
+                surface.DrawOutlinedRect(0, 0, width, height, 1)
+                TS.Editor.DrawIcon("crosshair-simple", 13, height / 2 - 8, 16, T.blue)
+                draw.SimpleText(weaponClass, "Talksmith_E_Body", 39, height / 2, T.text, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+            end
+
+            local remove = row:Add("DButton")
+            remove:Dock(RIGHT)
+            remove:SetWide(40)
+            remove:DockMargin(0, 6, 7, 6)
+            TS.Editor.StyleButton(remove, { label = "", quiet = true, danger = true, icon = "trash" })
+            remove:SetEnabled(self.CanEdit)
+            TS.Editor.SetTooltip(remove, TS.L("addon_weapons_remove"))
+            remove.DoClick = function()
+                if modal.CanEdit ~= true then
+                    return
+                end
+                TS.Editor.Confirm(
+                    TS.L("addon_weapons_remove_title"),
+                    string.format(TS.L("addon_weapons_remove_confirm"), weaponClass),
+                    {
+                        {
+                            label = TS.L("delete"),
+                            danger = true,
+                            callback = function()
+                                sendWeaponAllowlist(weaponClass, false)
+                            end,
+                        },
+                        { label = TS.L("cancel"), quiet = true },
+                    }
+                )
+            end
+        end
+    end
+
+    modal.OnKeyCodePressed = function(_, key)
+        if key == KEY_ESCAPE then
+            modal:Remove()
+        end
+    end
+    modal.Think = function()
+        if gui.IsGameUIVisible() and not gui.IsConsoleVisible() then
+            gui.HideGameUI()
+            modal:Remove()
+        end
+    end
+    modal.OnRemove = function()
+        if TS.Editor.WeaponAllowlistFrame == modal then
+            TS.Editor.WeaponAllowlistFrame = nil
+        end
+    end
+
+    modal:ApplyData(settingsFrame.SettingsData or {})
+    modal:MakePopup()
+    modal:DoModal()
+end
+
 local function buildEditorPage(parent, frame)
     local scroll = pageScroll(parent, TS.L("addon_settings_editor"), TS.L("addon_settings_editor_subtitle"))
     addSection(scroll, TS.L("addon_settings_local_section"))
@@ -532,6 +769,32 @@ local function buildServerPage(parent, frame)
             value = math.floor(value)
             settings.backups = value
             TS.Config.Set("backups", value, true)
+        end,
+    })
+
+    addSection(scroll, TS.L("addon_weapons_section"))
+    local weaponCount = #(istable(data.allowed_weapons) and data.allowed_weapons or {})
+    local luaOverride = data.allowed_weapons_source == "lua"
+    addCard(scroll, {
+        title = TS.L("addon_weapons_card_title"),
+        hint = TS.L(luaOverride and "addon_weapons_card_hint_lua" or "addon_weapons_card_hint"),
+        tall = 108,
+        controlTall = 30,
+        build = function(panel)
+            local button = panel:Add("DButton")
+            TS.Editor.StyleButton(button, {
+                label = string.format(
+                    TS.L(luaOverride and "addon_weapons_view" or "addon_weapons_manage"),
+                    weaponCount
+                ),
+                accent = canEdit and not luaOverride,
+                icon = luaOverride and "warning" or "crosshair-simple",
+                font = "Talksmith_E_Small",
+            })
+            button.DoClick = function()
+                openWeaponAllowlist(frame)
+            end
+            return button
         end,
     })
 
@@ -849,6 +1112,9 @@ function TS.Editor.OpenSettings(pageID)
     function frame:ApplySettings(data)
         local permissionsWereAvailable = self.SettingsData and self.SettingsData.permissions_available == true
         self.SettingsData = data
+        if IsValid(TS.Editor.WeaponAllowlistFrame) and TS.Editor.WeaponAllowlistFrame.ApplyData then
+            TS.Editor.WeaponAllowlistFrame:ApplyData(data)
+        end
         local permissionsAreAvailable = data.permissions_available == true
         if self.ActivePage == "permissions" and not permissionsAreAvailable then
             self.ActivePage = "server"
@@ -884,6 +1150,9 @@ function TS.Editor.OpenSettings(pageID)
     end
     frame.OnRemove = function()
         TS.Editor.ClosePopupMenu()
+        if IsValid(TS.Editor.WeaponAllowlistFrame) then
+            TS.Editor.WeaponAllowlistFrame:Remove()
+        end
         TS.Editor.AddonSettingsOpen = false
         if TS.Editor.AddonSettingsFrame == frame then
             TS.Editor.AddonSettingsFrame = nil
@@ -914,7 +1183,12 @@ net.Receive("ts_settings_data", function()
     local catalogChanged = applyIntegrationCatalog(data.integrations)
     applyRuntimeConfig(data.settings)
     if data.result == false then
-        TS.Runtime.Notify(TS.L("addon_settings_save_failed"), NOTIFY_ERROR, 4)
+        local errorKeys = {
+            invalid_weapon_class = "addon_weapons_invalid_class",
+            weapon_limit_reached = "addon_weapons_limit_reached",
+            weapon_lua_override = "addon_weapons_lua_override_error",
+        }
+        TS.Runtime.Notify(TS.L(errorKeys[data.code] or "addon_settings_save_failed"), NOTIFY_ERROR, 4)
     end
     if IsValid(TS.Editor.AddonSettingsFrame) and TS.Editor.AddonSettingsFrame.ApplySettings then
         TS.Editor.AddonSettingsFrame:ApplySettings(data)

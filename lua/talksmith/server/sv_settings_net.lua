@@ -4,6 +4,8 @@ local SETTINGS_FILE = "talksmith/settings.json"
 local MAX_PAYLOAD = 262144
 local MAX_NET_PAYLOAD = 60000
 local MAX_VALUE_PAYLOAD = 256
+local MAX_ALLOWED_WEAPONS = 256
+local MAX_WEAPON_CLASS = 64
 
 local SERVER_SETTINGS = {
     dialogue_speed = { kind = "number", min = 0.25, max = 4 },
@@ -26,6 +28,7 @@ for _, name in ipairs({
     "ts_settings_request",
     "ts_settings_update",
     "ts_server_setting_update",
+    "ts_weapon_allowlist_update",
     "ts_permission_setting_update",
     "ts_settings_data",
     "ts_runtime_settings",
@@ -62,6 +65,80 @@ local function validateSetting(key, value)
 
     return nil
 end
+
+local function validateWeaponClass(value)
+    if not isstring(value) then
+        return nil
+    end
+
+    local class = string.Trim(value)
+    if #class <= 0
+        or #class > MAX_WEAPON_CLASS
+        or not string.match(class, "^[a-z][a-z0-9_]*$")
+    then
+        return nil
+    end
+    return class
+end
+
+local function normalizeWeaponList(value)
+    if not istable(value) then
+        return nil
+    end
+
+    local count = 0
+    for key in pairs(value) do
+        if not isnumber(key) or key < 1 or key ~= math.floor(key) then
+            return nil
+        end
+        count = count + 1
+    end
+    if count > MAX_ALLOWED_WEAPONS then
+        return nil
+    end
+
+    local result = {}
+    local seen = {}
+    for index = 1, count do
+        local class = validateWeaponClass(value[index])
+        if not class or seen[class] then
+            return nil
+        end
+        seen[class] = true
+        result[#result + 1] = class
+    end
+    table.sort(result)
+    return result
+end
+
+local persistedAllowedWeapons = normalizeWeaponList(TS.Config.LuaAllowedWeapons) or {}
+local invalidLuaWeaponListLogged = false
+
+local function applyAllowedWeapons()
+    local source = persistedAllowedWeapons
+    if TS.Config.AllowedWeaponsLuaOverride == true then
+        local normalized = normalizeWeaponList(TS.Config.LuaAllowedWeapons)
+        if not normalized then
+            if not invalidLuaWeaponListLogged then
+                invalidLuaWeaponListLogged = true
+                TS.Logging.Log(0, "Invalid Lua allowed_weapons list; weapon actions are blocked until the config is fixed")
+            end
+            normalized = {}
+        end
+        source = normalized
+    end
+    TS.Config.allowed_weapons = table.Copy(source)
+end
+
+function TS.Config.GetAllowedWeapons()
+    return table.Copy(TS.Config.allowed_weapons or {})
+end
+
+function TS.Config.GetAllowedWeaponsSource()
+    return TS.Config.AllowedWeaponsLuaOverride == true and "lua" or "menu"
+end
+
+applyAllowedWeapons()
 
 local function serverSettings()
     if TS.Config.logging ~= -1 and (not TS.Logging.IsAvailable or not TS.Logging.IsAvailable()) then
@@ -112,6 +189,7 @@ function TS.Config.Save()
     file.CreateDir("talksmith")
     local json = util.TableToJSON({
         schema = 1,
+        allowed_weapons = table.Copy(persistedAllowedWeapons),
         server = serverSettings(),
         integrations = integrationSettings(),
         permissions = permissionSettings(),
@@ -129,6 +207,7 @@ function TS.Config.Load()
     local savedServer = {}
     local savedIntegrations = {}
     local savedPermissions = {}
+    local savedAllowedWeapons
 
     if file.Exists(SETTINGS_FILE, "DATA") then
         local raw = file.Read(SETTINGS_FILE, "DATA")
@@ -143,6 +222,7 @@ function TS.Config.Load()
             and istable(decoded.server)
             and istable(decoded.integrations)
             and (decoded.permissions == nil or istable(decoded.permissions))
+            and (decoded.allowed_weapons == nil or istable(decoded.allowed_weapons))
         if valid then
             for key, value in pairs(decoded.server) do
                 if not SERVER_SETTINGS[key] or validateSetting(key, value) == nil then
@@ -172,6 +252,14 @@ function TS.Config.Load()
                 end
             end
         end
+        if valid and decoded.allowed_weapons ~= nil then
+            local normalized = normalizeWeaponList(decoded.allowed_weapons)
+            if not normalized then
+                valid = false
+            else
+                savedAllowedWeapons = normalized
+            end
+        end
         if valid then
             savedServer = decoded.server
             savedIntegrations = decoded.integrations
@@ -198,6 +286,10 @@ function TS.Config.Load()
             TS.Config[key] = valid
         end
     end
+    if savedAllowedWeapons ~= nil then
+        persistedAllowedWeapons = savedAllowedWeapons
+    end
+    applyAllowedWeapons()
 
     for id in pairs(TS.Integrations.Registry) do
         local integration = TS.Integrations.Registry[id]
@@ -281,6 +373,53 @@ function TS.Config.Set(key, value)
     return true
 end
 
+function TS.Config.SetAllowedWeapon(class, allowed, actor)
+    if TS.Config.AllowedWeaponsLuaOverride == true then
+        return false, "weapon_lua_override"
+    end
+
+    class = validateWeaponClass(class)
+    if not class or not isbool(allowed) then
+        return false, "invalid_weapon_class"
+    end
+
+    local found
+    for index, candidate in ipairs(persistedAllowedWeapons) do
+        if candidate == class then
+            found = index
+            break
+        end
+    end
+
+    if allowed and found then
+        return true
+    end
+    if not allowed and not found then
+        return true
+    end
+    if allowed and #persistedAllowedWeapons >= MAX_ALLOWED_WEAPONS then
+        return false, "weapon_limit_reached"
+    end
+
+    local previous = table.Copy(persistedAllowedWeapons)
+    if allowed then
+        persistedAllowedWeapons[#persistedAllowedWeapons + 1] = class
+        table.sort(persistedAllowedWeapons)
+    else
+        table.remove(persistedAllowedWeapons, found)
+    end
+    applyAllowedWeapons()
+
+    if not TS.Config.Save() then
+        persistedAllowedWeapons = previous
+        applyAllowedWeapons()
+        return false, "save_failed"
+    end
+
+    hook.Run("Talksmith.AllowedWeaponChanged", class, allowed, actor)
+    return true
+end
+
 function TS.Config.SetPermissionGroup(right, group, actor)
     local previous = TS.Config.permission_groups[right]
     local ok, code = TS.Permissions.SetConfiguredGroup(right, group)
@@ -334,6 +473,9 @@ local function sendSettings(player, result, code)
         permission_groups = backendID and TS.Permissions.GetGroupCatalog() or {},
         permissions = backendID and TS.Permissions.GetSettings() or {},
         logging_available = TS.Logging.IsAvailable and TS.Logging.IsAvailable() or false,
+        allowed_weapons = TS.Config.GetAllowedWeapons(),
+        allowed_weapons_source = TS.Config.GetAllowedWeaponsSource(),
+        allowed_weapons_limit = MAX_ALLOWED_WEAPONS,
         settings = serverSettings(),
         integrations = TS.Integrations.GetCatalog(),
         result = result ~= false,
@@ -407,6 +549,20 @@ net.Receive("ts_server_setting_update", function(len, player)
     end
 
     local ok, code = TS.Config.Set(key, decoded.value)
+    broadcastSettings(player, ok, code)
+end)
+
+net.Receive("ts_weapon_allowlist_update", function(len, player)
+    if len > 800
+        or not TS.Network.Allow(player, "weapon_allowlist_update", 0.2)
+        or not TS.Permissions.CanUseEditor(player, "talksmith.settings.manage")
+    then
+        return
+    end
+
+    local allowed = net.ReadBool()
+    local class = net.ReadString() or ""
+    local ok, code = TS.Config.SetAllowedWeapon(class, allowed, player)
     broadcastSettings(player, ok, code)
 end)
 

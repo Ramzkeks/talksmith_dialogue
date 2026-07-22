@@ -27,7 +27,7 @@
   "nodes": {
     "armory": {
       "editor": { "x": 120, "y": 300, "note": "Exactly 6 responses — the default max_options limit." },
-      "text": "The armory only accepts classes listed in Talksmith.Config.allowed_weapons. By default, weapon_pistol and weapon_crowbar are allowed.",
+      "text": "The armory only accepts classes listed under Settings → Server → Allowed weapons. By default, weapon_pistol and weapon_crowbar are allowed.",
       "sound": "",
       "gesture": "",
       "actions": [],
@@ -171,7 +171,7 @@
     },
     "limitations": {
       "editor": { "x": 1080, "y": 300, "note": "A disallowed class passes parameter validation, but the action returns false on the server." },
-      "text": "Security restriction: arbitrary weapons cannot be issued. An administrator must add the class to allowed_weapons first. A node may contain no more than six responses.",
+      "text": "Security restriction: arbitrary weapons cannot be issued. An administrator must add the class under Allowed weapons first. If allowed_weapons was changed in the Lua config, the menu is read-only. A node may contain no more than six responses.",
       "sound": "",
       "gesture": "",
       "actions": [],

@@ -2,6 +2,14 @@ local TS = Talksmith
 
 TS.Config = TS.Config or {}
 
+-- Keep this fingerprint separate from the editable allowed_weapons block below.
+-- If a server owner changes that Lua block, the file becomes authoritative and
+-- the persisted Studio list is intentionally ignored.
+local STOCK_ALLOWED_WEAPONS = {
+    weapon_crowbar = true,
+    weapon_pistol = true,
+}
+
 local defaults = {
     editor_enabled = true,
     interact_distance = 160,
@@ -75,6 +83,8 @@ local defaults = {
         "models/combine_super_soldier.mdl",
         "models/zombie/classic.mdl",
     },
+    -- Changing this stock block makes Lua authoritative and locks menu edits.
+    -- Keep it unchanged when managing the list through Talksmith Settings.
     allowed_weapons = {
         "weapon_crowbar",
         "weapon_pistol",
@@ -129,12 +139,38 @@ local function hasSameType(value, default)
 end
 
 for key, default in pairs(defaults) do
-    if not hasSameType(TS.Config[key], default) then
+    if key == "allowed_weapons" then
+        -- Reset this value on Lua refresh. sv_settings_net applies the saved
+        -- Studio value later only when the Lua block is still stock.
+        TS.Config[key] = table.Copy(default)
+    elseif not hasSameType(TS.Config[key], default) then
         TS.Config[key] = default
     end
 end
 
 TS.Config.Defaults = defaults
+TS.Config.LuaAllowedWeapons = table.Copy(defaults.allowed_weapons)
+TS.Config.AllowedWeaponsLuaOverride = false
+
+local luaWeaponSet = {}
+local luaWeaponCount = 0
+for _, class in ipairs(defaults.allowed_weapons) do
+    if isstring(class) and not luaWeaponSet[class] then
+        luaWeaponSet[class] = true
+        luaWeaponCount = luaWeaponCount + 1
+    end
+end
+
+local stockWeaponCount = 0
+for class in pairs(STOCK_ALLOWED_WEAPONS) do
+    stockWeaponCount = stockWeaponCount + 1
+    if not luaWeaponSet[class] then
+        TS.Config.AllowedWeaponsLuaOverride = true
+    end
+end
+if luaWeaponCount ~= stockWeaponCount then
+    TS.Config.AllowedWeaponsLuaOverride = true
+end
 
 function TS.Config.Get(key, fallback)
     local value = TS.Config[key]
