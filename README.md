@@ -237,6 +237,19 @@ They can:
 
 Preview does not execute real actions. Studio displays what would happen in the game instead.
 
+### Allowed weapons
+
+The `core.give_weapon` and `core.take_weapon` actions, together with weapon-related conditions, use the active server allowlist. It can be managed without editing Lua:
+
+1. Open **Talksmith Studio → Settings → Server**.
+2. Under **Allowed weapons**, select **Manage list**.
+3. Add a class such as `weapon_pistol`, or remove an entry that is no longer needed.
+
+Changes take effect immediately and persist in `garrysmod/data/talksmith/settings.json`. Managing the list requires `talksmith.settings.manage`. Up to 256 unique classes are accepted; each class is limited to 64 characters using lowercase letters, numbers, and `_`.
+
+If the server owner manually changes the Lua `allowed_weapons` block from its stock value, Lua becomes the authoritative source. Studio displays the effective list but disables menu add/remove. An invalid Lua list blocks weapon actions until it is corrected.
+
+
 ### Variables
 
 Variables insert current data directly into dialogue lines.
