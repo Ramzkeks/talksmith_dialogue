@@ -117,4 +117,12 @@ if SERVER then
             { player = player }
         )
     end)
+
+    hook.Add("Talksmith.SuperAdminChanged", "Talksmith.UltimateLogsSuperAdminChanged", function(steamID64, allowed, player)
+        TS.Logging.Log(
+            1,
+            "Individual superadmin '" .. tostring(steamID64) .. "' " .. (allowed and "added" or "removed"),
+            { player = player }
+        )
+    end)
 end

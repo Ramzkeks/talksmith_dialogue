@@ -100,6 +100,13 @@ local function sendPermissionSetting(right, group)
     net.SendToServer()
 end
 
+local function sendSuperAdmin(steamID, allowed)
+    net.Start("ts_superadmin_update")
+    net.WriteBool(allowed == true)
+    net.WriteString(steamID or "")
+    net.SendToServer()
+end
+
 local function sendWeaponAllowlist(class, allowed)
     net.Start("ts_weapon_allowlist_update")
     net.WriteBool(allowed == true)
@@ -820,6 +827,134 @@ local function buildServerPage(parent, frame)
     })
 end
 
+local function clientSteamID(value)
+    if not isstring(value) then
+        return nil
+    end
+
+    value = string.Trim(value)
+    if #value == 17 and string.match(value, "^%d+$") then
+        return value
+    end
+    if #value <= 32 and string.match(value, "^STEAM_[0-5]:[01]:%d+$") then
+        return value
+    end
+end
+
+local function addSuperAdminControls(scroll, data)
+    local T = TS.Editor.Theme
+    local superadmins = istable(data.superadmins) and data.superadmins or {}
+    local limit = math.Clamp(math.floor(tonumber(data.superadmins_limit) or 16), 1, 16)
+
+    addSection(scroll, string.format(TS.L("addon_superadmins_count"), #superadmins, limit))
+    addCard(scroll, {
+        title = TS.L("addon_superadmins_title"),
+        hint = TS.L("addon_superadmins_hint"),
+        tall = 116,
+        controlTall = 34,
+        build = function(panel)
+            local form = panel:Add("DPanel")
+            form.Paint = function() end
+
+            local add = form:Add("DButton")
+            add:Dock(RIGHT)
+            add:SetWide(126)
+            TS.Editor.StyleButton(add, {
+                label = TS.L("addon_superadmins_add"),
+                accent = true,
+                icon = "user-plus",
+                font = "Talksmith_E_Small",
+            })
+
+            local entry = form:Add("DTextEntry")
+            entry:Dock(FILL)
+            entry:DockMargin(0, 0, 10, 0)
+            entry:SetPlaceholderText(TS.L("addon_superadmins_placeholder"))
+            entry:SetUpdateOnType(true)
+            TS.Editor.StyleEntry(entry)
+
+            local function submit()
+                local steamID = clientSteamID(entry:GetValue())
+                if not steamID then
+                    TS.Runtime.Notify(TS.L("addon_superadmins_invalid"), NOTIFY_ERROR, 4)
+                    return
+                end
+                sendSuperAdmin(steamID, true)
+                entry:SetText("")
+                entry:RequestFocus()
+            end
+
+            add:SetEnabled(#superadmins < limit)
+            add.DoClick = submit
+            entry.OnEnter = submit
+            return form
+        end,
+    })
+
+    if #superadmins == 0 then
+        local empty = scroll:Add("DLabel")
+        empty:Dock(TOP)
+        empty:DockMargin(0, 0, 0, 8)
+        empty:SetTall(48)
+        empty:SetFont("Talksmith_E_Body")
+        empty:SetTextColor(T.dim)
+        empty:SetContentAlignment(5)
+        empty:SetText(TS.L("addon_superadmins_empty"))
+        return
+    end
+
+    for _, definition in ipairs(superadmins) do
+        local steamID64 = istable(definition) and tostring(definition.steamid64 or "") or ""
+        if steamID64 ~= "" then
+            local online = definition.online == true
+            local name = tostring(definition.name or "")
+            local row = scroll:Add("DPanel")
+            row:Dock(TOP)
+            row:DockMargin(0, 0, 0, 6)
+            row:SetTall(52)
+            row.Paint = function(self, width, height)
+                draw.RoundedBox(4, 0, 0, width, height, self:IsHovered() and T.card or T.field)
+                surface.SetDrawColor(T.lineSoft)
+                surface.DrawOutlinedRect(0, 0, width, height, 1)
+                TS.Editor.DrawIcon("user-focus", 13, height / 2 - 8, 16, online and T.blue or T.muted)
+                draw.SimpleText(steamID64, "Talksmith_E_Body", 39, 18, T.text, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+                draw.SimpleText(
+                    online and string.format(TS.L("addon_superadmins_online"), name) or TS.L("addon_superadmins_offline"),
+                    "Talksmith_E_Small",
+                    39,
+                    37,
+                    online and T.blue or T.muted,
+                    TEXT_ALIGN_LEFT,
+                    TEXT_ALIGN_CENTER
+                )
+            end
+
+            local remove = row:Add("DButton")
+            remove:Dock(RIGHT)
+            remove:SetWide(40)
+            remove:DockMargin(0, 8, 7, 8)
+            TS.Editor.StyleButton(remove, { label = "", quiet = true, danger = true, icon = "user-minus" })
+            TS.Editor.SetTooltip(remove, TS.L("addon_superadmins_remove"))
+            remove.DoClick = function()
+                TS.Editor.Confirm(
+                    TS.L("addon_superadmins_remove_title"),
+                    string.format(TS.L("addon_superadmins_remove_confirm"), steamID64),
+                    {
+                        {
+                            label = TS.L("delete"),
+                            danger = true,
+                            callback = function()
+                                sendSuperAdmin(steamID64, false)
+                            end,
+                        },
+                        { label = TS.L("cancel"), quiet = true },
+                    }
+                )
+            end
+        end
+    end
+end
+
 local PERMISSION_PAGES = {
     { right = "talksmith.editor.open", key = "editor_open" },
     { right = "talksmith.dialogues.create", key = "dialogues_create" },
@@ -881,6 +1016,10 @@ local function buildPermissionsPage(parent, frame)
         string.format(TS.L("addon_permissions_backend"), tostring(data.permission_backend_name or data.permission_backend or ""))
     )
 
+    if canEdit then
+        addSuperAdminControls(scroll, data)
+    end
+    addSection(scroll, TS.L("addon_permissions_groups"))
     local permissions = istable(data.permissions) and data.permissions or {}
     for _, definition in ipairs(PERMISSION_PAGES) do
         local right = definition.right
@@ -1187,6 +1326,8 @@ net.Receive("ts_settings_data", function()
             invalid_weapon_class = "addon_weapons_invalid_class",
             weapon_limit_reached = "addon_weapons_limit_reached",
             weapon_lua_override = "addon_weapons_lua_override_error",
+            invalid_superadmin = "addon_superadmins_invalid",
+            superadmin_limit_reached = "addon_superadmins_limit_reached",
         }
         TS.Runtime.Notify(TS.L(errorKeys[data.code] or "addon_settings_save_failed"), NOTIFY_ERROR, 4)
     end

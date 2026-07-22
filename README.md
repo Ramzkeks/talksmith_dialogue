@@ -392,7 +392,7 @@ Talksmith is designed for use on public servers:
 - previous dialogue revisions are stored as backups;
 - reward sequences are protected against accidental repeated execution.
 
-Server permissions are assigned to `superadmin` by default. When ULX or sAdmin is used, minimum groups can be configured separately for:
+Group-based permissions default to `superadmin`. With sAdmin, ULX/ULib, or a CAMI-compatible admin mod, a minimum group can be configured separately for:
 
 - opening Studio;
 - creating, editing, and deleting dialogues;
@@ -401,6 +401,45 @@ Server permissions are assigned to `superadmin` by default. When ULX or sAdmin i
 - server settings;
 - integrations;
 - economy, inventory, jobs, and other sensitive actions.
+
+Access sources work in parallel. A player is allowed when at least one of these checks succeeds:
+
+- Garry's Mod reports the player as a native `superadmin`;
+- the player is in Talksmith's individual superadmin list;
+- the player's admin-mod group meets the configured minimum group for that specific permission.
+
+Group members receive only the Talksmith permissions configured for their group. An individual Talksmith superadmin receives every Talksmith permission, even without an admin-mod group. This does not change the player's real ULX, sAdmin, or CAMI group and grants no permissions outside Talksmith.
+
+Because `talksmith.settings.manage` can modify the individual list, treat it as full Talksmith access-delegation permission.
+
+### Individual access and RCON recovery
+
+Up to 16 Steam accounts can be managed in **Settings → Permissions** by SteamID or SteamID64. The same list can be managed from the server console or RCON:
+
+```text
+talksmith_superadmin_add "STEAM_0:1:12345678"
+talksmith_superadmin_remove "STEAM_0:1:12345678"
+talksmith_superadmin_status
+talksmith_superadmin_clear
+```
+
+`talksmith_superadmin_status` lists every configured account and shows whether it is currently online. These commands are server-console-only and cannot be executed by a player client.
+
+The protected archived convar can replace the entire list at once:
+
+```text
+talksmith_superadmin "STEAM_0:1:12345678,76561198000000000"
+```
+
+An empty value clears the list. Unlike `talksmith_superadmin_add`, changing the convar replaces all current entries, so include every account that should keep access.
+
+The normalized SteamID64 list is saved with the other server settings in:
+
+```text
+data/talksmith/settings.json
+```
+
+The JSON field is named `superadmins`. Changes are saved before they become active; if saving fails, the previous access list remains in effect.
 
 <p align="center">
   <img src="https://hm258634.webhm.pro/talksmith/photo11.jpg" alt="Talksmith permission settings" width="100%">

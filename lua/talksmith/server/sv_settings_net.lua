@@ -6,6 +6,9 @@ local MAX_NET_PAYLOAD = 60000
 local MAX_VALUE_PAYLOAD = 256
 local MAX_ALLOWED_WEAPONS = 256
 local MAX_WEAPON_CLASS = 64
+local MAX_SUPERADMINS = TS.Permissions.MaxSuperAdmins or 16
+
+TS.Storage.SettingsLoaded = false
 
 local SERVER_SETTINGS = {
     dialogue_speed = { kind = "number", min = 0.25, max = 4 },
@@ -30,6 +33,7 @@ for _, name in ipairs({
     "ts_server_setting_update",
     "ts_weapon_allowlist_update",
     "ts_permission_setting_update",
+    "ts_superadmin_update",
     "ts_settings_data",
     "ts_runtime_settings",
 }) do
@@ -138,6 +142,8 @@ function TS.Config.GetAllowedWeaponsSource()
     return TS.Config.AllowedWeaponsLuaOverride == true and "lua" or "menu"
 end
 
+local persistedSuperAdmins = TS.Permissions.NormalizeSuperAdminList(TS.Permissions.GetSuperAdmins()) or {}
+
 applyAllowedWeapons()
 
 local function serverSettings()
@@ -177,6 +183,36 @@ local function permissionSettings()
     return settings
 end
 
+local function superAdminSettings()
+    local online = {}
+    for _, target in ipairs(player.GetHumans()) do
+        online[target:SteamID64()] = target
+    end
+
+    local settings = {}
+    for _, steamID64 in ipairs(persistedSuperAdmins) do
+        local target = online[steamID64]
+        settings[#settings + 1] = {
+            steamid64 = steamID64,
+            online = IsValid(target),
+            name = IsValid(target) and TS.Utils.ClampString(string.gsub(target:Nick(), "%c", " "), 128) or "",
+        }
+    end
+    return settings
+end
+
+local function sameStringList(left, right)
+    if #left ~= #right then
+        return false
+    end
+    for index = 1, #left do
+        if left[index] ~= right[index] then
+            return false
+        end
+    end
+    return true
+end
+
 function TS.Config.GetServerSettings()
     return serverSettings()
 end
@@ -191,6 +227,7 @@ function TS.Config.Save()
         schema = 1,
         allowed_weapons = table.Copy(persistedAllowedWeapons),
         server = serverSettings(),
+        superadmins = table.Copy(persistedSuperAdmins),
         integrations = integrationSettings(),
         permissions = permissionSettings(),
     }, true)
@@ -204,10 +241,12 @@ end
 local broadcastRuntimeSettings
 
 function TS.Config.Load()
+    TS.Storage.SettingsLoaded = false
     local savedServer = {}
     local savedIntegrations = {}
     local savedPermissions = {}
     local savedAllowedWeapons
+    local savedSuperAdmins
 
     if file.Exists(SETTINGS_FILE, "DATA") then
         local raw = file.Read(SETTINGS_FILE, "DATA")
@@ -222,6 +261,7 @@ function TS.Config.Load()
             and istable(decoded.server)
             and istable(decoded.integrations)
             and (decoded.permissions == nil or istable(decoded.permissions))
+            and (decoded.superadmins == nil or istable(decoded.superadmins))
             and (decoded.allowed_weapons == nil or istable(decoded.allowed_weapons))
         if valid then
             for key, value in pairs(decoded.server) do
@@ -258,6 +298,14 @@ function TS.Config.Load()
                 valid = false
             else
                 savedAllowedWeapons = normalized
+            end
+        end
+        if valid and decoded.superadmins ~= nil then
+            local normalized = TS.Permissions.NormalizeSuperAdminList(decoded.superadmins)
+            if not normalized then
+                valid = false
+            else
+                savedSuperAdmins = normalized
             end
         end
         if valid then
@@ -315,12 +363,22 @@ function TS.Config.Load()
         TS.Config.permission_groups[right] = string.Trim(group)
     end
 
+    local migrateSuperAdmins = savedSuperAdmins == nil and #persistedSuperAdmins > 0
+    if savedSuperAdmins ~= nil then
+        persistedSuperAdmins = savedSuperAdmins
+    end
+    TS.Permissions.ApplySuperAdmins(persistedSuperAdmins)
+
+    TS.Storage.SettingsLoaded = true
     TS.Integrations.RefreshAll()
     if TS.Config.logging ~= -1 and (not TS.Logging.IsAvailable or not TS.Logging.IsAvailable()) then
         TS.Config.logging = -1
     end
     if broadcastRuntimeSettings then
         broadcastRuntimeSettings()
+    end
+    if migrateSuperAdmins and not TS.Config.Save() then
+        TS.Logging.Log(0, "Could not migrate individual superadmins to " .. SETTINGS_FILE)
     end
 end
 
@@ -437,6 +495,91 @@ function TS.Config.SetPermissionGroup(right, group, actor)
     return true
 end
 
+local function emitSuperAdminChanges(previous, current, actor)
+    local old = {}
+    local new = {}
+    for _, steamID64 in ipairs(previous) do
+        old[steamID64] = true
+    end
+    for _, steamID64 in ipairs(current) do
+        new[steamID64] = true
+    end
+
+    for _, steamID64 in ipairs(previous) do
+        if not new[steamID64] then
+            hook.Run("Talksmith.SuperAdminChanged", steamID64, false, actor)
+        end
+    end
+    for _, steamID64 in ipairs(current) do
+        if not old[steamID64] then
+            hook.Run("Talksmith.SuperAdminChanged", steamID64, true, actor)
+        end
+    end
+end
+
+function TS.Config.GetSuperAdmins()
+    return table.Copy(persistedSuperAdmins)
+end
+
+function TS.Config.ReplaceSuperAdmins(values, actor)
+    local normalized = TS.Permissions.NormalizeSuperAdminList(values)
+    if not normalized then
+        return false, "invalid_superadmin"
+    end
+    if sameStringList(persistedSuperAdmins, normalized) then
+        TS.Permissions.ApplySuperAdmins(normalized)
+        return true
+    end
+
+    local previous = table.Copy(persistedSuperAdmins)
+    persistedSuperAdmins = normalized
+    if TS.Storage.SettingsLoaded ~= true then
+        TS.Permissions.ApplySuperAdmins(normalized)
+        return true
+    end
+    if not TS.Config.Save() then
+        persistedSuperAdmins = previous
+        return false, "save_failed"
+    end
+
+    TS.Permissions.ApplySuperAdmins(normalized)
+    emitSuperAdminChanges(previous, normalized, actor)
+    if not IsValid(actor) and TS.Network.BroadcastSettings then
+        TS.Network.BroadcastSettings(nil, true, "")
+    end
+    return true
+end
+
+function TS.Config.SetSuperAdmin(value, allowed, actor)
+    local steamID64 = TS.Permissions.NormalizeSuperAdminSteamID(value)
+    if not steamID64 or not isbool(allowed) then
+        return false, "invalid_superadmin"
+    end
+
+    local found
+    for index, candidate in ipairs(persistedSuperAdmins) do
+        if candidate == steamID64 then
+            found = index
+            break
+        end
+    end
+    if allowed and found or not allowed and not found then
+        return true
+    end
+    if allowed and #persistedSuperAdmins >= MAX_SUPERADMINS then
+        return false, "superadmin_limit_reached"
+    end
+
+    local updated = table.Copy(persistedSuperAdmins)
+    if allowed then
+        updated[#updated + 1] = steamID64
+        table.sort(updated)
+    else
+        table.remove(updated, found)
+    end
+    return TS.Config.ReplaceSuperAdmins(updated, actor)
+end
+
 local function writeRuntimeSettings()
     net.WriteFloat(math.Clamp(tonumber(TS.Config.dialogue_speed) or 1, 0.25, 4))
     net.WriteBool(TS.Config.show_name == true)
@@ -462,11 +605,12 @@ end
 
 local function sendSettings(player, result, code)
     local backendID, backendName = TS.Permissions.GetAdminBackend()
+    local canManagePermissions = TS.Permissions.Has(player, "talksmith.settings.manage")
     local data = {
         api_version = TS.API.IntegrationVersion,
         can_manage_settings = TS.Permissions.Has(player, "talksmith.settings.manage"),
         can_manage_integrations = TS.Permissions.Has(player, "talksmith.integrations.manage"),
-        can_manage_permissions = TS.Permissions.Has(player, "talksmith.settings.manage"),
+        can_manage_permissions = canManagePermissions,
         permissions_available = backendID ~= nil,
         permission_backend = backendID or "",
         permission_backend_name = backendName or "",
@@ -476,6 +620,8 @@ local function sendSettings(player, result, code)
         allowed_weapons = TS.Config.GetAllowedWeapons(),
         allowed_weapons_source = TS.Config.GetAllowedWeaponsSource(),
         allowed_weapons_limit = MAX_ALLOWED_WEAPONS,
+        superadmins = canManagePermissions and superAdminSettings() or {},
+        superadmins_limit = MAX_SUPERADMINS,
         settings = serverSettings(),
         integrations = TS.Integrations.GetCatalog(),
         result = result ~= false,
@@ -588,6 +734,26 @@ net.Receive("ts_permission_setting_update", function(len, player)
     end
 
     local ok, code = TS.Config.SetPermissionGroup(right, group, player)
+    broadcastSettings(player, ok, code)
+end)
+
+net.Receive("ts_superadmin_update", function(len, player)
+    if len > 400
+        or not TS.Network.Allow(player, "superadmin_update", 0.25)
+        or not TS.Permissions.CanUseEditor(player, "talksmith.settings.manage")
+        or not TS.Permissions.HasAdminBackend()
+    then
+        return
+    end
+
+    local allowed = net.ReadBool()
+    local steamID = net.ReadString() or ""
+    if #steamID <= 0 or #steamID > 32 then
+        broadcastSettings(player, false, "invalid_superadmin")
+        return
+    end
+
+    local ok, code = TS.Config.SetSuperAdmin(steamID, allowed, player)
     broadcastSettings(player, ok, code)
 end)
 
