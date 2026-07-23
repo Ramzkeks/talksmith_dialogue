@@ -102,7 +102,7 @@ function TS.Storage.SaveFlags(player)
     if not json or #json > maxFileBytes() or table.Count(values) > maxFlags() then
         return false
     end
-    return file.Write(path(id), json) == true
+    return TS.Utils.WriteDataFile(path(id), json)
 end
 
 function TS.Storage.SetFlag(player, key, value)

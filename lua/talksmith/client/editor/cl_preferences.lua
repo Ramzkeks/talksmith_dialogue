@@ -95,7 +95,7 @@ function TS.Editor.SaveSettings()
     if not json or #json > MAX_SETTINGS_BYTES then
         return false
     end
-    return file.Write(SETTINGS_FILE, json) == true
+    return TS.Utils.WriteDataFile(SETTINGS_FILE, json)
 end
 
 function TS.Editor.GetSetting(key)

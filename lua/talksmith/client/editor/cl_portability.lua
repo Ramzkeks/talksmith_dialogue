@@ -86,7 +86,7 @@ local function showExport(doc, json)
     local T = TS.Editor.Theme
     file.CreateDir("talksmith/exports")
     local target = "talksmith/exports/" .. doc.id .. ".json"
-    local saved = file.Write(target, json) == true
+    local saved = TS.Utils.WriteDataFile(target, json)
     if not saved then
         TS.Runtime.Notify(TS.L("export_failed"), NOTIFY_ERROR, 3)
     end

@@ -158,7 +158,7 @@ local function backup(doc)
 
     local json = util.TableToJSON(doc, true)
     local target = dir .. "/" .. os.time() .. "_r" .. (doc.meta.revision or 0) .. ".json"
-    if not json or file.Write(target, json) ~= true then
+    if not json or not TS.Utils.WriteDataFile(target, json) then
         return false
     end
 
@@ -246,7 +246,7 @@ function TS.Dialogues.Save(doc, author, expected)
     if old and not backup(old) then
         return false, "backup_failed"
     end
-    if file.Write(target, raw) ~= true then
+    if not TS.Utils.WriteDataFile(target, raw) then
         return false, "write_failed"
     end
     doc.meta = TS.Utils.Copy(candidate.meta)

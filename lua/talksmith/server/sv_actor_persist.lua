@@ -73,7 +73,7 @@ function TS.Actors.SaveLayout()
         TS.Logging.Log(0, "Actor layout could not be encoded as JSON")
         return false, "too_large"
     end
-    if file.Write(path(), json) ~= true then
+    if not TS.Utils.WriteDataFile(path(), json) then
         TS.Logging.Log(0, "Actor layout could not be written to " .. path())
         return false, "write_failed"
     end

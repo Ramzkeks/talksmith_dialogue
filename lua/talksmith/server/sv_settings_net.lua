@@ -235,7 +235,7 @@ function TS.Config.Save()
         return false
     end
 
-    return file.Write(SETTINGS_FILE, json) == true
+    return TS.Utils.WriteDataFile(SETTINGS_FILE, json)
 end
 
 local broadcastRuntimeSettings

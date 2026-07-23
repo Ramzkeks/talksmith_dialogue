@@ -110,7 +110,7 @@ local function saveJournal(id, records)
     if not raw or #raw > MAX_FILE_BYTES then
         return false
     end
-    return file.Write(journalPath(id), raw) == true
+    return TS.Utils.WriteDataFile(journalPath(id), raw)
 end
 
 local function canonicalEntries(entries)

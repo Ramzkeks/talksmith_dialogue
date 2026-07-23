@@ -207,6 +207,19 @@ function TS.Utils.SafeCall(label, fn, ...)
     return true, a, b, c
 end
 
+function TS.Utils.WriteDataFile(path, contents)
+    if not isstring(path) or not isstring(contents) then
+        return false
+    end
+
+    local result = file.Write(path, contents)
+    if result == true then
+        return true
+    end
+
+    return file.Read(path) == contents
+end
+
 function TS.Utils.IsModelAllowed(model)
     if not isstring(model) or #model < 5 or #model > 256 then
         return false

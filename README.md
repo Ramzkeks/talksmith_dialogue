@@ -390,6 +390,7 @@ Talksmith is designed for use on public servers:
 - models, sounds, weapons, items, and server events are restricted;
 - an older document copy cannot silently overwrite newer changes;
 - previous dialogue revisions are stored as backups;
+- an ambiguous file API result is accepted only after an exact read-back confirms the persisted content, so live settings and dialogue state do not require a restart;
 - reward sequences are protected against accidental repeated execution.
 
 Group-based permissions default to `superadmin`. With sAdmin, ULX/ULib, or a CAMI-compatible admin mod, a minimum group can be configured separately for:
