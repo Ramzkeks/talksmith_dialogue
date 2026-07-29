@@ -4,7 +4,7 @@ local function modalBase(title)
     local T = TS.Editor.Theme
     local screen = vgui.Create("EditablePanel")
     screen:SetSize(ScrW(), ScrH())
-    screen:MakePopup()
+    TS.Editor.RegisterModalPanel(screen)
     screen.Paint = function(_, w, h)
         surface.SetDrawColor(0, 0, 0, 185)
         surface.DrawRect(0, 0, w, h)

@@ -201,6 +201,8 @@ The conversation also closes safely if the player moves too far away, loses sigh
 
 These tools turn an ordinary conversation into a complete gameplay scenario.
 
+When you add an action or condition, Studio opens a searchable catalog grouped by source. Each entry shows its localized name, short description, stable ID, and integration source; typing filters across all of these fields.
+
 ### Conditions
 
 Conditions determine whether the player can see a particular response.
@@ -320,11 +322,11 @@ All twelve optional integrations are disabled by default. Administrators enable 
 
 ### 1. Open Studio
 
-Join the server with the required permissions and enter this command in chat:
+Join the server with the required permissions and open Studio in any of these ways:
 
-```text
-!talksmith_menu
-```
+- **Spawnmenu → Utilities → Talksmith → Studio**;
+- enter `!talksmith_menu` in chat;
+- run `talksmith_menu` in the client developer console.
 
 Server-side tools are available to `superadmin` by default.
 
@@ -361,7 +363,7 @@ Approach the Actor and press `E`.
 1. Add Talksmith to the server collection.
 2. Make sure the addon is downloaded by the server and clients.
 3. Restart the server.
-4. Open Studio by entering `!talksmith_menu` in chat.
+4. Open Studio from **Spawnmenu → Utilities → Talksmith → Studio**, with `!talksmith_menu` in chat, or with `talksmith_menu` in the client console.
 
 ### Manual installation
 

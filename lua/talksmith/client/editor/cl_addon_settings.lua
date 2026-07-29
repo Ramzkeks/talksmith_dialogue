@@ -402,8 +402,7 @@ local function openWeaponAllowlist(settingsFrame)
     if IsValid(TS.Editor.WeaponAllowlistFrame) then
         local existing = TS.Editor.WeaponAllowlistFrame
         existing:ApplyData(settingsFrame.SettingsData or {})
-        existing:MakePopup()
-        existing:MoveToFront()
+        TS.Editor.ActivateModalPanel(existing, true)
         return
     end
 
@@ -613,8 +612,7 @@ local function openWeaponAllowlist(settingsFrame)
     end
 
     modal:ApplyData(settingsFrame.SettingsData or {})
-    modal:MakePopup()
-    modal:DoModal()
+    TS.Editor.RegisterModalPanel(modal, true)
 end
 
 local function buildEditorPage(parent, frame)
@@ -1093,8 +1091,7 @@ function TS.Editor.OpenSettings(pageID)
         end
         frame:BuildNavigation()
         frame:BuildPage()
-        frame:MakePopup()
-        frame:MoveToFront()
+        TS.Editor.ActivateModalPanel(frame)
         TS.Editor.RequestSettings()
         return
     end
@@ -1300,7 +1297,7 @@ function TS.Editor.OpenSettings(pageID)
 
     frame:BuildNavigation()
     frame:BuildPage()
-    frame:MakePopup()
+    TS.Editor.RegisterModalPanel(frame)
     TS.Editor.RequestSettings()
 end
 

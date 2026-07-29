@@ -4,6 +4,7 @@ local MAX_NET_PAYLOAD = 60000
 local EDITOR_CHAT_COMMAND = "!talksmith_menu"
 for _, s in ipairs({
     "ts_editor_open",
+    "ts_editor_open_request",
     "ts_editor_docs",
     "ts_editor_save",
     "ts_editor_result",
@@ -136,6 +137,11 @@ local function openEditor(p)
     net.WriteData(raw, #raw)
     net.Send(p)
 end
+
+net.Receive("ts_editor_open_request", function(len, p)
+    if len > 0 then return end
+    openEditor(p)
+end)
 
 hook.Add("PlayerSay", "Talksmith.EditorChatCommand", function(p, text)
     if not isstring(text) or string.lower(string.Trim(text)) ~= EDITOR_CHAT_COMMAND then

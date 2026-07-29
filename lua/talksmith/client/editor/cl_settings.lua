@@ -184,7 +184,6 @@ local function pickerModal(cfg)
 
     local scr = vgui.Create("EditablePanel")
     scr:SetSize(ScrW(), ScrH())
-    scr:MakePopup()
     TS.Editor.PickerDepth = (TS.Editor.PickerDepth or 0) + 1
     scr.Paint = function(_, w, h)
         surface.SetDrawColor(0, 0, 0, 180)
@@ -362,6 +361,7 @@ local function pickerModal(cfg)
         cfg.applyPreview(preview, selected)
     end
 
+    TS.Editor.RegisterModalPanel(scr)
     rebuild("")
     return scr
 end
@@ -485,7 +485,6 @@ function TS.Editor.OpenDialogueSettings(doc, cb)
     TS.Editor.DialogueSettingsFrame = scr
     TS.Editor.DialogueSettingsOpen = true
     scr:SetSize(ScrW(), ScrH())
-    scr:MakePopup()
     scr.Paint = function(_, w, h)
         surface.SetDrawColor(0, 0, 0, 170)
         surface.DrawRect(0, 0, w, h)
@@ -1008,6 +1007,7 @@ function TS.Editor.OpenDialogueSettings(doc, cb)
         end
     end
 
+    TS.Editor.RegisterModalPanel(scr)
     preview:SetPreviewModel(s.actor_model)
     refreshPreview()
     rebuild()

@@ -170,7 +170,7 @@ end
 
 function TS.Editor.OpenExamples(category)
     if IsValid(TS.Editor.ExamplesFrame) then
-        TS.Editor.ExamplesFrame:MakePopup()
+        TS.Editor.ActivateModalPanel(TS.Editor.ExamplesFrame)
         return
     end
 
@@ -357,5 +357,6 @@ function TS.Editor.OpenExamples(category)
         end
     end
 
+    TS.Editor.RegisterModalPanel(screen)
     rebuild()
 end

@@ -853,8 +853,15 @@ function TS.Editor.Open()
 end
 
 local function activeEditorPopup()
+    local managed = TS.Editor.GetActiveModalPanel and TS.Editor.GetActiveModalPanel()
+    if IsValid(managed) then
+        return managed
+    end
     if IsValid(TS.Editor.Modal) then
         return TS.Editor.Modal
+    end
+    if IsValid(TS.Editor.ReferencePicker) then
+        return TS.Editor.ReferencePicker
     end
     if IsValid(TS.Editor.PopupMenu) then
         local overlay = TS.Editor.PopupMenu:GetParent()
@@ -900,8 +907,12 @@ hook.Add("Think", "Talksmith.RestoreEditorFocus", function()
     if not IsValid(panel) then
         return
     end
-    panel:MakePopup()
-    panel:MoveToFront()
+    if panel._talksmithManagedModal and TS.Editor.ActivateModalPanel then
+        TS.Editor.ActivateModalPanel(panel, panel._talksmithDermaModal)
+    else
+        panel:MakePopup()
+        panel:MoveToFront()
+    end
 end)
 
 hook.Add(

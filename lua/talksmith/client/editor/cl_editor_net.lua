@@ -2,6 +2,22 @@ local TS = Talksmith
 local MAX_NET_PAYLOAD = 60000
 local MAX_EDITOR_CATALOG_BYTES = 2097152
 
+function TS.Editor.RequestOpen()
+    net.Start("ts_editor_open_request")
+    net.SendToServer()
+end
+
+concommand.Add("talksmith_menu", TS.Editor.RequestOpen)
+
+hook.Add("PopulateToolMenu", "Talksmith.EditorToolMenu", function()
+    spawnmenu.AddToolMenuOption("Utilities", "Talksmith", "TalksmithStudio", "Studio", "", "", function(panel)
+        local button = panel:Button(TS.L("open") .. " " .. TS.L("editor"))
+        if IsValid(button) then
+            button.DoClick = TS.Editor.RequestOpen
+        end
+    end)
+end)
+
 net.Receive("ts_editor_open", function()
     local n = net.ReadUInt(18)
     if n <= 0 or n > MAX_NET_PAYLOAD then

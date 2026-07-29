@@ -47,6 +47,7 @@ local shared = {
     "core/sh_i18n.lua",
     "core/sh_examples.lua",
     "integrations/sh_i18n.lua",
+    "integrations/sh_reference_i18n.lua",
     "api/sh_api.lua",
 }
 
@@ -86,6 +87,7 @@ local client = {
     "client/runtime/cl_dialogue_ui.lua",
     "client/runtime/cl_runtime_net.lua",
     "client/editor/cl_theme.lua",
+    "client/editor/cl_reference_picker.lua",
     "client/editor/cl_examples.lua",
     "client/editor/cl_help.lua",
     "client/editor/cl_settings.lua",

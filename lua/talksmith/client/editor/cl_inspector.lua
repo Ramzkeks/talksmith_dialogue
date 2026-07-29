@@ -310,6 +310,61 @@ local function providerChoices(kind, current, method)
     return choices
 end
 
+local function refGroupName(id, definition)
+    if definition.integration then
+        local catalog = TS.Editor.Catalog or {}
+        local integrations = catalog.integrations or {}
+        local integration = integrations[definition.integration]
+        return tostring(integration and integration.name or definition.integration)
+    end
+
+    local category = tostring(definition.category or "")
+    if category ~= "" then
+        if TS.Localization.IntegrationCategory then
+            return TS.Localization.IntegrationCategory(category)
+        end
+        return string.upper(string.sub(category, 1, 1)) .. string.sub(category, 2)
+    end
+
+    local namespace = string.match(tostring(id), "^([^.]+)%.")
+    if namespace == "core" then
+        return TS.Localization.Integration("reference_group_core")
+    end
+    if namespace == "darkrp" then
+        return "DarkRP"
+    end
+    if namespace and namespace ~= "" then
+        return string.upper(string.sub(namespace, 1, 1)) .. string.sub(namespace, 2)
+    end
+    return TS.Localization.Integration("reference_group_core")
+end
+
+local function refPickerItems(registry, kind, currentID)
+    local items = {}
+    for _, id in ipairs(sortedRefKeys(registry)) do
+        local definition = registry[id]
+        if definition.available ~= false or id == currentID then
+            local name = localizedRefText(id, kind, "name", definition.name)
+            local description = localizedRefText(id, kind, "description", definition.description) or ""
+            local prefix = definition.available == false
+                and TS.Localization.Integration("integration_ref_unavailable_prefix")
+                or ""
+            items[#items + 1] = {
+                id = id,
+                name = prefix .. name,
+                description = description ~= name and description or "",
+                group = refGroupName(id, definition),
+                keywords = table.concat({ definition.category or "", definition.integration or "" }, " "),
+            }
+        end
+    end
+    return items
+end
+
+local function refPickerTitle(kind)
+    return kind == "condition" and TS.L("add_condition") or TS.L("add_action")
+end
+
 local function refEditor(parent, list, idx, registry, cb, kind)
     local T = TS.Editor.Theme
     local box = parent:Add("DPanel")
@@ -338,25 +393,32 @@ local function refEditor(parent, list, idx, registry, cb, kind)
         cb.Changed(true)
     end
 
-    local combo = head:Add("DComboBox")
-    combo:Dock(FILL)
-    combo:DockMargin(0, 0, 6, 0)
-    TS.Editor.StyleCombo(combo)
     local entry = list[idx]
-    for _, id in ipairs(sortedRefKeys(registry)) do
-        local definition = registry[id]
-        if definition.available ~= false or id == entry.id then
-            local prefix = definition.available == false and TS.Localization.Integration("integration_ref_unavailable_prefix") or ""
-            local group = definition.integration and (" / " .. definition.integration) or ""
-            local name = localizedRefText(id, kind, "name", definition.name)
-            combo:AddChoice(prefix .. name .. group .. "   (" .. id .. ")", id, id == entry.id)
-        end
-    end
-    combo.OnSelect = function(_, _, _, id)
-        cb.Snapshot()
-        entry.id = id
-        entry.params = defaultRefParams(registry[id])
-        cb.Changed(true)
+    local currentDefinition = registry[entry.id] or {}
+    local currentName = localizedRefText(entry.id, kind, "name", currentDefinition.name)
+    local picker = head:Add("DButton")
+    picker:Dock(FILL)
+    picker:DockMargin(0, 0, 6, 0)
+    TS.Editor.StyleButton(picker, {
+        label = currentName,
+        quiet = true,
+        alignLeft = true,
+        icon = "magnifying-glass",
+    })
+    TS.Editor.SetTooltip(picker, currentName .. "\n" .. tostring(entry.id))
+    picker.DoClick = function()
+        TS.Editor.OpenReferencePicker({
+            title = refPickerTitle(kind),
+            current = entry.id,
+            items = refPickerItems(registry, kind, entry.id),
+            onSelect = function(id)
+                if id == entry.id or not registry[id] then return end
+                cb.Snapshot()
+                entry.id = id
+                entry.params = defaultRefParams(registry[id])
+                cb.Changed(true)
+            end,
+        })
     end
 
     local def = registry[entry.id]
@@ -499,9 +561,16 @@ local function refListBody(parent, addLabel, list, registry, cb, kind)
     add:DockMargin(0, 0, 0, 6)
     TS.Editor.StyleButton(add, { label = addLabel, quiet = #list > 0, icon = "plus" })
     add.DoClick = function()
-        cb.Snapshot()
-        list[#list + 1] = { id = firstAvailable, params = defaultRefParams(registry[firstAvailable]) }
-        cb.Changed(true)
+        TS.Editor.OpenReferencePicker({
+            title = addLabel,
+            items = refPickerItems(registry, kind),
+            onSelect = function(id)
+                if not registry[id] then return end
+                cb.Snapshot()
+                list[#list + 1] = { id = id, params = defaultRefParams(registry[id]) }
+                cb.Changed(true)
+            end,
+        })
     end
 end
 

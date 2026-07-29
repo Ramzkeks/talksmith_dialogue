@@ -419,6 +419,13 @@ function TS.Localization.IntegrationParameter(id)
 end
 
 function TS.Localization.IntegrationReference(id, kind, field, fallback)
+    if TS.Localization.ReferenceTextFor then
+        local exact = TS.Localization.ReferenceTextFor(id, kind, field)
+        if exact ~= nil then
+            return exact
+        end
+    end
+
     local integrationID, localID = string.match(id or "", "^([^.]+)%.(.+)$")
     if not integrationID or not localID then
         return fallback or id
@@ -438,11 +445,13 @@ function TS.Localization.IntegrationReference(id, kind, field, fallback)
     local addonName = manifest and manifest.name
         or integrationID == "inventory" and TS.Localization.Integration("generic_inventory")
         or integrationID == "currency" and TS.Localization.Integration("generic_currency")
+        or integrationID == "core" and "Talksmith"
+        or integrationID == "darkrp" and "DarkRP"
         or integrationID
 
     if field == "description" then
         return TS.Localization.Integration("ref_" .. kind .. "_description", label, addonName)
     end
 
-    return addonName .. ": " .. label
+    return label
 end

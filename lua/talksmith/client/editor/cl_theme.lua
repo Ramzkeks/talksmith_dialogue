@@ -34,6 +34,115 @@ TS.Editor.NodePalette = {
     Color(68, 57, 82),
 }
 
+TS.Editor.ModalPanelStack = TS.Editor.ModalPanelStack or {}
+
+local function cleanModalPanelStack()
+    local stack = TS.Editor.ModalPanelStack
+    local cleaned = {}
+    for _, panel in ipairs(stack) do
+        if IsValid(panel) and panel:IsVisible() then
+            cleaned[#cleaned + 1] = panel
+        end
+    end
+    TS.Editor.ModalPanelStack = cleaned
+    return cleaned
+end
+
+function TS.Editor.GetActiveModalPanel()
+    local stack = cleanModalPanelStack()
+    return stack[#stack]
+end
+
+function TS.Editor.SyncModalPanels(forceFocus)
+    local stack = cleanModalPanelStack()
+    local top = stack[#stack]
+    local changed = TS.Editor.ActiveModalPanel ~= top
+    TS.Editor.ActiveModalPanel = top
+
+    local restoreCursorX = changed and not forceFocus and TS.Editor.ModalCursorX or nil
+    local restoreCursorY = changed and not forceFocus and TS.Editor.ModalCursorY or nil
+    if IsValid(top) and not changed and system.HasFocus() ~= false then
+        TS.Editor.ModalCursorX, TS.Editor.ModalCursorY = input.GetCursorPos()
+    end
+
+    for _, panel in ipairs(stack) do
+        local active = panel == top
+        panel:SetMouseInputEnabled(active)
+        panel:SetKeyboardInputEnabled(active)
+    end
+
+    local editor = TS.Editor.Frame
+    if IsValid(editor) and editor ~= top then
+        local enabled = not IsValid(top)
+        editor:SetMouseInputEnabled(enabled)
+        editor:SetKeyboardInputEnabled(enabled)
+    end
+
+    if IsValid(top) then
+        top:SetMouseInputEnabled(true)
+        top:SetKeyboardInputEnabled(true)
+        if forceFocus then
+            top:MakePopup()
+            if top._talksmithDermaModal and top.DoModal then
+                top:DoModal()
+            end
+        end
+        if changed or forceFocus then
+            top:MoveToFront()
+        end
+    elseif changed and IsValid(editor) then
+        editor:SetMouseInputEnabled(true)
+        editor:SetKeyboardInputEnabled(true)
+        editor:MoveToFront()
+    end
+
+    if isnumber(restoreCursorX) and isnumber(restoreCursorY)
+        and system.HasFocus() ~= false
+        and not gui.IsConsoleVisible()
+        and not gui.IsGameUIVisible()
+    then
+        input.SetCursorPos(restoreCursorX, restoreCursorY)
+        timer.Simple(0, function()
+            if system.HasFocus() ~= false and not gui.IsConsoleVisible() and not gui.IsGameUIVisible() then
+                input.SetCursorPos(restoreCursorX, restoreCursorY)
+            end
+        end)
+    end
+
+    return top
+end
+
+function TS.Editor.ActivateModalPanel(panel, dermaModal)
+    if not IsValid(panel) then
+        return
+    end
+
+    local stack = cleanModalPanelStack()
+    for index = #stack, 1, -1 do
+        if stack[index] == panel then
+            table.remove(stack, index)
+        end
+    end
+    stack[#stack + 1] = panel
+    TS.Editor.ModalPanelStack = stack
+    if dermaModal ~= nil then
+        panel._talksmithDermaModal = dermaModal == true
+    end
+    TS.Editor.SyncModalPanels(true)
+end
+
+function TS.Editor.RegisterModalPanel(panel, dermaModal)
+    if not IsValid(panel) then
+        return panel
+    end
+    panel._talksmithManagedModal = true
+    TS.Editor.ActivateModalPanel(panel, dermaModal)
+    return panel
+end
+
+hook.Add('Think', 'Talksmith.SyncModalPanels', function()
+    TS.Editor.SyncModalPanels(false)
+end)
 local iconCache = {}
 function TS.Editor.IconMaterial(name)
     if not isstring(name) or name == "" then
@@ -437,7 +546,7 @@ function TS.Editor.CreateMenu(minWidth)
         y = math.Clamp(y, 8, math.max(ScrH() - height - 8, 8))
 
         overlay:SetVisible(true)
-        overlay:MakePopup()
+        TS.Editor.RegisterModalPanel(overlay)
         s:SetPos(x, y)
         s:SetSize(width, height)
         s:SetVisible(true)
@@ -621,8 +730,7 @@ function TS.Editor.OpenModal(opts)
         end
     end
 
-    frame:MakePopup()
-    frame:DoModal()
+    TS.Editor.RegisterModalPanel(frame, true)
     if IsValid(entry) then
         entry:RequestFocus()
         entry:SelectAllText(true)

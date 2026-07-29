@@ -585,7 +585,7 @@ end
 
 function TS.Editor.OpenHelp()
     if IsValid(TS.Editor.HelpFrame) then
-        TS.Editor.HelpFrame:MakePopup()
+        TS.Editor.ActivateModalPanel(TS.Editor.HelpFrame)
         return
     end
     local T = TS.Editor.Theme
@@ -848,5 +848,6 @@ function TS.Editor.OpenHelp()
         end
     end
 
+    TS.Editor.RegisterModalPanel(scr)
     showPage(1)
 end
