@@ -430,6 +430,12 @@ function TS.Runtime.Start(player, actor, dialogueID)
         return false
     end
 
+    -- core.open_dialogue retains the same entity, so refresh the target
+    -- dialogue's model, appearance and idle animation before entering its node.
+    if TS.Actors.ApplyDialogueAppearance then
+        TS.Actors.ApplyDialogueAppearance(actor, document.settings)
+    end
+
     local now = CurTime()
     TS.Runtime.Sessions[player] = {
         player = player,
@@ -479,6 +485,16 @@ function TS.Runtime.Stop(player, reason)
 
     TS.Runtime.Sessions[player] = nil
     TS.Actors.RefreshBusy(session.actor)
+
+    -- A transition can temporarily apply another dialogue's model and idle
+    -- sequence to this Actor. When the last session ends, restore the Actor's
+    -- own linked dialogue so its world appearance never stays stale.
+    if not TS.Runtime.GetActorSession(session.actor) then
+        local homeDialogue = TS.Dialogues.Get(TS.Actors.GetDialogue(session.actor))
+        if homeDialogue and TS.Actors.ApplyDialogueAppearance then
+            TS.Actors.ApplyDialogueAppearance(session.actor, homeDialogue.settings)
+        end
+    end
 
     if IsValid(player) then
         net.Start("ts_dialogue_close")

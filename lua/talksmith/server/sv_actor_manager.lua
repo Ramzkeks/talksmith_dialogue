@@ -58,6 +58,22 @@ function TS.Actors.ApplyAppearance(actor, settings)
     end
 end
 
+-- Applies the visual part of a dialogue without changing the Actor's identity.
+-- Runtime dialogue switches use this so the model's idle animation is refreshed
+-- before the first node of the newly opened dialogue is shown.
+function TS.Actors.ApplyDialogueAppearance(actor, settings)
+    if not TS.Actors.IsActor(actor) or not istable(settings) then
+        return
+    end
+
+    if not actor.ModelOverride and TS.Utils.IsModelAllowed(settings.actor_model) then
+        actor:SetModel(settings.actor_model)
+    end
+    if actor.ApplyIdleSettings then
+        actor:ApplyIdleSettings(settings)
+    end
+    TS.Actors.ApplyAppearance(actor, settings)
+end
 function TS.Actors.Spawn(data)
     local doc = data.dialogue and TS.Dialogues.Get(data.dialogue)
     local modelOverride = data.model_override == true
@@ -83,8 +99,7 @@ function TS.Actors.Spawn(data)
 
     actor.ModelOverride = modelOverride
     if doc then
-        actor:ApplyIdleSettings(doc.settings)
-        TS.Actors.ApplyAppearance(actor, doc.settings)
+        TS.Actors.ApplyDialogueAppearance(actor, doc.settings)
     end
 
     actor.Persistent = true
@@ -106,14 +121,13 @@ function TS.Actors.SetDialogue(actor, dialogueID)
     if not TS.Actors.IsActor(actor) or not doc then
         return false
     end
-    TS.Actors.SetData(actor, doc.settings.actor_name, doc.settings.actor_subtitle, dialogueID)
-    if not actor.ModelOverride and TS.Utils.IsModelAllowed(doc.settings.actor_model) then
-        actor:SetModel(doc.settings.actor_model)
-    end
-    if actor.ApplyIdleSettings then
-        actor:ApplyIdleSettings(doc.settings)
-    end
-    TS.Actors.ApplyAppearance(actor, doc.settings)
+    TS.Actors.SetData(
+        actor,
+        TS.Utils.ClampString(doc.settings.actor_name, 128),
+        TS.Utils.ClampString(doc.settings.actor_subtitle, 128),
+        dialogueID
+    )
+    TS.Actors.ApplyDialogueAppearance(actor, doc.settings)
     return true
 end
 
@@ -185,21 +199,13 @@ hook.Add("Talksmith.DialogueSaved", "Talksmith.RefreshSavedActors", function(dia
     end
     for _, actor in ipairs(TS.Actors.GetAll()) do
         if TS.Actors.GetDialogue(actor) == dialogueID then
-            if
-                not actor.ModelOverride
-                and TS.Utils.IsModelAllowed(doc.settings.actor_model)
-                and actor:GetModel() ~= doc.settings.actor_model
-            then
-                actor:SetModel(doc.settings.actor_model)
-            end
             TS.Actors.SetData(
                 actor,
                 TS.Utils.ClampString(doc.settings.actor_name, 128),
                 TS.Utils.ClampString(doc.settings.actor_subtitle, 128),
                 dialogueID
             )
-            if actor.ApplyIdleSettings then actor:ApplyIdleSettings(doc.settings) end
-            TS.Actors.ApplyAppearance(actor, doc.settings)
+            TS.Actors.ApplyDialogueAppearance(actor, doc.settings)
         end
     end
 end)

@@ -413,15 +413,7 @@ net.Receive("ts_editor_actor", function(len, p)
         if d and e then
             TS.Actors.RemoveByDialogue(id, e)
             e.ModelOverride = false
-            if TS.Utils.IsModelAllowed(d.settings.actor_model) then e:SetModel(d.settings.actor_model) end
-            TS.Actors.SetData(
-                e,
-                TS.Utils.ClampString(d.settings.actor_name, 128),
-                TS.Utils.ClampString(d.settings.actor_subtitle, 128),
-                id
-            )
-            if e.ApplyIdleSettings then e:ApplyIdleSettings(d.settings) end
-            TS.Actors.ApplyAppearance(e, d.settings)
+            TS.Actors.SetDialogue(e, id)
             if TS.Config.autosave_actors then
                 TS.Actors.SaveLayout()
             end
