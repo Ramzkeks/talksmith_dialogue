@@ -30,9 +30,11 @@ net.Receive("ts_editor_export", function(len, p)
         return
     end
     local payload = util.Compress(json)
-    if not payload or #payload > MAX_NET_PAYLOAD then
-        return
+    if not payload then return end
+    if #payload > MAX_NET_PAYLOAD then
+        return TS.Editor.Transfer.Send("export", payload, p)
     end
+    TS.Editor.Transfer.Cancel("export", p)
     net.Start("ts_editor_export")
     net.WriteString(id)
     net.WriteUInt(#payload, 20)
@@ -128,10 +130,11 @@ local function openEditor(p)
         return
     end
     local raw = util.Compress(json)
-    if not raw or #raw > MAX_NET_PAYLOAD then
-        TS.Logging.Log(0, "Compressed editor catalog exceeds the network field limit")
-        return
+    if not raw then return end
+    if #raw > MAX_NET_PAYLOAD then
+        return TS.Editor.Transfer.Send("catalog", raw, p)
     end
+    TS.Editor.Transfer.Cancel("catalog", p)
     net.Start("ts_editor_open")
     net.WriteUInt(#raw, 18)
     net.WriteData(raw, #raw)
@@ -164,13 +167,16 @@ local function sendDocList(p)
         }
     end
     local json = util.TableToJSON(payload) or "[]"
-    if #json > TS.Config.max_document_bytes then
+    if #json > TS.Editor.Transfer.ListLimit then
+        TS.Logging.Log(0, "Editor dialogue list exceeds the safe payload limit")
         return false
     end
     local raw = util.Compress(json)
-    if not raw or #raw > MAX_NET_PAYLOAD then
-        return false
+    if not raw then return false end
+    if #raw > MAX_NET_PAYLOAD then
+        return TS.Editor.Transfer.Send("list", raw, p)
     end
+    TS.Editor.Transfer.Cancel("list", p)
     net.Start("ts_editor_docs")
     net.WriteBool(false)
     net.WriteUInt(#raw, 20)
@@ -196,9 +202,11 @@ net.Receive("ts_editor_docs", function(len, p)
         return
     end
     local raw = util.Compress(json)
-    if not raw or #raw > MAX_NET_PAYLOAD then
-        return
+    if not raw then return end
+    if #raw > MAX_NET_PAYLOAD then
+        return TS.Editor.Transfer.Send("document", raw, p)
     end
+    TS.Editor.Transfer.Cancel("document", p)
     net.Start("ts_editor_docs")
     net.WriteBool(true)
     net.WriteUInt(#raw, 20)
@@ -222,23 +230,11 @@ local function sendEditorResult(player, ok, code, issues)
     net.Send(player)
 end
 
-net.Receive("ts_editor_save", function(len, p)
-    if not TS.Network.Allow(p, "save", 1)
-        or not TS.Permissions.CanUseEditor(p)
-        or len / 8 > MAX_NET_PAYLOAD + 16
-    then
-        return
-    end
-    local n = net.ReadUInt(20)
-    if n > MAX_NET_PAYLOAD or n * 8 + 52 > len then
-        return
-    end
-    local raw = util.Decompress(net.ReadData(n) or "", TS.Config.max_document_bytes)
-    if not raw or #raw > TS.Config.max_document_bytes then
-        return
-    end
-    local decoded, doc = pcall(util.JSONToTable, raw, false, true)
-    if not decoded then
+local function saveDocument(raw, p, expected)
+    if not TS.Permissions.CanUseEditor(p) then return end
+    local doc = TS.Editor.Transfer.Decode(raw, TS.Config.max_document_bytes)
+    if not doc then
+        sendEditorResult(p, false, "invalid")
         return
     end
     local id = istable(doc) and TS.Utils.SafeID(doc.id or "")
@@ -272,12 +268,31 @@ net.Receive("ts_editor_save", function(len, p)
         return
     end
 
-    local expected = net.ReadUInt(32)
     local ok, a, b = TS.Dialogues.Save(doc, p:SteamID64(), expected)
     sendEditorResult(p, ok, a, b)
     if ok then
         sendDocList(p)
     end
+end
+
+TS.Editor.Transfer.Handlers.save = saveDocument
+
+net.Receive("ts_editor_save", function(len, p)
+    if not TS.Network.Allow(p, "save", 1)
+        or not TS.Permissions.CanUseEditor(p)
+        or len / 8 > MAX_NET_PAYLOAD + 16
+    then
+        return
+    end
+    local n = net.ReadUInt(20)
+    if n > MAX_NET_PAYLOAD or n * 8 + 52 > len then
+        return
+    end
+    local raw = util.Decompress(net.ReadData(n) or "", TS.Config.max_document_bytes)
+    if not raw or #raw > TS.Config.max_document_bytes then
+        return
+    end
+    saveDocument(raw, p, net.ReadUInt(32))
 end)
 
 net.Receive("ts_editor_manage", function(len, p)

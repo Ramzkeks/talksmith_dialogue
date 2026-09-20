@@ -182,7 +182,7 @@ function TS.Dialogues.Reload()
         if #raw > TS.Config.max_document_bytes then
             TS.Logging.Log(0, "Rejected " .. name .. ": file exceeds max_document_bytes")
         else
-            local decoded, doc = pcall(util.JSONToTable, raw, false, true)
+            local decoded, doc = pcall(util.JSONToTable, raw, true, true)
             local checked, ok, issues = false, false, nil
             if decoded then
                 checked, ok, issues = TS.Utils.SafeCall("validate " .. name, TS.Validation.ValidateDialogue, doc)

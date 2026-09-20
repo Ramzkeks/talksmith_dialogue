@@ -129,6 +129,15 @@ local function showExport(doc, json)
     end, true)
 end
 
+TS.Editor.Transfer.Handlers.export = function(json)
+    local doc = TS.Editor.Transfer.Decode(json, TS.Config.max_document_bytes)
+    if not doc or not TS.Utils.SafeID(doc.id or "") then
+        TS.Runtime.Notify(TS.L("export_failed"), NOTIFY_ERROR, 3)
+        return
+    end
+    showExport(doc, json)
+end
+
 net.Receive("ts_editor_export", function()
     local id = TS.Utils.SafeID(net.ReadString() or "")
     local length = net.ReadUInt(20)
@@ -136,7 +145,7 @@ net.Receive("ts_editor_export", function()
         return
     end
     local json = util.Decompress(net.ReadData(length) or "", TS.Config.max_document_bytes)
-    local doc = json and util.JSONToTable(json, false, true)
+    local doc = TS.Editor.Transfer.Decode(json, TS.Config.max_document_bytes)
     if not json or not istable(doc) or doc.id ~= id then
         TS.Runtime.Notify(TS.L("export_failed"), NOTIFY_ERROR, 3)
         return

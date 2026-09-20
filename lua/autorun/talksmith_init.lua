@@ -38,6 +38,7 @@ TS.Validation = TS.Validation or {}
 local shared = {
     "core/sh_config.lua",
     "core/sh_util.lua",
+    "core/sh_editor_transfer.lua",
     "core/sh_log.lua",
     "core/sh_registry.lua",
     "integrations/sh_integrations.lua",

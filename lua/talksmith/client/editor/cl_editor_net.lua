@@ -18,16 +18,9 @@ hook.Add("PopulateToolMenu", "Talksmith.EditorToolMenu", function()
     end)
 end)
 
-net.Receive("ts_editor_open", function()
-    local n = net.ReadUInt(18)
-    if n <= 0 or n > MAX_NET_PAYLOAD then
-        return
-    end
-    local raw = util.Decompress(net.ReadData(n) or "", MAX_EDITOR_CATALOG_BYTES)
-    if not raw then
-        return
-    end
-    local cat = util.JSONToTable(raw or "") or {}
+local function receiveCatalog(raw)
+    local cat = TS.Editor.Transfer.Decode(raw, MAX_EDITOR_CATALOG_BYTES)
+    if not cat then return end
     TS.Editor.Catalog = {
         api_version = cat.api_version,
         actions = cat.actions or {},
@@ -37,22 +30,25 @@ net.Receive("ts_editor_open", function()
         variables = cat.variables or {},
     }
     TS.Editor.Open()
-end)
+end
+TS.Editor.Transfer.Handlers.catalog = receiveCatalog
 
-net.Receive("ts_editor_docs", function()
-    local isDoc = net.ReadBool()
-    local n = net.ReadUInt(20)
+net.Receive("ts_editor_open", function()
+    local n = net.ReadUInt(18)
     if n <= 0 or n > MAX_NET_PAYLOAD then
         return
     end
-    local raw = util.Decompress(net.ReadData(n) or "", TS.Config.max_document_bytes)
+    local raw = util.Decompress(net.ReadData(n) or "", MAX_EDITOR_CATALOG_BYTES)
     if not raw then
         return
     end
-    local data = util.JSONToTable(raw or "", false, true)
-    if not data then
-        return
-    end
+    receiveCatalog(raw)
+end)
+
+local function receiveDocs(raw, isDoc)
+    local data = TS.Editor.Transfer.Decode(raw,
+        isDoc and TS.Config.max_document_bytes or TS.Editor.Transfer.ListLimit)
+    if not data then return end
     if isDoc then
         if TS.Editor.ReceiveDocument then
             TS.Editor.ReceiveDocument(data)
@@ -62,6 +58,21 @@ net.Receive("ts_editor_docs", function()
             TS.Editor.ReceiveList(data)
         end
     end
+end
+TS.Editor.Transfer.Handlers.list = function(raw) receiveDocs(raw, false) end
+TS.Editor.Transfer.Handlers.document = function(raw) receiveDocs(raw, true) end
+
+net.Receive("ts_editor_docs", function()
+    local isDoc = net.ReadBool()
+    local n = net.ReadUInt(20)
+    if n <= 0 or n > MAX_NET_PAYLOAD then
+        return
+    end
+    local raw = util.Decompress(net.ReadData(n) or "", isDoc and TS.Config.max_document_bytes or TS.Editor.Transfer.ListLimit)
+    if not raw then
+        return
+    end
+    receiveDocs(raw, isDoc)
 end)
 
 net.Receive("ts_editor_result", function()
@@ -74,11 +85,20 @@ net.Receive("ts_editor_result", function()
 end)
 
 function TS.Editor.Save(doc)
-    local raw = util.Compress(util.TableToJSON(doc) or "")
-    if not raw or #raw > MAX_NET_PAYLOAD then
+    local json = util.TableToJSON(doc)
+    if not json or #json > TS.Config.max_document_bytes then
         TS.Runtime.Notify(TS.L("save_failed", "too_large"), NOTIFY_ERROR, 4)
         return
     end
+    local raw = util.Compress(json)
+    if not raw then
+        TS.Runtime.Notify(TS.L("save_failed", "too_large"), NOTIFY_ERROR, 4)
+        return
+    end
+    if #raw > MAX_NET_PAYLOAD then
+        return TS.Editor.Transfer.Send("save", raw, nil, doc.meta and doc.meta.revision or 0)
+    end
+    TS.Editor.Transfer.Cancel("save")
     net.Start("ts_editor_save")
     net.WriteUInt(#raw, 20)
     net.WriteData(raw, #raw)
