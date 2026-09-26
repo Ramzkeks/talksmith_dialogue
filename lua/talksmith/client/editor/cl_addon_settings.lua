@@ -963,6 +963,8 @@ local PERMISSION_PAGES = {
     { right = "talksmith.settings.manage", key = "settings_manage" },
     { right = "talksmith.integrations.manage", key = "integrations_manage" },
     { right = "talksmith.diagnostics.view", key = "diagnostics_view" },
+    { right = "talksmith.flags.view", key = "flags_view" },
+    { right = "talksmith.flags.manage", key = "flags_manage" },
     { right = "talksmith.actions.dangerous", key = "actions_dangerous" },
     { right = "talksmith.actions.economy", key = "actions_economy" },
     { right = "talksmith.actions.inventory", key = "actions_inventory" },

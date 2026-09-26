@@ -542,6 +542,11 @@ function TS.Editor.Open()
     end
     TS.Editor.SetTooltip(toolsBtn, TS.L("settings_title") .. " · " .. TS.L("actor_menu"))
 
+    local flagsBtn = tbtn(TS.L("player_flags"), 140, function()
+        TS.Editor.OpenPlayerFlags()
+    end)
+    TS.Editor.SetTooltip(flagsBtn, TS.L("player_flags"))
+
     local helpBtn = toolbar:Add("DButton")
     helpBtn:Dock(RIGHT)
     surface.SetFont("Talksmith_E_Body")
@@ -814,6 +819,9 @@ function TS.Editor.Open()
         end
         if IsValid(TS.Editor.AddonSettingsFrame) then
             TS.Editor.AddonSettingsFrame:Remove()
+        end
+        if TS.Editor.ClosePlayerFlags then
+            TS.Editor.ClosePlayerFlags()
         end
         if IsValid(TS.Editor.ExamplesFrame) then
             TS.Editor.ExamplesFrame:Remove()

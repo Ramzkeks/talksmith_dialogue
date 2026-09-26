@@ -10,6 +10,8 @@ local rights = {
     "talksmith.settings.manage",
     "talksmith.integrations.manage",
     "talksmith.diagnostics.view",
+    "talksmith.flags.view",
+    "talksmith.flags.manage",
     "talksmith.actions.dangerous",
     "talksmith.actions.economy",
     "talksmith.actions.inventory",

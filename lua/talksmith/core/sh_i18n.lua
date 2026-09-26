@@ -2,6 +2,11 @@ local TS = Talksmith
 
 TS.Localization.Text = {
     ru = {
+        player_flags = "Флаги игроков",
+        addon_permission_flags_view = "Просмотр флагов игроков",
+        addon_permission_flags_view_hint = "Кто может видеть сохранённые флаги игроков онлайн.",
+        addon_permission_flags_manage = "Изменение флагов игроков",
+        addon_permission_flags_manage_hint = "Кто может менять прогресс квестов через флаги. Также нужно право просмотра.",
         vj_bind = "VJ NPC: привязать диалог (мирное ожидание)",
         vj_bind_native = "VJ NPC: привязать (обычное поведение)",
         vj_unbind = "VJ NPC: снять привязку диалога",
@@ -376,6 +381,7 @@ TS.Localization.Text = {
         ref_params = {
             key = "Ключ флага",
             class = "Класс оружия",
+            npc_class = "Класс VJ NPC",
             team = "Команда",
             value = "Значение",
             chance = "Шанс",
@@ -401,6 +407,11 @@ TS.Localization.Text = {
         },
     },
     en = {
+        player_flags = "Player flags",
+        addon_permission_flags_view = "View player flags",
+        addon_permission_flags_view_hint = "Who may inspect persistent flags of online players.",
+        addon_permission_flags_manage = "Edit player flags",
+        addon_permission_flags_manage_hint = "Who may change quest progress through flags. Viewing permission is also required.",
         vj_bind = "VJ NPC: bind dialogue (peaceful staging)",
         vj_bind_native = "VJ NPC: bind (native behavior)",
         vj_unbind = "VJ NPC: unbind dialogue",
@@ -746,6 +757,7 @@ TS.Localization.Text = {
         ref_params = {
             key = "Flag key",
             class = "Weapon class",
+            npc_class = "VJ NPC class",
             team = "Team",
             value = "Value",
             chance = "Chance",
@@ -792,6 +804,10 @@ function TS.Localization.ReferenceName(id, fallback)
 end
 
 function TS.Localization.ReferenceParameter(key, fallback, integration)
+    if integration == "vj" and key == "class" then
+        return refLangTable("ref_params").npc_class
+    end
+
     local integrationLabel = integration
         and TS.Localization.IntegrationParameter
         and TS.Localization.IntegrationParameter(key)
