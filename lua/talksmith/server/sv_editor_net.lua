@@ -67,6 +67,7 @@ local function catalog()
                 provider_method = d.provider_method,
                 safe = d.safe == true,
                 dangerous = d.dangerous == true,
+                vj_scene_action = d.vj_scene_action == true,
                 permission = d.permission,
                 available = isAvailable(d),
             }
@@ -434,6 +435,24 @@ net.Receive("ts_editor_actor", function(len, p)
             end
             sendActorResult(p, true, "updated")
         end
+    elseif op == 6 or op == 7 then
+        local id = op == 6 and TS.Utils.SafeID(net.ReadString() or "") or nil
+        local mode = op == 6 and net.ReadBool() and "native" or "staged"
+        local entity = p:GetEyeTrace().Entity
+        if not TS.VJ or not IsValid(entity) or p:GetPos():DistToSqr(entity:GetPos()) >= 65536 then
+            return sendActorResult(p, false, "vj_error")
+        end
+        local binding = TS.VJ.Bindings[entity]
+        if binding and (binding.attempt or binding.player or binding.owner) then
+            return sendActorResult(p, false, "vj_error")
+        end
+        local ok
+        if op == 6 then
+            ok = TS.VJ.Bind(entity, id, { mode = mode })
+        else
+            ok = TS.VJ.Unbind(entity)
+        end
+        sendActorResult(p, ok == true, ok and (op == 6 and (mode == "native" and "updated" or "vj_bound") or "vj_unbound") or "vj_error")
     elseif op == 5 then
         local id = TS.Utils.SafeID(net.ReadString() or "")
         local d = TS.Dialogues.Get(id)

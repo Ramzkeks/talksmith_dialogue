@@ -105,6 +105,23 @@ function TS.Storage.SaveFlags(player)
     return TS.Utils.WriteDataFile(path(id), json)
 end
 
+-- Commit related objective flags in one write, or restore the whole set.
+function TS.Storage.SetFlags(player, updates)
+    local values = TS.Storage.LoadFlags(player)
+    if not values or not istable(updates) then return false end
+    local previous = table.Copy(values)
+    for key, value in pairs(updates) do
+        if TS.Utils.SafeID(key) ~= key or not validValue(value) then return false end
+    end
+    for key, value in pairs(updates) do values[key] = value end
+    if not TS.Storage.SaveFlags(player) then
+        table.Empty(values)
+        for key, value in pairs(previous) do values[key] = value end
+        return false
+    end
+    return true
+end
+
 function TS.Storage.SetFlag(player, key, value)
     key = TS.Utils.SafeID(key or "")
     local values = key and TS.Storage.LoadFlags(player)

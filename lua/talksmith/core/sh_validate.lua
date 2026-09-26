@@ -68,6 +68,9 @@ local function checkRefs(out, path, list, lookup, kind)
                     end
                 end
                 if kind == "action" then
+                    if definition.integration == "vj" and definition.vj_scene_action and #list ~= 1 then
+                        issue(out, "error", path, definition.id .. ": must be the only action in this list")
+                    end
                     local cost = math.max(tonumber(definition.action_cost) or 1, 1)
                     if isstring(definition.cost_param) then
                         local value = istable(entry.params) and tonumber(entry.params[definition.cost_param]) or nil

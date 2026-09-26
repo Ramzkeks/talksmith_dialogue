@@ -38,6 +38,7 @@ TS.Validation = TS.Validation or {}
 local shared = {
     "core/sh_config.lua",
     "core/sh_util.lua",
+    "core/sh_speakers.lua",
     "core/sh_editor_transfer.lua",
     "core/sh_log.lua",
     "core/sh_registry.lua",
@@ -182,6 +183,27 @@ if SERVER then
     for _, path in ipairs(server) do
         include("talksmith/" .. path)
     end
+
+    -- Optional NPC integration loads only after the legacy runtime, storage,
+    -- Actor spawner and networking are ready. A broken/missing adapter must
+    -- never abort registration of those systems on servers using old quests.
+    local vjLoaded = true
+    for _, path in ipairs({ "sv_vj_base.lua", "sv_vj_targets.lua" }) do
+        local ok, reason = pcall(include, "talksmith/integrations/" .. path)
+        if not ok then
+            vjLoaded = false
+            TS.VJ = TS.VJ or {}
+            TS.VJ.Failed = true
+            local manifest = TS.Integrations.Registry.vj
+            if manifest then
+                manifest.detect = function() return false, "adapter_load_failed" end
+                manifest.status = "error"
+            end
+            TS.Logging.Log(0, "VJ integration unavailable: " .. tostring(reason))
+            break
+        end
+    end
+    if vjLoaded and TS.VJ then TS.VJ.Failed = nil end
 else
     for _, path in ipairs(client) do
         include("talksmith/" .. path)

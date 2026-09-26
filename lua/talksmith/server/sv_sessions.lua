@@ -20,27 +20,29 @@ function TS.Runtime.GetActorSession(actor, exceptPlayer)
 end
 
 function TS.Actors.RefreshBusy(actor)
-    if not IsValid(actor) or not TS.Actors.IsActor(actor) then
+    if not IsValid(actor) or not TS.Speakers.IsSpeaker(actor) then
         return
     end
     local active = TS.Runtime.GetActorSession(actor)
-    local current = TS.Dialogues.Get(TS.Actors.GetDialogue(actor))
-    local occupied = active ~= nil and current ~= nil and current.settings.use_limit == true
-    TS.Actors.SetBusy(actor, occupied)
+    local current = TS.Dialogues.Get(TS.Speakers.GetDialogue(actor))
+    local occupied = active ~= nil and current ~= nil
+        and (current.settings.use_limit == true or TS.Speakers.IsBoundNPC(actor))
+    local binding = TS.Speakers.IsBoundNPC(actor) and TS.VJ.Bindings[actor]
+    TS.Speakers.SetBusy(actor, occupied or binding and binding.attempt ~= nil)
 end
 
 function TS.Actors.RefreshAllBusy()
     local activeActors = {}
     for player, session in pairs(TS.Runtime.Sessions) do
-        if IsValid(player) and session.actor ~= nil then
-            activeActors[session.actor] = true
-        end
+        if IsValid(player) and session.actor ~= nil then activeActors[session.actor] = true end
     end
-
-    for _, actor in ipairs(TS.Actors.GetAll()) do
-        local current = TS.Dialogues.Get(TS.Actors.GetDialogue(actor))
-        local occupied = activeActors[actor] == true and current ~= nil and current.settings.use_limit == true
-        TS.Actors.SetBusy(actor, occupied)
+    for _, actor in ipairs(TS.Speakers.GetAll()) do
+        local bound = TS.Speakers.IsBoundNPC(actor)
+        local current = TS.Dialogues.Get(TS.Speakers.GetDialogue(actor))
+        local occupied = activeActors[actor] == true and current ~= nil
+            and (current.settings.use_limit == true or bound)
+        local binding = bound and TS.VJ.Bindings[actor]
+        TS.Speakers.SetBusy(actor, occupied or binding and binding.attempt ~= nil)
     end
 end
 
@@ -70,7 +72,7 @@ local function isValidState(player, actor, distance, requireSight)
     return IsValid(player)
         and player:Alive()
         and IsValid(actor)
-        and TS.Actors.IsActor(actor)
+        and TS.Speakers.IsAlive(actor)
         and player:GetPos():DistToSqr(actor:GetPos()) <= distance * distance
         and (requireSight ~= true or hasLineOfSight(player, actor))
 end
@@ -186,6 +188,11 @@ local function prepareActions(context, entries)
         local definition = TS.Actions.Registry[entry.id]
         if not definition then
             return nil, "unknown_action"
+        end
+        -- A combat handoff must not be replayed/skipped by a multi-action
+        -- reward journal, nor leave later actions running after session close.
+        if definition.integration == "vj" and definition.vj_scene_action and #entries ~= 1 then
+            return nil, "vj_scene_action_must_be_alone"
         end
         local validParameters = TS.Validation.ValidateParams(definition.params, entry.params)
         if not validParameters then
@@ -337,8 +344,8 @@ local function sendNodePayload(player, session, node, context)
 
     net.Start("ts_dialogue_node")
     net.WriteString(session.token)
-    net.WriteString(TS.Utils.ClampString(TS.Actors.GetName(session.actor), 128))
-    net.WriteString(TS.Utils.ClampString(TS.Actors.GetSubtitle(session.actor), 128))
+    net.WriteString(TS.Utils.ClampString(TS.Speakers.GetName(session.actor), 128))
+    net.WriteString(TS.Utils.ClampString(TS.Speakers.GetSubtitle(session.actor), 128))
     net.WriteString(TS.Utils.ClampString(TS.Integrations.ResolveVariables(node.text, context), 4096))
     local theme = session.doc.settings.theme
     net.WriteString(TS.Utils.InList(TS.Config.allowed_themes, theme) and theme or "default")
@@ -365,8 +372,8 @@ local function sendNodePayload(player, session, node, context)
         session.actor:EmitSound(node.sound)
     end
 
-    if isstring(node.gesture) and node.gesture ~= "" and IsValid(session.actor) and session.actor.PlayGesture then
-        session.actor:PlayGesture(node.gesture)
+    if isstring(node.gesture) and node.gesture ~= "" and IsValid(session.actor) then
+        TS.Speakers.PlayGesture(session.actor, node.gesture)
     end
 
     hook.Run("Talksmith.NodeEntered", player, session.actor, session.doc.id, session.node)
@@ -401,6 +408,11 @@ function TS.Runtime.Advance(player)
         end
         session.pending = false
         if not ok then result = false; TS.Runtime.Stop(player, "action_error"); return end
+        if context.vjCombat then
+            result = TS.VJ.CommitCombat(context)
+            if not result then TS.Runtime.Stop(player, "combat_rejected") end
+            return
+        end
         if context.close then result = false; TS.Runtime.Stop(player, "completed"); return end
         if context.open then result = switchDialogue(player, session, context.open); return end
         result = sendNodePayload(player, session, node, context)
@@ -419,7 +431,8 @@ function TS.Runtime.Start(player, actor, dialogueID)
         return false
     end
 
-    if document.settings.use_limit == true and TS.Runtime.GetActorSession(actor, player) then
+    if (document.settings.use_limit == true or TS.Speakers.IsBoundNPC(actor))
+        and (TS.Runtime.GetActorSession(actor, player) or TS.Speakers.IsBoundNPC(actor) and TS.Speakers.GetBusy(actor)) then
         TS.Actors.RefreshBusy(actor)
         notify(player, "busy")
         hook.Run("Talksmith.DialogueStartRejected", player, actor, dialogueID, "busy")
@@ -429,6 +442,7 @@ function TS.Runtime.Start(player, actor, dialogueID)
     if hook.Run("Talksmith.CanStartDialogue", player, actor, dialogueID) == false then
         return false
     end
+    if not TS.Speakers.Acquire(actor, player) then return false end
 
     -- core.open_dialogue retains the same entity, so refresh the target
     -- dialogue's model, appearance and idle animation before entering its node.
@@ -484,6 +498,7 @@ function TS.Runtime.Stop(player, reason)
     end
 
     TS.Runtime.Sessions[player] = nil
+    TS.Speakers.Release(session.actor, player, reason)
     TS.Actors.RefreshBusy(session.actor)
 
     -- A transition can temporarily apply another dialogue's model and idle
@@ -548,9 +563,13 @@ function TS.Runtime.SelectOption(player, token, index)
         end
         session.pending = false
         if not ok then return TS.Runtime.Stop(player, "rejected") end
+        if context.vjCombat then
+            if not TS.VJ.CommitCombat(context) then TS.Runtime.Stop(player, "combat_rejected") end
+            return
+        end
         hook.Run("Talksmith.OptionSelected", player, session.actor, index)
-        if isstring(option.gesture) and option.gesture ~= "" and session.actor.PlayGesture then
-            session.actor:PlayGesture(option.gesture)
+        if isstring(option.gesture) and option.gesture ~= "" then
+            TS.Speakers.PlayGesture(session.actor, option.gesture)
         end
         if context.close then return TS.Runtime.Stop(player, "completed") end
         if context.open then return switchDialogue(player, session, context.open) end

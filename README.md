@@ -1,5 +1,6 @@
 # Talksmith
 
+
 **English** | [Русский](README.ru.md)
 
 **[Documentation](https://ramzkeks.github.io/talksmith-docs/)**
@@ -297,6 +298,7 @@ When installed, they can provide additional conditions, actions, and variables:
 
 | Integration | What it adds |
 | --- | --- |
+| VJ Base | Dialogues on combat NPCs, peaceful staging, coordinate-based spawning, and personal combat results |
 | PointShop 1 | Points, items, equipment, and shop access |
 | Finventory | Items, capacity, and blocked-item rules |
 | GWS Inventory System | Inventory, weapons, and ammunition |
@@ -310,9 +312,11 @@ When installed, they can provide additional conditions, actions, and variables:
 | sAdmin | Permissions and groups |
 | Wiremod | Inputs, outputs, signals, and map automation |
 
+VJ Base is optional and disabled by default, even when installed. Enable it under **Settings → Integrations**. Bind a dialogue to an existing supported ground VJ NPC, or spawn a peaceful personal target at explicit map coordinates through a dialogue action. Existing Actor quests and their automatic placement keep their original format. See the [VJ Base guide](https://ramzkeks.github.io/talksmith-docs/integrations/vj-base) for setup, combat ownership, and shared-world limitations.
+
 Basic DarkRP features are connected automatically when DarkRP is installed. Ultimate Logs can be used separately for Talksmith server diagnostics.
 
-All twelve optional integrations are disabled by default. Administrators enable only the required integrations under **Settings - Integrations**. Integration status and the available action catalog update in an already open Studio window without reconnecting.
+All thirteen optional integrations are disabled by default. Administrators enable only the required integrations under **Settings - Integrations**. Integration status and the available action catalog update in an already open Studio window without reconnecting.
 
 <p align="center">
   <img src="https://hm258634.webhm.pro/talksmith/photo10.jpg" alt="Talksmith integration settings" width="100%">

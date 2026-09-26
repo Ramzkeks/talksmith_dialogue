@@ -748,7 +748,7 @@ function TS.Runtime.Show(data)
     end
 
     if not frame.preview and not frame.cameraInitialized then
-        TS.Runtime.Camera.Actor = TS.Actors.IsActor(data.actor) and data.actor or TS.Runtime.FindTalkTarget()
+        TS.Runtime.Camera.Actor = TS.Speakers.IsSpeaker(data.actor) and data.actor or TS.Runtime.FindTalkTarget()
         TS.Runtime.Camera.ShotDirty = true
         TS.Runtime.Camera.ShotPosition = nil
         TS.Runtime.Camera.ShotAngle = nil
@@ -774,7 +774,7 @@ function TS.Runtime.FindTalkTarget()
         return
     end
     local tr = ply:GetEyeTrace()
-    if TS.Actors.IsActor(tr.Entity) then
+    if TS.Speakers.IsSpeaker(tr.Entity) then
         return tr.Entity
     end
     local best, bestd

@@ -9,6 +9,8 @@ local semantics = {
             currency = "Выбранная валютная интеграция",
         },
         actions = {
+            start_combat = { name = "VJ: начать бой с собеседником", description = "Завершает разговор и начинает бой с этим игроком. Убийство владельцем — успех; его смерть или выход — провал. Единственное действие в списке. Источник: %s." },
+            spawn_target = { name = "VJ: создать персональную цель", description = "Создаёт VJ NPC с диалогом на указанной карте и в точных координатах. Занятая точка отклоняется. Единственное действие в списке. Источник: %s." },
             add = { name = "Добавить валюту", description = "Начисляет игроку указанное количество валюты. Источник: %s." },
             add_levels = { name = "Добавить уровни", description = "Повышает уровень игрока на указанное количество. Источник: %s." },
             add_points = { name = "Добавить очки", description = "Начисляет игроку указанное количество очков. Источник: %s." },
@@ -188,6 +190,13 @@ local semantics = {
         },
     },
 }
+
+semantics.en.actions.start_combat = { name = "VJ: start combat with speaker", description = "Ends dialogue and fights its player. Only the owner's kill succeeds; owner death/disconnect fails. Must be the only action in its list. Source: %s." }
+semantics.en.actions.spawn_target = { name = "VJ: spawn personal target", description = "Creates a VJ dialogue NPC at exact map coordinates. Occupied points fail. Must be the only action in its list. Source: %s." }
+semantics.ru.conditions.result_is = { name = "VJ: результат боя", description = "Проверяет результат попытки игрока: active, success или failed. Источник: %s." }
+semantics.en.conditions.result_is = { name = "VJ: combat result", description = "Checks the player's attempt result: active, success or failed. Source: %s." }
+semantics.ru.conditions.has_target = { name = "VJ: у игрока есть цель", description = "Проверяет наличие персональной цели или активного боя у игрока. Источник: %s." }
+semantics.en.conditions.has_target = { name = "VJ: player has a target", description = "Checks whether the player owns a dialogue target or has an active fight. Source: %s." }
 
 TS.Localization.ReferenceSemantics = semantics
 

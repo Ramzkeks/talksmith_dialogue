@@ -2,6 +2,12 @@ local TS = Talksmith
 
 TS.Localization.Text = {
     ru = {
+        vj_bind = "VJ NPC: привязать диалог (мирное ожидание)",
+        vj_bind_native = "VJ NPC: привязать (обычное поведение)",
+        vj_unbind = "VJ NPC: снять привязку диалога",
+        vj_bound = "Диалог привязан к VJ NPC. NPC мирно ожидает сцену.",
+        vj_unbound = "Привязка VJ NPC снята.",
+        vj_error = "Нужен живой наземный VJ NPC поблизости, без активной сцены или управления.",
         exit = "Завершить разговор",
         editor = "Talksmith Studio",
         workflow = "WORKFLOW",
@@ -395,6 +401,12 @@ TS.Localization.Text = {
         },
     },
     en = {
+        vj_bind = "VJ NPC: bind dialogue (peaceful staging)",
+        vj_bind_native = "VJ NPC: bind (native behavior)",
+        vj_unbind = "VJ NPC: unbind dialogue",
+        vj_bound = "Dialogue bound to VJ NPC. NPC is peacefully staged.",
+        vj_unbound = "VJ NPC dialogue unbound.",
+        vj_error = "Aim at a nearby living ground VJ NPC without an active scene or controller.",
         exit = "Leave conversation",
         editor = "Talksmith Studio",
         workflow = "WORKFLOW",

@@ -212,8 +212,20 @@ function TS.Editor.OpenPresetImporter(onImport)
         doc.meta.author = IsValid(LocalPlayer()) and LocalPlayer():SteamID64() or ""
         local ok, issues = TS.Validation.ValidateDialogue(doc)
         if not ok then
+            local errors, details = 0, {}
+            for _, issue in ipairs(issues or {}) do
+                if issue.severity == "error" then
+                    errors = errors + 1
+                    details[#details + 1] = tostring(issue.path or "/") .. ": " .. tostring(issue.message or "")
+                end
+            end
+            local message = table.concat(details, "\n")
             status:SetTextColor(T.red)
-            status:SetText(TS.L("import_errors", #issues))
+            status:SetText(TS.L("import_errors", errors) .. " — " .. (details[1] or ""))
+            status:SetTooltip(message)
+            -- Keep the JSON intact and show the validator's actual reason.
+            -- A missing optional action must not look like a model error.
+            Derma_Message(message, TS.L("import_errors", errors), "OK")
             return
         end
         onImport(doc)

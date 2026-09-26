@@ -50,7 +50,7 @@ hook.Add("HUDPaint", "Talksmith.ActorLabel", function()
         return
     end
     local actor = player:GetEyeTrace().Entity
-    if not TS.Actors.IsActor(actor) then
+    if not TS.Speakers.IsSpeaker(actor) then
         return
     end
     local dist = player:GetPos():DistToSqr(actor:GetPos())
@@ -58,12 +58,12 @@ hook.Add("HUDPaint", "Talksmith.ActorLabel", function()
         return
     end
     local alpha = math.Clamp(255 * (1 - dist / 65536) + 80, 0, 255)
-    local pos = (actor:GetPos() + Vector(0, 0, TS.Actors.GetNameOffset(actor))):ToScreen()
-    local T = TS.Runtime.GetTheme(TS.Actors.GetTheme(actor))
+    local pos = (actor:GetPos() + Vector(0, 0, TS.Speakers.GetNameOffset(actor))):ToScreen()
+    local T = TS.Runtime.GetTheme(TS.Speakers.GetTheme(actor))
     local outline = Color(0, 0, 0, alpha * 0.8)
     if TS.Config.show_name then
         draw.SimpleTextOutlined(
-            TS.Actors.GetName(actor),
+            TS.Speakers.GetName(actor),
             T.fonts.label,
             pos.x,
             pos.y - 20,
@@ -74,7 +74,7 @@ hook.Add("HUDPaint", "Talksmith.ActorLabel", function()
             outline
         )
     end
-    local subtitle = TS.Actors.GetSubtitle(actor)
+    local subtitle = TS.Speakers.GetSubtitle(actor)
     if TS.Config.show_description and subtitle ~= "" then
         draw.SimpleTextOutlined(
             subtitle,
@@ -89,7 +89,7 @@ hook.Add("HUDPaint", "Talksmith.ActorLabel", function()
         )
     end
     if TS.Config.show_interaction then
-        local busy = actor:GetBusy()
+        local busy = TS.Speakers.GetBusy(actor)
         draw.SimpleTextOutlined(
             busy and TS.L("actor_busy_label") or ("[E] " .. TS.L("talk_hint")),
             T.fonts.small,

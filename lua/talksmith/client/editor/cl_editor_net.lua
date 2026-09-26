@@ -117,17 +117,18 @@ function TS.Editor.Manage(op, id, newid)
     net.SendToServer()
 end
 
-local ActorOPS = { place = 0, save = 1, remove = 2, load = 3, update = 4, copy_aim = 5 }
-function TS.Editor.ManageActor(op, id)
+local ActorOPS = { place = 0, save = 1, remove = 2, load = 3, update = 4, copy_aim = 5, vj_bind = 6, vj_unbind = 7 }
+function TS.Editor.ManageActor(op, id, mode)
     local code = ActorOPS[op]
     if code == nil then
         return
     end
     net.Start("ts_editor_actor")
     net.WriteUInt(code, 3)
-    if op == "place" or op == "update" or op == "copy_aim" then
+    if op == "place" or op == "update" or op == "copy_aim" or op == "vj_bind" then
         net.WriteString(id or "")
     end
+    if op == "vj_bind" then net.WriteBool(mode == "native") end
     net.SendToServer()
 end
 
@@ -135,6 +136,9 @@ net.Receive("ts_editor_actor_result", function()
     local ok = net.ReadBool()
     local code = net.ReadString()
     local key = code == "copy_done" and "copy_transform_done"
+        or code == "vj_bound" and "vj_bound"
+        or code == "vj_unbound" and "vj_unbound"
+        or code == "vj_error" and "vj_error"
         or code == "updated" and "status_saved"
         or "copy_aim_invalid"
     TS.Runtime.Notify(TS.L(key), ok and NOTIFY_GENERIC or NOTIFY_ERROR, 3)

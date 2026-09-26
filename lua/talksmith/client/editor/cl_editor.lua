@@ -517,6 +517,20 @@ function TS.Editor.Open()
         TS.Editor.AddMenuOption(m, TS.L("actor_delete"), function()
             TS.Editor.ManageActor("remove")
         end, { icon = "user-minus", danger = true })
+        local integrations = TS.Editor.Catalog and TS.Editor.Catalog.integrations
+        local vj = integrations and integrations.vj
+        if vj and vj.enabled == true and vj.status == "available" then
+            TS.Editor.AddMenuSpacer(m)
+            TS.Editor.AddMenuOption(m, TS.L("vj_bind"), function()
+                if doc then TS.Editor.ManageActor("vj_bind", doc.id) end
+            end, { icon = "user-focus", enabled = doc ~= nil })
+            TS.Editor.AddMenuOption(m, TS.L("vj_bind_native"), function()
+                if doc then TS.Editor.ManageActor("vj_bind", doc.id, "native") end
+            end, { icon = "user-focus", enabled = doc ~= nil })
+            TS.Editor.AddMenuOption(m, TS.L("vj_unbind"), function()
+                TS.Editor.ManageActor("vj_unbind")
+            end, { icon = "user-minus" })
+        end
         TS.Editor.AddMenuSpacer(m)
         TS.Editor.AddMenuOption(m, TS.L("actor_save"), function()
             TS.Editor.ManageActor("save")
