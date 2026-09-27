@@ -1,0 +1,489 @@
+{
+  "schema": 3,
+  "id": "ts_anim_test_list",
+  "meta": {
+    "title": "Анимации 2 - список idle",
+    "author": "Animation QA",
+    "created": 1790518130,
+    "modified": 1790519360,
+    "revision": 0
+  },
+  "settings": {
+    "actor_name": "Анимации 2 - список idle",
+    "actor_subtitle": "Тест Talksmith Actor",
+    "actor_model": "models/Humans/Group01/male_02.mdl",
+    "interact_distance": 160,
+    "actor_scale": 1,
+    "actor_skin": 0,
+    "actor_bodygroups": {},
+    "name_offset": 82,
+    "idle_sequence": "idle_subtle",
+    "idle_sequences": [
+      "idle_subtle",
+      "LineIdle01",
+      "idle_angry"
+    ],
+    "theme": "default",
+    "use_limit": false,
+    "start_random": []
+  },
+  "start": "greeting",
+  "nodes": {
+    "greeting": {
+      "text": "Список idle_subtle / LineIdle01 / idle_angry: наблюдайте 30–60 секунд. Выбор случайный; одна последовательность может выпасть повторно. Смена происходит по окончании, а не каждый тик.\n\nТест анимаций Talksmith Actor. Выполняйте пункты по порядку. Сначала наблюдайте за актёром 15 секунд: idle должен двигаться непрерывно. Для проверки рук можно закрыть окно и наблюдать снаружи. Все результаты оцениваются визуально; файл не выдаёт автоматический PASS.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "1. Жест из реплики",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [],
+          "next": "node_wave"
+        },
+        {
+          "text": "2. Жест из ответа",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [],
+          "next": "response_ready"
+        },
+        {
+          "text": "3. Повтор и замена жеста",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [],
+          "next": "replace_ready"
+        },
+        {
+          "text": "4. Пустой и неизвестный жест",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [],
+          "next": "noop_ready"
+        },
+        {
+          "text": "5–6. Наблюдение и загрузка карты",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [],
+          "next": "more_tests"
+        },
+        {
+          "text": "Завершить",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ],
+      "editor": {
+        "x": 180,
+        "y": 160
+      }
+    },
+    "node_wave": {
+      "text": "Сейчас запущен Wave из реплики. Не нажимайте кнопки 10 секунд. Рука должна пройти всю анимацию, затем актёр сам возвращается к idle. Повторный вход в этот пункт запускает Wave с начала.",
+      "sound": "",
+      "gesture": "Wave",
+      "actions": [],
+      "options": [
+        {
+          "text": "Повторить Wave",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [],
+          "next": "node_wave"
+        },
+        {
+          "text": "Вернуться к списку проверок",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [],
+          "next": "greeting"
+        }
+      ],
+      "editor": {
+        "x": 700,
+        "y": 160
+      }
+    },
+    "response_ready": {
+      "text": "Нажмите кнопку ниже: Wave_close будет запущен именно ответом. Следующая реплика не задаёт жест, поэтому не должна прервать его.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Запустить Wave_close ответом",
+          "next_random": [],
+          "gesture": "Wave_close",
+          "conditions": [],
+          "actions": [],
+          "next": "response_wait"
+        },
+        {
+          "text": "Вернуться к списку проверок",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [],
+          "next": "greeting"
+        }
+      ],
+      "editor": {
+        "x": 1220,
+        "y": 160
+      }
+    },
+    "response_wait": {
+      "text": "Жест пришёл из ответа. Подождите 10 секунд: движение завершается и возвращается idle. Этот узел имеет пустой gesture.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Повторить ответ",
+          "next_random": [],
+          "gesture": "Wave_close",
+          "conditions": [],
+          "actions": [],
+          "next": "response_wait"
+        },
+        {
+          "text": "Вернуться к списку проверок",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [],
+          "next": "greeting"
+        }
+      ],
+      "editor": {
+        "x": 180,
+        "y": 510
+      }
+    },
+    "replace_ready": {
+      "text": "Запустите Wave, затем сразу выбирайте повтор или замену. Если текст появляется медленно, сначала пропустите печать, затем нажмите ответ.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Начать Wave",
+          "next_random": [],
+          "gesture": "Wave",
+          "conditions": [],
+          "actions": [],
+          "next": "replace_active"
+        },
+        {
+          "text": "Вернуться к списку проверок",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [],
+          "next": "greeting"
+        }
+      ],
+      "editor": {
+        "x": 700,
+        "y": 510
+      }
+    },
+    "replace_active": {
+      "text": "Нажимайте сразу: повтор - с начала, замена - новый жест. Затем ждите возврата к idle.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Повторить Wave с начала",
+          "next_random": [],
+          "gesture": "Wave",
+          "conditions": [],
+          "actions": [],
+          "next": "replace_active"
+        },
+        {
+          "text": "Заменить на Wave_close",
+          "next_random": [],
+          "gesture": "Wave_close",
+          "conditions": [],
+          "actions": [],
+          "next": "replace_active"
+        },
+        {
+          "text": "Заменить обратно на Wave",
+          "next_random": [],
+          "gesture": "Wave",
+          "conditions": [],
+          "actions": [],
+          "next": "replace_active"
+        },
+        {
+          "text": "Вернуться к списку проверок",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [],
+          "next": "greeting"
+        }
+      ],
+      "editor": {
+        "x": 1220,
+        "y": 510
+      }
+    },
+    "noop_ready": {
+      "text": "Проверка безопасного no-op. Пустое или неизвестное имя не должно сбрасывать текущую анимацию и ломать переходы. Проверьте сначала на idle, затем во время Wave.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Пустой жест на idle",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [],
+          "next": "noop_empty"
+        },
+        {
+          "text": "Неизвестный жест на idle",
+          "next_random": [],
+          "gesture": "ts_missing_gesture_test",
+          "conditions": [],
+          "actions": [],
+          "next": "noop_unknown"
+        },
+        {
+          "text": "Начать Wave для проверки no-op",
+          "next_random": [],
+          "gesture": "Wave",
+          "conditions": [],
+          "actions": [],
+          "next": "noop_active"
+        },
+        {
+          "text": "Вернуться к списку проверок",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [],
+          "next": "greeting"
+        }
+      ],
+      "editor": {
+        "x": 180,
+        "y": 860
+      }
+    },
+    "noop_active": {
+      "text": "Wave начался. Сразу выберите пустой или неизвестный жест: движение должно продолжиться без сброса.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Пустой жест",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [],
+          "next": "noop_empty"
+        },
+        {
+          "text": "Неизвестный жест в ответе",
+          "next_random": [],
+          "gesture": "ts_missing_gesture_test",
+          "conditions": [],
+          "actions": [],
+          "next": "noop_empty"
+        },
+        {
+          "text": "Неизвестный жест в реплике",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [],
+          "next": "noop_unknown"
+        },
+        {
+          "text": "Вернуться к списку проверок",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [],
+          "next": "greeting"
+        }
+      ],
+      "editor": {
+        "x": 700,
+        "y": 860
+      }
+    },
+    "noop_empty": {
+      "text": "Пустой gesture: текущая анимация должна продолжиться. Диалог остаётся работоспособным. Подождите завершения жеста, если он был активен.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Повторить проверку",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [],
+          "next": "noop_ready"
+        },
+        {
+          "text": "Вернуться к списку проверок",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [],
+          "next": "greeting"
+        }
+      ],
+      "editor": {
+        "x": 1220,
+        "y": 860
+      }
+    },
+    "noop_unknown": {
+      "text": "Неизвестный gesture: анимация не должна сброситься, актёр не должен зависнуть. Переходы и ответы должны работать.",
+      "sound": "",
+      "gesture": "ts_missing_gesture_test",
+      "actions": [],
+      "options": [
+        {
+          "text": "Повторить проверку",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [],
+          "next": "noop_ready"
+        },
+        {
+          "text": "Вернуться к списку проверок",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [],
+          "next": "greeting"
+        }
+      ],
+      "editor": {
+        "x": 180,
+        "y": 1210
+      }
+    },
+    "outside": {
+      "text": "Следующая кнопка запускает Wave и закрывает разговор. Наблюдайте за актёром 10 секунд: жест завершается, idle продолжает двигаться. Затем снова поговорите с ним.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Wave и закрыть разговор",
+          "next_random": [],
+          "gesture": "Wave",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Вернуться к списку проверок",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [],
+          "next": "greeting"
+        }
+      ],
+      "editor": {
+        "x": 700,
+        "y": 1210
+      }
+    },
+    "idle_check": {
+      "text": "Проверьте idle до разговора и после жеста. Затем сохраните актёра обычным способом, перезапустите карту и повторите пункты 1 и 2. Актёр должен восстановиться один раз. Автоспавн и нагрузка 128 актёров проверяются отдельно; этот диалог сам никого не создаёт.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Вернуться к списку проверок",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [],
+          "next": "greeting"
+        },
+        {
+          "text": "Закрыть и наблюдать",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ],
+      "editor": {
+        "x": 1220,
+        "y": 1210
+      }
+    },
+    "more_tests": {
+      "text": "Дополнительные проверки: движение после закрытия разговора, idle и восстановление после перезапуска карты.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "5. Жест после закрытия",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [],
+          "next": "outside"
+        },
+        {
+          "text": "6. Idle и загрузка карты",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [],
+          "next": "idle_check"
+        },
+        {
+          "text": "К основным проверкам",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [],
+          "next": "greeting"
+        },
+        {
+          "text": "Завершить",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ],
+      "editor": {
+        "x": 180,
+        "y": 1560
+      }
+    }
+  }
+}

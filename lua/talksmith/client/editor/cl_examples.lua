@@ -175,7 +175,7 @@ function TS.Editor.OpenExamples(category)
     end
 
     local T = TS.Editor.Theme
-    local activeCategory = category == "integration" and "integration" or "standard"
+    local activeCategory = (category == "integration" or category == "test") and category or "standard"
     local screen = vgui.Create("EditablePanel")
     TS.Editor.ExamplesFrame = screen
     TS.Editor.ExamplesOpen = true
@@ -244,6 +244,7 @@ function TS.Editor.OpenExamples(category)
     end
     addTab("standard", TS.L("presets_standard"))
     addTab("integration", TS.L("presets_integrations"))
+    addTab("test", TS.L("presets_tests"))
 
     rebuild = function()
         list:Clear()

@@ -59,10 +59,25 @@ function ENT:ApplyIdleSettings(settings)
     settings = settings or {}
     self.IdleSequenceName = isstring(settings.idle_sequence) and settings.idle_sequence or ""
     self.IdleSequences = istable(settings.idle_sequences) and settings.idle_sequences or {}
+    -- Appearance restoration calls SetModel even for the same model, which can
+    -- reset its sequence. Restore the gesture at its elapsed time, not its start.
+    if self.GestureUntil and CurTime() < self.GestureUntil and self.GestureModel == self:GetModel() then
+        self:ResetSequence(self.GestureSeqIndex)
+        self:SetCycle(math.Clamp((CurTime() - self.GestureStartedAt) / (self.GestureUntil - self.GestureStartedAt), 0, 1))
+        self:SetPlaybackRate(1)
+        self:NextThink(CurTime())
+        return
+    end
     self:StartIdleAnim()
 end
 
 function ENT:StartIdleAnim()
+    self.GestureUntil = nil
+    self.GestureModel = nil
+    self.GestureSeqIndex = nil
+    self.GestureStartedAt = nil
+    self.IdleSeqIndex = nil
+    self.IdleSwitchAt = nil
     local name = self.IdleSequenceName
     local list = self.IdleSequences
     if istable(list) and #list > 0 then
@@ -94,11 +109,12 @@ function ENT:StartIdleAnim()
         local now = CurTime()
         if istable(list) and #list > 1 then
             self.IdleSwitchAt = now + math.max(self:SequenceDuration(seq), 0.2)
-            self:NextThink(self.IdleSwitchAt)
         else
             self.IdleSwitchAt = nil
-            self:NextThink(now + 60)
         end
+        self:NextThink(now)
+    else
+        self:NextThink(CurTime() + 60)
     end
 end
 
@@ -114,9 +130,12 @@ function ENT:PlayGesture(name)
     self:SetCycle(0)
     self:SetPlaybackRate(1)
     local dur = math.max(self:SequenceDuration(seq), 0.2)
-    self.GestureUntil = CurTime() + dur
+    self.GestureStartedAt = CurTime()
+    self.GestureUntil = self.GestureStartedAt + dur
+    self.GestureSeqIndex = seq
+    self.GestureModel = self:GetModel()
     self.IdleSwitchAt = nil
-    self:NextThink(self.GestureUntil)
+    self:NextThink(CurTime())
 end
 
 function ENT:Use(player)
@@ -133,22 +152,22 @@ function ENT:Think()
     local now = CurTime()
     if self.GestureUntil then
         if now < self.GestureUntil then
-            self:NextThink(self.GestureUntil)
+            self:NextThink(now)
             return true
         end
         self.GestureUntil = nil
         self:StartIdleAnim()
         return true
     end
-    if not (istable(self.IdleSequences) and #self.IdleSequences > 1) then
+    if self.IdleSeqIndex == nil then
         self:NextThink(now + 60)
         return true
     end
 
-    if not self.IdleSwitchAt or now >= self.IdleSwitchAt then
+    if self.IdleSwitchAt and now >= self.IdleSwitchAt then
         self:StartIdleAnim()
     else
-        self:NextThink(self.IdleSwitchAt)
+        self:NextThink(now)
     end
     return true
 end

@@ -190,6 +190,24 @@ TS.Examples.Catalog = {
     },
 }
 
+for _, variant in ipairs({
+    { "single", "Одиночный idle", "Single idle" },
+    { "list", "Список idle", "Idle list" },
+    { "fallback", "Запасной idle", "Fallback idle" },
+}) do
+    local id = "ts_anim_test_" .. variant[1]
+    TS.Examples.Catalog[#TS.Examples.Catalog + 1] = {
+        id = id,
+        file = id .. ".json",
+        category = "test",
+        title = localized("Анимации: " .. variant[2], "Animations: " .. variant[3]),
+        description = localized(
+            "Жесты реплик и ответов, повтор, замена, возврат к idle и жест после закрытия.",
+            "Node and response gestures, replay, replacement, return to idle, and gestures after closing."
+        ),
+    }
+end
+
 TS.Examples.ByID = {}
 for _, entry in ipairs(TS.Examples.Catalog) do
     TS.Examples.ByID[entry.id] = entry
@@ -215,6 +233,6 @@ function TS.Examples.Path(entry, language)
         return nil
     end
     language = language == "ru" and "ru" or "en"
-    local folder = entry.category == "integration" and "integrations" or "standard"
+    local folder = entry.category == "test" and "tests" or entry.category == "integration" and "integrations" or "standard"
     return "data_static/talksmith/examples/" .. language .. "/" .. folder .. "/" .. entry.file
 end

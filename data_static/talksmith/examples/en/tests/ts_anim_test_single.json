@@ -1,0 +1,485 @@
+{
+  "schema": 3,
+  "id": "ts_anim_test_single",
+  "meta": {
+    "title": "Animations 1 - single idle",
+    "author": "Animation QA",
+    "created": 1790518130,
+    "modified": 1790518571,
+    "revision": 0
+  },
+  "settings": {
+    "actor_name": "Animations 1 - single idle",
+    "actor_subtitle": "Talksmith Actor test",
+    "actor_model": "models/Humans/Group01/male_02.mdl",
+    "interact_distance": 160,
+    "actor_scale": 1,
+    "actor_skin": 0,
+    "actor_bodygroups": {},
+    "name_offset": 82,
+    "idle_sequence": "idle_subtle",
+    "idle_sequences": [],
+    "theme": "default",
+    "use_limit": false,
+    "start_random": []
+  },
+  "start": "greeting",
+  "nodes": {
+    "greeting": {
+      "text": "Single idle_subtle: watch for continuous movement for at least 15 seconds.\n\nTalksmith Actor animation test. Follow the checks in order. Watch the actor for 15 seconds first: idle should keep moving. You can close the window to see the hands clearly. Judge the results visually; this dialogue does not produce an automatic PASS.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "1. Gesture from a node",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [],
+          "next": "node_wave"
+        },
+        {
+          "text": "2. Gesture from a response",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [],
+          "next": "response_ready"
+        },
+        {
+          "text": "3. Repeat and replace a gesture",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [],
+          "next": "replace_ready"
+        },
+        {
+          "text": "4. Empty and unknown gestures",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [],
+          "next": "noop_ready"
+        },
+        {
+          "text": "5–6. Observation and map reload",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [],
+          "next": "more_tests"
+        },
+        {
+          "text": "Finish",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ],
+      "editor": {
+        "x": 180,
+        "y": 160
+      }
+    },
+    "node_wave": {
+      "text": "Wave has started from this node. Do not press anything for 10 seconds. The arm should complete the animation, then return to idle automatically. Entering this check again starts Wave from the beginning.",
+      "sound": "",
+      "gesture": "Wave",
+      "actions": [],
+      "options": [
+        {
+          "text": "Repeat Wave",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [],
+          "next": "node_wave"
+        },
+        {
+          "text": "Back to checks",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [],
+          "next": "greeting"
+        }
+      ],
+      "editor": {
+        "x": 700,
+        "y": 160
+      }
+    },
+    "response_ready": {
+      "text": "Press the button below to start Wave_close from a response. The next node has no gesture and should not interrupt it.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Start Wave_close from a response",
+          "next_random": [],
+          "gesture": "Wave_close",
+          "conditions": [],
+          "actions": [],
+          "next": "response_wait"
+        },
+        {
+          "text": "Back to checks",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [],
+          "next": "greeting"
+        }
+      ],
+      "editor": {
+        "x": 1220,
+        "y": 160
+      }
+    },
+    "response_wait": {
+      "text": "The gesture came from a response. Wait 10 seconds: it should finish and return to idle. This node has an empty gesture.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Repeat the response gesture",
+          "next_random": [],
+          "gesture": "Wave_close",
+          "conditions": [],
+          "actions": [],
+          "next": "response_wait"
+        },
+        {
+          "text": "Back to checks",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [],
+          "next": "greeting"
+        }
+      ],
+      "editor": {
+        "x": 180,
+        "y": 510
+      }
+    },
+    "replace_ready": {
+      "text": "Start Wave, then quickly repeat or replace it. If the text appears slowly, skip the typing first, then select a response.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Start Wave",
+          "next_random": [],
+          "gesture": "Wave",
+          "conditions": [],
+          "actions": [],
+          "next": "replace_active"
+        },
+        {
+          "text": "Back to checks",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [],
+          "next": "greeting"
+        }
+      ],
+      "editor": {
+        "x": 700,
+        "y": 510
+      }
+    },
+    "replace_active": {
+      "text": "Press immediately: repeat restarts the gesture; replacement starts another one. Then wait for the return to idle.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Restart Wave",
+          "next_random": [],
+          "gesture": "Wave",
+          "conditions": [],
+          "actions": [],
+          "next": "replace_active"
+        },
+        {
+          "text": "Replace with Wave_close",
+          "next_random": [],
+          "gesture": "Wave_close",
+          "conditions": [],
+          "actions": [],
+          "next": "replace_active"
+        },
+        {
+          "text": "Replace with Wave",
+          "next_random": [],
+          "gesture": "Wave",
+          "conditions": [],
+          "actions": [],
+          "next": "replace_active"
+        },
+        {
+          "text": "Back to checks",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [],
+          "next": "greeting"
+        }
+      ],
+      "editor": {
+        "x": 1220,
+        "y": 510
+      }
+    },
+    "noop_ready": {
+      "text": "Safe no-op check. An empty or unknown name must not reset the animation or break dialogue navigation. Test it while idle, then during Wave.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Empty gesture while idle",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [],
+          "next": "noop_empty"
+        },
+        {
+          "text": "Unknown gesture while idle",
+          "next_random": [],
+          "gesture": "ts_missing_gesture_test",
+          "conditions": [],
+          "actions": [],
+          "next": "noop_unknown"
+        },
+        {
+          "text": "Start Wave for the no-op check",
+          "next_random": [],
+          "gesture": "Wave",
+          "conditions": [],
+          "actions": [],
+          "next": "noop_active"
+        },
+        {
+          "text": "Back to checks",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [],
+          "next": "greeting"
+        }
+      ],
+      "editor": {
+        "x": 180,
+        "y": 860
+      }
+    },
+    "noop_active": {
+      "text": "Wave has started. Immediately select an empty or unknown gesture: movement should continue without resetting.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Empty gesture",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [],
+          "next": "noop_empty"
+        },
+        {
+          "text": "Unknown gesture in a response",
+          "next_random": [],
+          "gesture": "ts_missing_gesture_test",
+          "conditions": [],
+          "actions": [],
+          "next": "noop_empty"
+        },
+        {
+          "text": "Unknown gesture in a node",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [],
+          "next": "noop_unknown"
+        },
+        {
+          "text": "Back to checks",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [],
+          "next": "greeting"
+        }
+      ],
+      "editor": {
+        "x": 700,
+        "y": 860
+      }
+    },
+    "noop_empty": {
+      "text": "Empty gesture: the current animation should continue. The dialogue should still work. Wait for the active gesture to finish, if any.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Repeat the check",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [],
+          "next": "noop_ready"
+        },
+        {
+          "text": "Back to checks",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [],
+          "next": "greeting"
+        }
+      ],
+      "editor": {
+        "x": 1220,
+        "y": 860
+      }
+    },
+    "noop_unknown": {
+      "text": "Unknown gesture: the animation should not reset and the actor should not freeze. Responses and navigation should still work.",
+      "sound": "",
+      "gesture": "ts_missing_gesture_test",
+      "actions": [],
+      "options": [
+        {
+          "text": "Repeat the check",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [],
+          "next": "noop_ready"
+        },
+        {
+          "text": "Back to checks",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [],
+          "next": "greeting"
+        }
+      ],
+      "editor": {
+        "x": 180,
+        "y": 1210
+      }
+    },
+    "outside": {
+      "text": "The next button starts Wave and closes the conversation. Watch the actor for 10 seconds: the gesture should finish and idle should keep moving. Then talk to the actor again.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Wave and close the conversation",
+          "next_random": [],
+          "gesture": "Wave",
+          "conditions": [],
+          "actions": []
+        },
+        {
+          "text": "Back to checks",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [],
+          "next": "greeting"
+        }
+      ],
+      "editor": {
+        "x": 700,
+        "y": 1210
+      }
+    },
+    "idle_check": {
+      "text": "Check idle before the conversation and after a gesture. Save the actor normally, restart the map, then repeat checks 1 and 2. The actor should be restored exactly once. Configured spawning and the 128-actor load test are separate checks; this dialogue does not spawn actors.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "Back to checks",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [],
+          "next": "greeting"
+        },
+        {
+          "text": "Close and observe",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ],
+      "editor": {
+        "x": 1220,
+        "y": 1210
+      }
+    },
+    "more_tests": {
+      "text": "Additional checks: animation after closing the conversation, idle, and restoration after restarting the map.",
+      "sound": "",
+      "gesture": "",
+      "actions": [],
+      "options": [
+        {
+          "text": "5. Gesture after closing",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [],
+          "next": "outside"
+        },
+        {
+          "text": "6. Idle and map reload",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [],
+          "next": "idle_check"
+        },
+        {
+          "text": "Back to main checks",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": [],
+          "next": "greeting"
+        },
+        {
+          "text": "Finish",
+          "next_random": [],
+          "gesture": "",
+          "conditions": [],
+          "actions": []
+        }
+      ],
+      "editor": {
+        "x": 180,
+        "y": 1560
+      }
+    }
+  }
+}

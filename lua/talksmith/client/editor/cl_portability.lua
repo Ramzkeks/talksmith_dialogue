@@ -223,9 +223,6 @@ function TS.Editor.OpenPresetImporter(onImport)
             status:SetTextColor(T.red)
             status:SetText(TS.L("import_errors", errors) .. " — " .. (details[1] or ""))
             status:SetTooltip(message)
-            -- Keep the JSON intact and show the validator's actual reason.
-            -- A missing optional action must not look like a model error.
-            Derma_Message(message, TS.L("import_errors", errors), "OK")
             return
         end
         onImport(doc)
