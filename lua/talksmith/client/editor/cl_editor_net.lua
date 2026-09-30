@@ -28,6 +28,7 @@ local function receiveCatalog(raw)
         integrations = cat.integrations or {},
         providers = cat.providers or {},
         variables = cat.variables or {},
+        class_pickers = cat.class_pickers or {},
     }
     TS.Editor.Open()
 end
@@ -50,6 +51,7 @@ local function receiveDocs(raw, isDoc)
         isDoc and TS.Config.max_document_bytes or TS.Editor.Transfer.ListLimit)
     if not data then return end
     if isDoc then
+        data = TS.Dialogues.Normalize(data)
         if TS.Editor.ReceiveDocument then
             TS.Editor.ReceiveDocument(data)
         end

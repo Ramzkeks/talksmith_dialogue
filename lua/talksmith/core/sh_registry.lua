@@ -61,11 +61,11 @@ function TS.Actions.Execute(id, context, params)
     if not definition then
         return false, "unknown_action"
     end
-    local valid, reason = TS.Validation.ValidateParams(definition.params, params)
+    local valid, reason, resolved = TS.Validation.ValidateParams(definition.params, params)
     if not valid then
         return false, reason
     end
-    local called, result = TS.Utils.SafeCall("action " .. tostring(id), definition.run, context or {}, params or {})
+    local called, result = TS.Utils.SafeCall("action " .. tostring(id), definition.run, context or {}, resolved)
     return called and result ~= false, result
 end
 
@@ -74,16 +74,26 @@ function TS.Conditions.Evaluate(id, context, params)
     if not definition then
         return false, "unknown_condition"
     end
-    local valid, reason = TS.Validation.ValidateParams(definition.params, params)
+    local valid, reason, resolved = TS.Validation.ValidateParams(definition.params, params)
     if not valid then
         return false, reason
     end
-    local called, result = TS.Utils.SafeCall("condition " .. tostring(id), definition.run, context or {}, params or {})
+    local called, result = TS.Utils.SafeCall("condition " .. tostring(id), definition.run, context or {}, resolved)
     return called and not not result, result
 end
 
 local function finiteNumber(value)
     return isnumber(value) and value == value and value ~= math.huge and value ~= -math.huge
+end
+
+function TS.Validation.ResolveParams(schema, values)
+    local resolved = TS.Utils.Copy(values or {})
+    for key, rule in pairs(schema or {}) do
+        if istable(rule) and resolved[key] == nil and rule.default ~= nil then
+            resolved[key] = istable(rule.default) and TS.Utils.Copy(rule.default) or rule.default
+        end
+    end
+    return resolved
 end
 
 function TS.Validation.ValidateParams(schema, values)
@@ -95,6 +105,7 @@ function TS.Validation.ValidateParams(schema, values)
     if not istable(schema) then
         return false, "parameter schema is invalid"
     end
+    values = TS.Validation.ResolveParams(schema, values)
 
     for key, value in pairs(values) do
         local rule = schema[key]
@@ -167,5 +178,5 @@ function TS.Validation.ValidateParams(schema, values)
             end
         end
     end
-    return true
+    return true, nil, values
 end

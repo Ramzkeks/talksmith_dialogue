@@ -42,7 +42,56 @@ net.Receive("ts_editor_export", function(len, p)
     net.Send(p)
 end)
 
-local function catalog()
+function TS.Editor.BuildClassCatalog(player)
+    local out = { weapon = {}, npc = {}, vj_npc = {} }
+    local weaponDefinitions = {}
+    for _, definition in pairs(list.Get("Weapon") or {}) do
+        if istable(definition) and isstring(definition.ClassName) then
+            weaponDefinitions[definition.ClassName] = definition
+        end
+    end
+    for _, definition in pairs(weapons.GetList() or {}) do
+        if istable(definition) and isstring(definition.ClassName) then
+            weaponDefinitions[definition.ClassName] = definition
+        end
+    end
+    local function item(class, definition)
+        definition = definition or {}
+        return {
+            id = class,
+            name = isstring(definition.PrintName) and definition.PrintName
+                or isstring(definition.Name) and definition.Name or class,
+            group = isstring(definition.Category) and definition.Category or "",
+        }
+    end
+    for _, class in ipairs(TS.Config.allowed_weapons or {}) do
+        out.weapon[#out.weapon + 1] = item(class, weaponDefinitions[class])
+    end
+    for class, definition in pairs(list.Get("NPC") or {}) do
+        if istable(definition) then
+            class = definition.Class or class
+            if isstring(class) then out.npc[#out.npc + 1] = item(class, definition) end
+        end
+    end
+    if TS.VJ and not TS.VJ.Failed and TS.VJ.GetSpawnDefinition then
+        for class in pairs(list.Get("VJBASE_SPAWNABLE_NPC") or {}) do
+            local definition = TS.VJ.GetSpawnDefinition(class)
+            if definition and (not definition.AdminOnly or player:IsAdmin()) then
+                local choice = item(class, definition)
+                choice.weapons = {}
+                for _, weapon in ipairs(istable(definition.Weapons) and definition.Weapons or {}) do
+                    if isstring(weapon) then
+                        choice.weapons[#choice.weapons + 1] = item(weapon, weaponDefinitions[weapon])
+                    end
+                end
+                out.vj_npc[#out.vj_npc + 1] = choice
+            end
+        end
+    end
+    return out
+end
+
+local function catalog(player)
     local function isAvailable(definition)
         if definition.integration then
             return TS.Integrations.IsAvailable(definition.integration)
@@ -113,6 +162,7 @@ local function catalog()
         integrations = TS.Integrations.GetCatalog and TS.Integrations.GetCatalog() or {},
         providers = providers,
         variables = variables,
+        class_pickers = TS.Editor.BuildClassCatalog(player),
     }
 end
 
@@ -125,7 +175,7 @@ local function openEditor(p)
     then
         return
     end
-    local json = util.TableToJSON(catalog()) or "{}"
+    local json = util.TableToJSON(catalog(p)) or "{}"
     if #json > MAX_EDITOR_CATALOG_BYTES then
         TS.Logging.Log(0, "Editor catalog exceeds the safe payload limit")
         return

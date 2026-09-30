@@ -1,5 +1,7 @@
 local TS = Talksmith
 TS.Dialogues.Registry = TS.Dialogues.Registry or {}
+local loadedFingerprints = TS.Dialogues.LoadedFingerprints or setmetatable({}, { __mode = "k" })
+TS.Dialogues.LoadedFingerprints = loadedFingerprints
 local root = "talksmith/dialogues"
 file.CreateDir("talksmith")
 file.CreateDir(root)
@@ -56,7 +58,7 @@ local function appendCanonical(value, out, seen, depth)
     return true
 end
 
-function TS.Dialogues.DependencyFingerprint(document)
+local function documentFingerprint(document)
     if not istable(document) then return nil end
     local payload = TS.Utils.Copy(document)
     if istable(payload.meta) then
@@ -66,6 +68,15 @@ function TS.Dialogues.DependencyFingerprint(document)
     local out = {}
     if not appendCanonical(payload, out, {}, 0) then return nil end
     return util.SHA256(table.concat(out))
+end
+
+function TS.Dialogues.DependencyFingerprint(document)
+    local current = documentFingerprint(document)
+    local loaded = loadedFingerprints[document]
+    -- Filling missing defaults is not a saved edit. Keep historical links
+    -- valid, while still detecting subsequent in-memory content changes.
+    if loaded and current == loaded.normalized then return loaded.original end
+    return current
 end
 
 local function snapshotActionDependencies(document, entries, revisions, fingerprints)
@@ -156,7 +167,11 @@ local function backup(doc)
         return true
     end
 
-    local json = util.TableToJSON(doc, true)
+    local loaded = loadedFingerprints[doc]
+    -- A backup of an unchanged legacy document must retain its original
+    -- representation so restoring it also restores historical link hashes.
+    local json = loaded and documentFingerprint(doc) == loaded.normalized and loaded.raw
+        or util.TableToJSON(doc, true)
     local target = dir .. "/" .. os.time() .. "_r" .. (doc.meta.revision or 0) .. ".json"
     if not json or not TS.Utils.WriteDataFile(target, json) then
         return false
@@ -183,16 +198,46 @@ function TS.Dialogues.Reload()
             TS.Logging.Log(0, "Rejected " .. name .. ": file exceeds max_document_bytes")
         else
             local decoded, doc = pcall(util.JSONToTable, raw, true, true)
+            local original = doc
             local checked, ok, issues = false, false, nil
             if decoded then
-                checked, ok, issues = TS.Utils.SafeCall("validate " .. name, TS.Validation.ValidateDialogue, doc)
+                local normalized, candidate = TS.Utils.SafeCall("normalize " .. name, TS.Dialogues.Normalize, doc)
+                if normalized then
+                    doc = candidate
+                    checked, ok, issues = TS.Utils.SafeCall("validate " .. name, TS.Validation.ValidateDialogue, doc)
+                end
             end
             if decoded and checked and ok and name == doc.id .. ".json" then
                 TS.Dialogues.Registry[doc.id] = doc
+                loadedFingerprints[doc] = {
+                    original = documentFingerprint(original),
+                    normalized = documentFingerprint(doc),
+                    raw = raw,
+                }
             else
                 local reason = decoded and checked and ok and "filename does not match document id"
                     or (util.TableToJSON(issues or {}) or "validation_error")
                 TS.Logging.Log(0, "Rejected " .. name .. ": " .. reason)
+            end
+        end
+    end
+    -- Older files may predate dependency snapshots. Resolve them only after
+    -- every document is loaded; JSON files and revisions remain untouched.
+    for id, doc in pairs(TS.Dialogues.Registry) do
+        local meta = doc.meta
+        if meta.open_dialogue_revisions == nil then
+            local revisions, fingerprints, reason = TS.Dialogues.BuildDependencySnapshot(doc)
+            if revisions then
+                meta.open_dialogue_revisions = revisions
+                meta.open_dialogue_fingerprints = fingerprints
+            else
+                TS.Logging.Log(0, "Could not restore legacy dialogue links for " .. id .. ": " .. tostring(reason))
+            end
+        elseif meta.open_dialogue_fingerprints == nil then
+            meta.open_dialogue_fingerprints = {}
+            for targetID in pairs(meta.open_dialogue_revisions) do
+                local fingerprint = TS.Dialogues.DependencyFingerprint(TS.Dialogues.Get(targetID))
+                if fingerprint then meta.open_dialogue_fingerprints[targetID] = fingerprint end
             end
         end
     end
@@ -220,7 +265,7 @@ function TS.Dialogues.Save(doc, author, expected)
         return false, "invalid", issues
     end
 
-    local candidate = TS.Utils.Copy(doc)
+    local candidate = TS.Dialogues.Normalize(doc)
     local now = os.time()
     candidate.meta.author = author
     candidate.meta.modified = now

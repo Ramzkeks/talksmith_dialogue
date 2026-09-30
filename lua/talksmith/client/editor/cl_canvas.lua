@@ -603,23 +603,13 @@ function PANEL:AddNode(wx, wy, silent)
     if not id then
         return
     end
-    self.Doc.nodes[id] = {
-        editor = { x = snapCoordinate(wx), y = snapCoordinate(wy) },
-        text = TS.L("new_node_text"),
-        sound = "",
-        gesture = "",
-        actions = {},
-        options = {
-            {
-                text = TS.L("new_response_text"),
-                next = nil,
-                next_random = {},
-                gesture = "",
-                conditions = {},
-                actions = {},
-            },
-        },
-    }
+    local node = TS.Dialogues.DefaultNodeFields()
+    node.editor = { x = snapCoordinate(wx), y = snapCoordinate(wy) }
+    node.text = TS.L("new_node_text")
+    local option = TS.Dialogues.DefaultOptionFields()
+    option.text = TS.L("new_response_text")
+    node.options = { option }
+    self.Doc.nodes[id] = node
     self:InvalidateSortedIDs()
     if not silent then
         self:Select(id, nil, false)

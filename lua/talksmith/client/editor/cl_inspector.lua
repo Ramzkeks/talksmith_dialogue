@@ -246,10 +246,10 @@ local function activeProviderIDs(kind, method)
 end
 
 local function defaultRefParams(definition)
-    local params = {}
+    local params = TS.Validation.ResolveParams(definition and definition.params, {})
     if definition and definition.provider_kind then
         local ids = activeProviderIDs(definition.provider_kind, definition.provider_method)
-        if #ids == 1 then
+        if #ids == 1 and params.provider == nil then
             params.provider = ids[1]
         end
     end
@@ -458,7 +458,7 @@ local function refEditor(parent, list, idx, registry, cb, kind)
         description:SetText(displayDescription)
     end
 
-    local rows = 0
+    local rows, parameterEntries = 0, {}
     entry.params = istable(entry.params) and entry.params or {}
     local paramKeys = sortedKeys(def.params)
     if def.provider_kind then
@@ -514,7 +514,26 @@ local function refEditor(parent, list, idx, registry, cb, kind)
                 cb.Changed()
             end
         else
+            local pickerKind = rule.picker
+            local chooseClass, clipboard
+            if rule.type == "string" or rule.type == nil then
+                clipboard = row:Add("DButton")
+                clipboard:Dock(RIGHT)
+                clipboard:SetWide(26)
+                clipboard:DockMargin(3, 0, 0, 0)
+                TS.Editor.StyleButton(clipboard, { label = "", quiet = true, icon = "clipboard-text", iconSize = 16 })
+                TS.Editor.SetTooltip(clipboard, TS.L("text_clipboard_insert"))
+            end
+            if pickerKind then
+                chooseClass = row:Add("DButton")
+                chooseClass:Dock(RIGHT)
+                chooseClass:SetWide(26)
+                chooseClass:DockMargin(3, 0, 0, 0)
+                TS.Editor.StyleButton(chooseClass, { label = "", quiet = true, icon = "magnifying-glass", iconSize = 16 })
+                TS.Editor.SetTooltip(chooseClass, TS.L("class_picker_search"))
+            end
             local e = row:Add("DTextEntry")
+            parameterEntries[key] = e
             e:Dock(FILL)
             TS.Editor.StyleEntry(e)
             e:SetUpdateOnType(true)
@@ -528,8 +547,33 @@ local function refEditor(parent, list, idx, registry, cb, kind)
             end
             e.OnGetFocus = cb.Snapshot
             e.OnValueChange = function(_, s)
+                if pickerKind == "vj_npc" and s ~= displayValue(entry.params[key]) then
+                    entry.params.weapon = nil
+                    local weaponEntry = parameterEntries.weapon
+                    if IsValid(weaponEntry) then weaponEntry:SetText("") end
+                end
                 entry.params[key] = s ~= "" and parseValue(rule, s) or nil
                 cb.Changed()
+            end
+            local function insert(value)
+                if not IsValid(e) or value == displayValue(entry.params[key]) then return end
+                cb.Snapshot()
+                if pickerKind == "vj_npc" then
+                    entry.params.class = value
+                    entry.params.weapon = nil
+                    cb.Changed(true)
+                    return
+                end
+                e:SetText(value)
+                e:OnValueChange(value)
+            end
+            if chooseClass then
+                chooseClass.DoClick = function()
+                    TS.Editor.OpenClassPicker(pickerKind, entry.params, e:GetText(), insert)
+                end
+            end
+            if clipboard then
+                clipboard.DoClick = function() TS.Editor.OpenTextClipboard(insert) end
             end
         end
         rows = rows + 1
@@ -917,14 +961,9 @@ local function responseList(parent, node, sel, cb)
         TS.Editor.StyleButton(add, { label = TS.L("add_response"), icon = "plus" })
         add.DoClick = function()
             cb.Snapshot()
-            node.options[#node.options + 1] = {
-                text = TS.L("new_response_text"),
-                next = nil,
-                next_random = {},
-                gesture = "",
-                conditions = {},
-                actions = {},
-            }
+            local option = TS.Dialogues.DefaultOptionFields()
+            option.text = TS.L("new_response_text")
+            node.options[#node.options + 1] = option
             cb.Changed()
             cb.SelectOpt(#node.options)
         end

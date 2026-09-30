@@ -37,30 +37,33 @@ function TS.Editor.OpenReferencePicker(opts)
         TS.Editor.ReferencePicker:Remove()
     end
 
-    local items = {}
-    for _, source in ipairs(opts.items or {}) do
-        local item = {
-            id = tostring(source.id or ""),
-            name = tostring(source.name or source.id or ""),
-            description = tostring(source.description or ""),
-            group = tostring(source.group or "Core"),
-        }
-        item.search = lowerText(table.concat({
-            item.name,
-            item.id,
-            item.group,
-            tostring(source.keywords or ""),
-        }, " "))
-        items[#items + 1] = item
-    end
+    local function readItems()
+        local items = {}
+        local sources = isfunction(opts.items) and opts.items() or opts.items or {}
+        for _, source in ipairs(sources) do
+            local item = {
+                id = tostring(source.id or ""),
+                name = tostring(source.name or source.id or ""),
+                description = tostring(source.description or ""),
+                group = tostring(source.group or "Core"),
+            }
+            item.search = lowerText(table.concat({
+                item.name, item.id, item.group, tostring(source.keywords or ""),
+            }, " "))
+            items[#items + 1] = item
+        end
 
-    table.sort(items, function(a, b)
-        local leftGroup, rightGroup = lowerText(a.group), lowerText(b.group)
-        if leftGroup ~= rightGroup then return leftGroup < rightGroup end
-        local leftName, rightName = lowerText(a.name), lowerText(b.name)
-        if leftName ~= rightName then return leftName < rightName end
-        return a.id < b.id
-    end)
+        if not opts.preserveOrder then
+            table.sort(items, function(a, b)
+                local leftGroup, rightGroup = lowerText(a.group), lowerText(b.group)
+                if leftGroup ~= rightGroup then return leftGroup < rightGroup end
+                local leftName, rightName = lowerText(a.name), lowerText(b.name)
+                if leftName ~= rightName then return leftName < rightName end
+                return a.id < b.id
+            end)
+        end
+        return items
+    end
 
     local screen = vgui.Create("EditablePanel")
     TS.Editor.ReferencePicker = screen
@@ -117,6 +120,13 @@ function TS.Editor.OpenReferencePicker(opts)
     search:SetPlaceholderText(opts.placeholder or TS.L("search"))
     TS.Editor.StyleEntry(search)
 
+    local footer
+    if opts.buildFooter then
+        footer = content:Add("DPanel")
+        footer:Dock(BOTTOM)
+        footer.Paint = function() end
+    end
+
     local scroll = content:Add("DScrollPanel")
     scroll:Dock(FILL)
     local bar = scroll:GetVBar()
@@ -147,7 +157,7 @@ function TS.Editor.OpenReferencePicker(opts)
         local shown = 0
         local currentGroup
 
-        for _, item in ipairs(items) do
+        for _, item in ipairs(readItems()) do
             if filter == "" or string.find(item.search, filter, 1, true) then
                 local itemData = item
                 if not firstMatch then
@@ -172,6 +182,7 @@ function TS.Editor.OpenReferencePicker(opts)
                 row:DockMargin(0, 0, 8, 4)
                 row:SetText("")
                 row.Paint = function(s, w, h)
+                    local textRight = w - (opts.copyable and 46 or 12)
                     local selected = itemData.id == opts.current
                     draw.RoundedBox(4, 0, 0, w, h, selected and T.accentSoft or (s:IsHovered() and T.card or T.field))
                     surface.SetDrawColor(selected and T.blue or T.lineSoft)
@@ -181,9 +192,9 @@ function TS.Editor.OpenReferencePicker(opts)
                     end
 
                     surface.SetFont("Talksmith_E_Tiny")
-                    local idWidth = surface.GetTextSize(itemData.id)
+                    local idWidth = opts.hideIDs and 0 or math.min(surface.GetTextSize(itemData.id), math.max(textRight * 0.5, 40))
                     draw.SimpleText(
-                        fitText(itemData.name, "Talksmith_E_Body", math.max(w - idWidth - 42, 80)),
+                        fitText(itemData.name, "Talksmith_E_Body", math.max(textRight - idWidth - 24, 20)),
                         "Talksmith_E_Body",
                         12,
                         itemData.description ~= "" and 17 or h / 2,
@@ -191,18 +202,18 @@ function TS.Editor.OpenReferencePicker(opts)
                         TEXT_ALIGN_LEFT,
                         TEXT_ALIGN_CENTER
                     )
-                    draw.SimpleText(
-                        itemData.id,
+                    if not opts.hideIDs then draw.SimpleText(
+                        fitText(itemData.id, "Talksmith_E_Tiny", idWidth),
                         "Talksmith_E_Tiny",
-                        w - 12,
+                        textRight,
                         itemData.description ~= "" and 17 or h / 2,
                         T.dim,
                         TEXT_ALIGN_RIGHT,
                         TEXT_ALIGN_CENTER
-                    )
+                    ) end
                     if itemData.description ~= "" then
                         draw.SimpleText(
-                            fitText(itemData.description, "Talksmith_E_Tiny", math.max(w - 24, 80)),
+                            fitText(itemData.description, "Talksmith_E_Tiny", math.max(textRight - 12, 20)),
                             "Talksmith_E_Tiny",
                             12,
                             40,
@@ -215,9 +226,18 @@ function TS.Editor.OpenReferencePicker(opts)
                 row.DoClick = function()
                     choose(itemData.id)
                 end
+                if opts.copyable then
+                    local copy = row:Add("DButton")
+                    copy:Dock(RIGHT)
+                    copy:SetWide(30)
+                    copy:DockMargin(0, 5, 6, 5)
+                    TS.Editor.StyleButton(copy, { label = "", quiet = true, icon = "copy", iconSize = 16 })
+                    TS.Editor.SetTooltip(copy, TS.L("class_picker_copy"))
+                    copy.DoClick = function() SetClipboardText(itemData.id) end
+                end
                 TS.Editor.SetTooltip(
                     row,
-                    itemData.description ~= ""
+                    opts.hideIDs and utf8.sub(itemData.name, 1, 1000) or itemData.description ~= ""
                         and (itemData.name .. "\n" .. itemData.description .. "\n" .. itemData.id)
                         or (itemData.name .. "\n" .. itemData.id)
                 )
@@ -241,6 +261,10 @@ function TS.Editor.OpenReferencePicker(opts)
     search.OnEnter = function()
         choose(firstMatch)
     end
+    function screen:RefreshItems()
+        rebuild(search:GetValue())
+    end
+    if footer then opts.buildFooter(footer, screen) end
     local baseOnKeyCodeTyped = search.OnKeyCodeTyped
     search.OnKeyCodeTyped = function(self, key)
         if key == KEY_ESCAPE then
@@ -268,6 +292,9 @@ function TS.Editor.OpenReferencePicker(opts)
         TS.Editor.PickerDepth = math.max((TS.Editor.PickerDepth or 1) - 1, 0)
         if TS.Editor.ReferencePicker == screen then
             TS.Editor.ReferencePicker = nil
+        end
+        if TS.Editor.TextClipboardPicker == screen then
+            TS.Editor.TextClipboardPicker = nil
         end
     end
 

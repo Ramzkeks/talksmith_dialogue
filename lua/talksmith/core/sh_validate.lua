@@ -55,11 +55,10 @@ local function checkRefs(out, path, list, lookup, kind)
             if not definition then
                 issue(out, "error", path, "Unknown " .. kind .. ": " .. tostring(entry.id))
             else
-                local good, why = TS.Validation.ValidateParams(definition.params, entry.params)
+                local good, why, params = TS.Validation.ValidateParams(definition.params, entry.params)
                 if not good then
                     issue(out, "error", path, definition.id .. ": " .. why)
                 elseif definition.provider_kind and TS.Providers.CountAvailable then
-                    local params = istable(entry.params) and entry.params or {}
                     local provider = params.provider
                     if (provider == nil or provider == "" or provider == "auto")
                         and TS.Providers.CountAvailable(definition.provider_kind, definition.provider_method) > 1
@@ -73,7 +72,7 @@ local function checkRefs(out, path, list, lookup, kind)
                     end
                     local cost = math.max(tonumber(definition.action_cost) or 1, 1)
                     if isstring(definition.cost_param) then
-                        local value = istable(entry.params) and tonumber(entry.params[definition.cost_param]) or nil
+                        local value = params and tonumber(params[definition.cost_param]) or nil
                         if value then
                             cost = math.max(
                                 cost,
@@ -108,6 +107,7 @@ local function tooManyVariables(value)
 end
 
 function TS.Validation.ValidateDialogue(doc)
+    doc = TS.Dialogues.Normalize(doc)
     local out = {}
     issueStates[out] = { hasError = false, truncated = false }
     if not istable(doc) then

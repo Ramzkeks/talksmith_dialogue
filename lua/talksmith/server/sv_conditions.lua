@@ -24,13 +24,13 @@ registerCondition("core.flag_is_not_set", "Flag is not set", {
 end)
 
 registerCondition("core.has_weapon", "Has weapon", {
-    class = { type = "string", required = true, max = 64 },
+    class = { type = "string", required = true, max = 64, picker = "weapon" },
 }, function(context, params)
     return TS.Utils.InList(TS.Config.allowed_weapons, params.class) and context.player:HasWeapon(params.class)
 end)
 
 registerCondition("core.does_not_have_weapon", "Does not have weapon", {
-    class = { type = "string", required = true, max = 64 },
+    class = { type = "string", required = true, max = 64, picker = "weapon" },
 }, function(context, params)
     return TS.Utils.InList(TS.Config.allowed_weapons, params.class) and not context.player:HasWeapon(params.class)
 end)

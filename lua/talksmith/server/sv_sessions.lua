@@ -109,7 +109,7 @@ local function meetsConditions(context, entries, resultCache)
             return false
         end
 
-        local validParameters = TS.Validation.ValidateParams(definition.params, entry.params)
+        local validParameters, _, params = TS.Validation.ValidateParams(definition.params, entry.params)
 
         if not validParameters then
             return false
@@ -118,7 +118,7 @@ local function meetsConditions(context, entries, resultCache)
         local result = definition.cache_result and resultCache and resultCache[index]
         local succeeded = true
         if result == nil then
-            succeeded, result = TS.Utils.SafeCall("condition " .. entry.id, definition.run, context, entry.params or {})
+            succeeded, result = TS.Utils.SafeCall("condition " .. entry.id, definition.run, context, params)
             if succeeded and definition.cache_result and resultCache then
                 resultCache[index] = not not result
             end
@@ -194,15 +194,15 @@ local function prepareActions(context, entries)
         if definition.integration == "vj" and definition.vj_scene_action and #entries ~= 1 then
             return nil, "vj_scene_action_must_be_alone"
         end
-        local validParameters = TS.Validation.ValidateParams(definition.params, entry.params)
+        local validParameters, _, params = TS.Validation.ValidateParams(definition.params, entry.params)
         if not validParameters then
             return nil, "invalid_action_parameters"
         end
-        cost = cost + actionCost(definition, entry.params)
+        cost = cost + actionCost(definition, params)
         if cost > math.Clamp(tonumber(TS.Config.max_action_cost) or 64, 1, 1024) then
             return nil, "action_budget"
         end
-        prepared[index] = { entry = entry, definition = definition }
+        prepared[index] = { entry = entry, definition = definition, params = params }
     end
 
     for _, preparedEntry in ipairs(prepared) do
@@ -212,7 +212,7 @@ local function prepareActions(context, entries)
                 "action preflight " .. preparedEntry.entry.id,
                 definition.preflight,
                 context,
-                preparedEntry.entry.params or {}
+                preparedEntry.params
             )
             if not called or not actionResultOK(result) then
                 return nil, "action_preflight"
@@ -295,7 +295,7 @@ local function executeActions(context, entries, done)
             return finish(false)
         end
 
-        local succeeded, result = TS.Utils.SafeCall("action " .. entry.id, definition.run, context, entry.params or {})
+        local succeeded, result = TS.Utils.SafeCall("action " .. entry.id, definition.run, context, preparedEntry.params)
         if not succeeded or not actionResultOK(result) then
             TS.Runtime.ActionJournal.Mark(transaction, index, "failed")
             return finish(false)

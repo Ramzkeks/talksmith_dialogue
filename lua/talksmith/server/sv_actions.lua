@@ -39,7 +39,7 @@ registerAction("core.clear_flag", "Clear flag", {
 end, { safe = true })
 
 registerAction("core.give_weapon", "Give weapon", {
-    class = { type = "string", required = true, max = 64 },
+    class = { type = "string", required = true, max = 64, picker = "weapon" },
 }, function(context, params)
     if not TS.Utils.InList(TS.Config.allowed_weapons, params.class) then
         return false
@@ -49,7 +49,7 @@ registerAction("core.give_weapon", "Give weapon", {
 end, { permission = "talksmith.actions.inventory" })
 
 registerAction("core.take_weapon", "Take weapon", {
-    class = { type = "string", required = true, max = 64 },
+    class = { type = "string", required = true, max = 64, picker = "weapon" },
 }, function(context, params)
     if not TS.Utils.InList(TS.Config.allowed_weapons, params.class) then
         return false

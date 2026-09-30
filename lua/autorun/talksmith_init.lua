@@ -91,6 +91,8 @@ local client = {
     "client/runtime/cl_runtime_net.lua",
     "client/editor/cl_theme.lua",
     "client/editor/cl_reference_picker.lua",
+    "client/editor/cl_class_picker.lua",
+    "client/editor/cl_clipboard.lua",
     "client/editor/cl_examples.lua",
     "client/editor/cl_help.lua",
     "client/editor/cl_settings.lua",

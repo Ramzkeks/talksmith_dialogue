@@ -41,6 +41,7 @@ function TS.Editor.AddExampleDraft(document, exampleID)
     if not istable(document) then
         return nil
     end
+    document = TS.Dialogues.Normalize(document)
     local id = uniqueDraftID(document.id or exampleID)
     if not id then
         return nil

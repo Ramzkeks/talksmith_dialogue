@@ -1319,6 +1319,7 @@ net.Receive("ts_settings_data", function()
     end
 
     local catalogChanged = applyIntegrationCatalog(data.integrations)
+    TS.Editor.UpdateAllowedWeaponChoices(data.allowed_weapons)
     applyRuntimeConfig(data.settings)
     if data.result == false then
         local errorKeys = {

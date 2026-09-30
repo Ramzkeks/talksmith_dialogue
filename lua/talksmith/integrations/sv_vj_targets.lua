@@ -35,21 +35,23 @@ local function canSpawn(context, params)
 end
 
 local spawnParams = {
-    class = { type = "string", required = true, max = 128 },
+    class = { type = "string", required = true, max = 128, picker = "vj_npc" },
     dialogue = { type = "string", required = true, max = 64 },
     map = { type = "string", required = true, max = 128 },
     x = { type = "number", required = true, min = -32768, max = 32768 },
     y = { type = "number", required = true, min = -32768, max = 32768 },
     z = { type = "number", required = true, min = -32768, max = 32768 },
     yaw = { type = "number", min = -360, max = 360 },
-    weapon = { type = "string", max = 128 },
+    weapon = { type = "string", max = 128, picker = "vj_weapon" },
     lifetime = { type = "number", min = 30, max = 3600 },
 }
 
 function API.SpawnTarget(player, params)
-    if not TS.Validation.ValidateParams(spawnParams, params) or not canSpawn({ player = player }, params) then
+    local valid, _, resolved = TS.Validation.ValidateParams(spawnParams, params)
+    if not valid or not canSpawn({ player = player }, resolved) then
         return nil, "invalid_or_occupied_spawn"
     end
+    params = resolved
     local definition = API.GetSpawnDefinition(params.class)
     local entity = ents.Create(params.class)
     if not IsValid(entity) then return nil, "create_failed" end

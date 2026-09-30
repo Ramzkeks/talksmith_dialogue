@@ -363,6 +363,7 @@ end
 
 function TS.Editor.StyleEntry(e)
     local T = TS.Editor.Theme
+    if TS.Editor.TrackClipboardEntry then TS.Editor.TrackClipboardEntry(e) end
     e:SetFont("Talksmith_E_Body")
     e:SetTextColor(T.text)
     e:SetCursorColor(T.text)

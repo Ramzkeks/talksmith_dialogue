@@ -47,6 +47,7 @@ function TS.Examples.LoadDocument(exampleID, language, author)
         TS.Logging.Log(0, "Could not decode Talksmith example " .. path)
         return nil, "invalid_json"
     end
+    document = TS.Dialogues.Normalize(document)
 
     local id = uniqueDialogueID(document.id or entry.id)
     if not id then

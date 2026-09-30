@@ -19,10 +19,50 @@ function TS.Dialogues.DefaultSettings()
     }
 end
 
+function TS.Dialogues.DefaultNodeFields()
+    return { sound = "", gesture = "", actions = {}, options = {} }
+end
+
+function TS.Dialogues.DefaultOptionFields()
+    return { next_random = {}, gesture = "", conditions = {}, actions = {} }
+end
+
+local function fillMissing(target, defaults)
+    for key, value in pairs(defaults) do
+        if target[key] == nil then target[key] = istable(value) and TS.Utils.Copy(value) or value end
+    end
+end
+
+-- Additive fields belong in these defaults. Only absence gets a fallback:
+-- false, zero, empty strings and malformed values must not be overwritten.
+-- This never writes to disk or changes the caller's document/revision.
+function TS.Dialogues.Normalize(document)
+    if not istable(document) then return document end
+    local doc = TS.Utils.Copy(document)
+    if doc.schema ~= TS.Dialogues.Schema then return doc end
+    if doc.settings == nil then doc.settings = {} end
+    if istable(doc.settings) then fillMissing(doc.settings, TS.Dialogues.DefaultSettings()) end
+    if istable(doc.meta) and doc.meta.revision == nil then doc.meta.revision = 0 end
+    if istable(doc.nodes) then
+        local nodeDefaults, optionDefaults = TS.Dialogues.DefaultNodeFields(), TS.Dialogues.DefaultOptionFields()
+        for _, node in pairs(doc.nodes) do
+            if istable(node) then
+                fillMissing(node, nodeDefaults)
+                if istable(node.options) then
+                    for _, option in ipairs(node.options) do
+                        if istable(option) then fillMissing(option, optionDefaults) end
+                    end
+                end
+            end
+        end
+    end
+    return doc
+end
+
 function TS.Dialogues.New(id, author)
     local now = os.time()
 
-    return {
+    local doc = {
         schema = TS.Dialogues.Schema,
         id = id,
         meta = {
@@ -59,4 +99,5 @@ function TS.Dialogues.New(id, author)
             },
         },
     }
+    return TS.Dialogues.Normalize(doc)
 end

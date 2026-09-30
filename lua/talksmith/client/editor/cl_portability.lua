@@ -198,6 +198,7 @@ function TS.Editor.OpenPresetImporter(onImport)
             status:SetText(TS.L("import_invalid"))
             return
         end
+        doc = TS.Dialogues.Normalize(doc)
         local override = idEntry:GetText()
         if override ~= "" then
             doc.id = TS.Utils.SafeID(override)

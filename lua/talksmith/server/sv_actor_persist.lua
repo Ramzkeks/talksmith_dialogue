@@ -120,18 +120,26 @@ function TS.Actors.LoadLayout()
             and dialogue == v.dialogue
             and isNumberTriple(v.pos)
             and (v.ang == nil or isNumberTriple(v.ang))
-        if wellFormed and TS.Utils.IsModelAllowed(v.model) and TS.Dialogues.Get(dialogue) then
+        local doc = wellFormed and TS.Dialogues.Get(dialogue)
+        local model, name, subtitle
+        if doc then
+            model, name, subtitle = v.model, v.name, v.subtitle
+            if model == nil then model = doc.settings.actor_model end
+            if name == nil then name = doc.settings.actor_name end
+            if subtitle == nil then subtitle = doc.settings.actor_subtitle end
+        end
+        if doc and TS.Utils.IsModelAllowed(model) then
             local a = istable(v.ang) and v.ang or { 0, 0, 0 }
-            local actor = TS.Actors.Spawn({
-                model = v.model,
+            local called, actor = TS.Utils.SafeCall("restore Actor " .. dialogue, TS.Actors.Spawn, {
+                model = model,
                 model_override = v.model_override == true,
                 pos = Vector(tonumber(v.pos[1]) or 0, tonumber(v.pos[2]) or 0, tonumber(v.pos[3]) or 0),
                 ang = Angle(tonumber(a[1]) or 0, tonumber(a[2]) or 0, tonumber(a[3]) or 0),
-                name = TS.Utils.ClampString(v.name, 128),
-                subtitle = TS.Utils.ClampString(v.subtitle, 128),
+                name = TS.Utils.ClampString(name, 128),
+                subtitle = TS.Utils.ClampString(subtitle, 128),
                 dialogue = dialogue,
             })
-            if IsValid(actor) then
+            if called and IsValid(actor) then
                 spawned = spawned + 1
             else
                 TS.Storage.DeferredActors[#TS.Storage.DeferredActors + 1] = v
@@ -159,8 +167,8 @@ function TS.Actors.LoadConfigured()
         if istable(definition) and TS.Utils.MapMatches(definition.map) then
             local data = TS.Utils.Copy(definition)
             data.code_key = tostring(key)
-            local actor = TS.Actors.Create(data)
-            if IsValid(actor) then
+            local called, actor = TS.Utils.SafeCall("configured Actor " .. tostring(key), TS.Actors.Create, data)
+            if called and IsValid(actor) then
                 count = count + 1
             else
                 TS.Logging.Log(0, "Rejected configured Actor spawn: " .. tostring(key))

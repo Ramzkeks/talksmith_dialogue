@@ -32,7 +32,7 @@ function TS.Dialogues.Register(id, data, author, expected)
         return false, "bad_id"
     end
 
-    local doc = TS.Utils.Copy(data)
+    local doc = TS.Dialogues.Normalize(data)
     doc.id = id
     local ok, issues = TS.Validation.ValidateDialogue(doc)
     if not ok then

@@ -106,6 +106,14 @@ function TS.Editor.Open()
         confirmIfDirty(reallyClose)
     end
 
+    local clipboardBtn = titlebar:Add("DButton")
+    clipboardBtn:Dock(RIGHT)
+    clipboardBtn:SetWide(38)
+    clipboardBtn:DockMargin(0, 10, 6, 10)
+    TS.Editor.StyleButton(clipboardBtn, { label = "", quiet = true, icon = "clipboard-text" })
+    TS.Editor.SetTooltip(clipboardBtn, TS.L("text_clipboard"))
+    clipboardBtn.DoClick = function() TS.Editor.OpenTextClipboard() end
+
     toolbar = f:Add("DPanel")
     toolbar:Dock(TOP)
     toolbar:SetTall(46)
@@ -816,6 +824,9 @@ function TS.Editor.Open()
 
         if IsValid(TS.Editor.Modal) then
             TS.Editor.Modal:Remove()
+        end
+        if IsValid(TS.Editor.ReferencePicker) then
+            TS.Editor.ReferencePicker:Remove()
         end
         if IsValid(TS.Editor.AddonSettingsFrame) then
             TS.Editor.AddonSettingsFrame:Remove()
