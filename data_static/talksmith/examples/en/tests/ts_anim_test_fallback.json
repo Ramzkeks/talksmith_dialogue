@@ -10,7 +10,7 @@
   },
   "settings": {
     "actor_name": "Animations 3 - fallback idle",
-    "actor_subtitle": "Talksmith Actor test",
+    "actor_subtitle": "Talksmith Dialogue Actor test",
     "actor_model": "models/Humans/Group01/male_02.mdl",
     "interact_distance": 160,
     "actor_scale": 1,
@@ -26,7 +26,7 @@
   "start": "greeting",
   "nodes": {
     "greeting": {
-      "text": "The configured idle name does not exist. A normal fallback animation is the expected result, not a failure. The actor should also return to a working idle after a gesture.\n\nTalksmith Actor animation test. Follow the checks in order. Watch the actor for 15 seconds first: idle should keep moving. You can close the window to see the hands clearly. Judge the results visually; this dialogue does not produce an automatic PASS.",
+      "text": "The configured idle name does not exist. A normal fallback animation is the expected result, not a failure. The actor should also return to a working idle after a gesture.\n\nTalksmith Dialogue Actor animation test. Follow the checks in order. Watch the actor for 15 seconds first: idle should keep moving. You can close the window to see the hands clearly. Judge the results visually; this dialogue does not produce an automatic PASS.",
       "sound": "",
       "gesture": "",
       "actions": [],

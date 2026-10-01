@@ -2,10 +2,10 @@ Talksmith = Talksmith or {}
 local TS = Talksmith
 
 TS.API = TS.API or {}
-TS.API.Name = "Talksmith - Advanced NPC Dialogue Framework"
-TS.API.ShortName = "Talksmith"
-TS.API.StudioName = "Talksmith Studio"
-TS.API.ActorName = "Talksmith Actor"
+TS.API.Name = "Talksmith Dialogue - Advanced NPC Dialogue Framework"
+TS.API.ShortName = "Talksmith Dialogue"
+TS.API.StudioName = "Talksmith Dialogue Studio"
+TS.API.ActorName = "Talksmith Dialogue Actor"
 TS.API.Version = "2.0.0"
 TS.API.IntegrationVersion = 1
 TS.Actions = TS.Actions or {}

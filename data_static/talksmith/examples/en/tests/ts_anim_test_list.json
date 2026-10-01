@@ -10,7 +10,7 @@
   },
   "settings": {
     "actor_name": "Animations 2 - idle list",
-    "actor_subtitle": "Talksmith Actor test",
+    "actor_subtitle": "Talksmith Dialogue Actor test",
     "actor_model": "models/Humans/Group01/male_02.mdl",
     "interact_distance": 160,
     "actor_scale": 1,
@@ -30,7 +30,7 @@
   "start": "greeting",
   "nodes": {
     "greeting": {
-      "text": "Idle list: idle_subtle / LineIdle01 / idle_angry. Watch for 30–60 seconds. Selection is random, so the same sequence may repeat. Changes happen at the end of a sequence, not every tick.\n\nTalksmith Actor animation test. Follow the checks in order. Watch the actor for 15 seconds first: idle should keep moving. You can close the window to see the hands clearly. Judge the results visually; this dialogue does not produce an automatic PASS.",
+      "text": "Idle list: idle_subtle / LineIdle01 / idle_angry. Watch for 30–60 seconds. Selection is random, so the same sequence may repeat. Changes happen at the end of a sequence, not every tick.\n\nTalksmith Dialogue Actor animation test. Follow the checks in order. Watch the actor for 15 seconds first: idle should keep moving. You can close the window to see the hands clearly. Judge the results visually; this dialogue does not produce an automatic PASS.",
       "sound": "",
       "gesture": "",
       "actions": [],

@@ -19,7 +19,7 @@ local function registerCategory()
         return existing.TalksmithCategory == true
     end
 
-    local ok = pcall(ULogs.AddLogType, CATEGORY_ID, 0, "Talksmith", function()
+    local ok = pcall(ULogs.AddLogType, CATEGORY_ID, 0, "Talksmith Dialogue", function()
         return {}
     end)
     if not ok then
@@ -67,7 +67,7 @@ if SERVER then
 
         local label = level == 0 and "Error" or "Event"
         local information = {
-            { "Source : Talksmith", "Talksmith" },
+            { "Source : Talksmith Dialogue", "Talksmith Dialogue" },
             { "Level : " .. label, string.lower(label) },
         }
         if istable(context) and IsValid(context.player) then
@@ -75,7 +75,7 @@ if SERVER then
         end
 
         local text = cleanText(message, MAX_MESSAGE_LENGTH)
-        local ok = pcall(ULogs.AddLog, CATEGORY_ID, "[Talksmith][" .. label .. "] " .. text, information)
+        local ok = pcall(ULogs.AddLog, CATEGORY_ID, "[Talksmith Dialogue][" .. label .. "] " .. text, information)
         return ok
     end
 end

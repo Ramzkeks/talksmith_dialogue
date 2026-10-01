@@ -3,7 +3,7 @@ local TS = Talksmith
 local semantics = {
     ru = {
         sources = {
-            core = "Talksmith",
+            core = "Talksmith Dialogue",
             darkrp = "DarkRP",
             inventory = "Выбранная интеграция инвентаря",
             currency = "Выбранная валютная интеграция",
@@ -19,7 +19,7 @@ local semantics = {
             change_team = { name = "Сменить команду", description = "Переводит игрока в разрешённую команду. Источник: %s." },
             clear_flag = { name = "Снять флаг", description = "Удаляет сохранённый флаг у игрока. Источник: %s." },
             close_dialogue = { name = "Закрыть диалог", description = "Завершает текущий диалог сразу после выполнения цепочки. Источник: %s." },
-            emit_event = { name = "Вызвать событие", description = "Вызывает серверное событие Talksmith с указанными именем и данными. Источник: %s." },
+            emit_event = { name = "Вызвать событие", description = "Вызывает серверное событие Talksmith Dialogue с указанными именем и данными. Источник: %s." },
             give_ammo = { name = "Выдать боеприпасы", description = "Добавляет игроку указанный тип и количество боеприпасов. Источник: %s." },
             give_armor = { name = "Добавить броню", description = "Увеличивает запас брони игрока на указанное значение. Источник: %s." },
             give_health = { name = "Восстановить здоровье", description = "Увеличивает здоровье игрока, не превышая его максимум. Источник: %s." },
@@ -47,7 +47,7 @@ local semantics = {
             take_xp = { name = "Списать опыт", description = "Уменьшает опыт игрока на указанное количество. Источник: %s." },
         },
         conditions = {
-            can_edit_dialogues = { name = "Может редактировать диалоги", description = "Проверяет наличие права на редактирование диалогов Talksmith. Источник: %s." },
+            can_edit_dialogues = { name = "Может редактировать диалоги", description = "Проверяет наличие права на редактирование диалогов Talksmith Dialogue. Источник: %s." },
             can_level_up = { name = "Может повысить уровень", description = "Проверяет, достаточно ли игроку опыта для следующего уровня. Источник: %s." },
             does_not_have_weapon = { name = "Нет оружия", description = "Проверяет, что у игрока нет оружия указанного разрешённого класса. Источник: %s." },
             faction_is = { name = "Фракция совпадает", description = "Проверяет текущую фракцию выбранного персонажа. Источник: %s." },
@@ -98,7 +98,7 @@ local semantics = {
     },
     en = {
         sources = {
-            core = "Talksmith",
+            core = "Talksmith Dialogue",
             darkrp = "DarkRP",
             inventory = "Selected inventory provider",
             currency = "Selected currency provider",
@@ -112,7 +112,7 @@ local semantics = {
             change_team = { name = "Change team", description = "Moves the player to an allowed team. Source: %s." },
             clear_flag = { name = "Clear flag", description = "Removes a stored flag from the player. Source: %s." },
             close_dialogue = { name = "Close dialogue", description = "Ends the current dialogue after the action chain completes. Source: %s." },
-            emit_event = { name = "Emit event", description = "Runs a server-side Talksmith event with the specified name and data. Source: %s." },
+            emit_event = { name = "Emit event", description = "Runs a server-side Talksmith Dialogue event with the specified name and data. Source: %s." },
             give_ammo = { name = "Give ammo", description = "Adds the specified ammo type and amount to the player. Source: %s." },
             give_armor = { name = "Add armor", description = "Increases the player's armor by the specified amount. Source: %s." },
             give_health = { name = "Restore health", description = "Increases the player's health without exceeding its maximum. Source: %s." },
@@ -140,7 +140,7 @@ local semantics = {
             take_xp = { name = "Take experience", description = "Reduces the player's experience by the specified amount. Source: %s." },
         },
         conditions = {
-            can_edit_dialogues = { name = "Can edit dialogues", description = "Checks whether the player may edit Talksmith dialogues. Source: %s." },
+            can_edit_dialogues = { name = "Can edit dialogues", description = "Checks whether the player may edit Talksmith Dialogue dialogues. Source: %s." },
             can_level_up = { name = "Can level up", description = "Checks whether the player has enough experience for the next level. Source: %s." },
             does_not_have_weapon = { name = "Does not have weapon", description = "Checks that the player does not have the specified allowed weapon class. Source: %s." },
             faction_is = { name = "Character faction matches", description = "Checks the selected character's current faction. Source: %s." },
@@ -234,5 +234,5 @@ function TS.Localization.ReferenceTextFor(id, kind, field)
     end
 end
 
-TS.Localization.IntegrationText.ru.reference_group_core = "Talksmith — встроенные возможности"
-TS.Localization.IntegrationText.en.reference_group_core = "Talksmith — built-in"
+TS.Localization.IntegrationText.ru.reference_group_core = "Talksmith Dialogue — встроенные возможности"
+TS.Localization.IntegrationText.en.reference_group_core = "Talksmith Dialogue — built-in"

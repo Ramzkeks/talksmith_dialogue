@@ -45,7 +45,7 @@ function TS.Dialogues.Register(id, data, author, expected)
         if revision == nil then
             revision = current and current.meta and current.meta.revision or 0
         end
-        return TS.Dialogues.Save(doc, author or "Talksmith API", revision)
+        return TS.Dialogues.Save(doc, author or "Talksmith Dialogue API", revision)
     end
     TS.Dialogues.Registry[id] = doc
     return true, doc

@@ -29,7 +29,7 @@
       "editor": {
         "x": 120,
         "y": 300,
-        "note": "Talksmith Actor automatically receives 8 ExternalValue inputs and 8 CustomOutput outputs when Wiremod is active."
+        "note": "Talksmith Dialogue Actor automatically receives 8 ExternalValue inputs and 8 CustomOutput outputs when Wiremod is active."
       },
       "text": "Connect Wiremod to this Actor and choose an input or output test.",
       "sound": "",
@@ -196,7 +196,7 @@
               "id": "wiremod.send_string",
               "params": {
                 "output": 3,
-                "text": "Talksmith Wiremod test"
+                "text": "Talksmith Dialogue Wiremod test"
               }
             }
           ]

@@ -1,4 +1,4 @@
-# Talksmith
+# Talksmith Dialogue
 
 
 **English** | [Русский](README.ru.md)
@@ -10,19 +10,19 @@
 Create lively nonlinear conversations, configure characters, and connect dialogues to game systems through a convenient visual editor.
 
 ![Garry's Mod](https://img.shields.io/badge/Garry's%20Mod-Addon-4B69FF?style=flat-square)
-![Talksmith Studio](https://img.shields.io/badge/Visual-Talksmith%20Studio-35B8C5?style=flat-square)
+![Talksmith Dialogue Studio](https://img.shields.io/badge/Visual-Talksmith%20Dialogue%20Studio-35B8C5?style=flat-square)
 ![Languages](https://img.shields.io/badge/Interface-Russian%20%7C%20English-E7A93B?style=flat-square)
 ![Version](https://img.shields.io/badge/Version-2.0.0-1F252B?style=flat-square)
 
 ---
 
 <p align="center">
-  <img src="https://hm258634.webhm.pro/talksmith/photo7.jpg" alt="Talksmith dialogue with selectable player responses" width="100%">
+  <img src="https://hm258634.webhm.pro/talksmith/photo7.jpg" alt="Talksmith Dialogue with selectable player responses" width="100%">
 </p>
 
-## What is Talksmith?
+## What is Talksmith Dialogue?
 
-Talksmith is a complete dialogue builder for Garry's Mod servers. It lets you create NPC characters with branching conversations without writing Lua code manually.
+Talksmith Dialogue is a complete dialogue builder for Garry's Mod servers. It lets you create NPC characters with branching conversations without writing Lua code manually.
 
 A single dialogue can combine:
 
@@ -34,15 +34,15 @@ A single dialogue can combine:
 - one of several ready-made runtime interface themes;
 - game data supplied by supported integrations.
 
-Dialogues are created in **Talksmith Studio** as a visual graph: every card is an Actor line, and connections between cards represent the routes taken by player responses.
+Dialogues are created in **Talksmith Dialogue Studio** as a visual graph: every card is an Actor line, and connections between cards represent the routes taken by player responses.
 
-> Talksmith is suitable for shops, tutorials, story characters, job assignment, access systems, interactive objects, and ordinary atmospheric conversations.
+> Talksmith Dialogue is suitable for shops, tutorials, story characters, job assignment, access systems, interactive objects, and ordinary atmospheric conversations.
 
 ## Contents
 
 - [Main features](#main-features)
 - [How dialogue creation works](#how-dialogue-creation-works)
-- [Talksmith Studio](#talksmith-studio)
+- [Talksmith Dialogue Studio](#talksmith-dialogue-studio)
 - [Actors and the runtime interface](#actors-and-the-runtime-interface)
 - [Conditions, actions, and variables](#conditions-actions-and-variables)
 - [Dialogue themes](#dialogue-themes)
@@ -70,7 +70,7 @@ Dialogues are created in **Talksmith Studio** as a visual graph: every card is a
 | Separated permissions | Control access to Studio, publishing, Actors, integrations, and sensitive actions independently |
 
 <p align="center">
-  <img src="https://hm258634.webhm.pro/talksmith/photo9.jpg" alt="Talksmith Studio overview" width="100%">
+  <img src="https://hm258634.webhm.pro/talksmith/photo9.jpg" alt="Talksmith Dialogue Studio overview" width="100%">
 </p>
 
 ## How dialogue creation works
@@ -97,14 +97,14 @@ The player sees the available responses
       ↓
 The player selects a response
       ↓
-Talksmith executes the actions
+Talksmith Dialogue executes the actions
       ↓
 The dialogue continues or ends
 ```
 
-## Talksmith Studio
+## Talksmith Dialogue Studio
 
-Talksmith Studio is the main interface for creating and managing dialogues.
+Talksmith Dialogue Studio is the main interface for creating and managing dialogues.
 
 ### Dialogue library
 
@@ -131,7 +131,7 @@ The central area contains the working canvas:
 - multiple nodes can be selected, copied, pasted, and moved together.
 
 <p align="center">
-  <img src="https://hm258634.webhm.pro/talksmith/photo8.jpg" alt="Branching dialogue graph in Talksmith Studio" width="100%">
+  <img src="https://hm258634.webhm.pro/talksmith/photo8.jpg" alt="Branching dialogue graph in Talksmith Dialogue Studio" width="100%">
 </p>
 
 ### Property editor
@@ -148,7 +148,7 @@ The selected line is configured on the right:
 
 ### Diagnostics
 
-Talksmith checks the graph while you work:
+Talksmith Dialogue checks the graph while you work:
 
 - errors block saving and Preview;
 - warnings highlight suspicious but valid areas;
@@ -168,7 +168,7 @@ A preset is added as a draft, so it can be studied and changed before publishing
 
 ## Actors and the runtime interface
 
-An Actor is a Talksmith character placed on the map. One saved dialogue controls one placed Actor; placing the same dialogue again replaces the previous Actor.
+An Actor is a Talksmith Dialogue character placed on the map. One saved dialogue controls one placed Actor; placing the same dialogue again replaces the previous Actor.
 
 You can configure:
 
@@ -186,7 +186,7 @@ You can configure:
 An already placed Actor receives updated settings after the document is saved. Actor placement can be saved automatically for each map.
 
 <p align="center">
-  <img src="https://hm258634.webhm.pro/talksmith/photo1.jpg" alt="Talksmith Actor with name, description, and interaction hint" width="100%">
+  <img src="https://hm258634.webhm.pro/talksmith/photo1.jpg" alt="Talksmith Dialogue Actor with name, description, and interaction hint" width="100%">
 </p>
 
 During a conversation, the player can:
@@ -244,7 +244,7 @@ Preview does not execute real actions. Studio displays what would happen in the 
 
 The `core.give_weapon` and `core.take_weapon` actions, together with weapon-related conditions, use the active server allowlist. It can be managed without editing Lua:
 
-1. Open **Talksmith Studio → Settings → Server**.
+1. Open **Talksmith Dialogue Studio → Settings → Server**.
 2. Under **Allowed weapons**, select **Manage list**.
 3. Add a class such as `weapon_pistol`, or remove an entry that is no longer needed.
 
@@ -292,7 +292,7 @@ Text reveal speed is configured globally. The selected theme is used both in the
 
 ## Integrations
 
-The core Talksmith features work independently. Third-party addons are optional.
+The core Talksmith Dialogue features work independently. Third-party addons are optional.
 
 When installed, they can provide additional conditions, actions, and variables:
 
@@ -314,12 +314,12 @@ When installed, they can provide additional conditions, actions, and variables:
 
 VJ Base is optional and disabled by default, even when installed. Enable it under **Settings → Integrations**. Bind a dialogue to an existing supported ground VJ NPC, or spawn a peaceful personal target at explicit map coordinates through a dialogue action. Existing Actor quests and their automatic placement keep their original format. See the [VJ Base guide](https://ramzkeks.github.io/talksmith-docs/integrations/vj-base) for setup, combat ownership, and shared-world limitations.
 
-Basic DarkRP features are connected automatically when DarkRP is installed. Ultimate Logs can be used separately for Talksmith server diagnostics.
+Basic DarkRP features are connected automatically when DarkRP is installed. Ultimate Logs can be used separately for Talksmith Dialogue server diagnostics.
 
 All thirteen optional integrations are disabled by default. Administrators enable only the required integrations under **Settings - Integrations**. Integration status and the available action catalog update in an already open Studio window without reconnecting.
 
 <p align="center">
-  <img src="https://hm258634.webhm.pro/talksmith/photo10.jpg" alt="Talksmith integration settings" width="100%">
+  <img src="https://hm258634.webhm.pro/talksmith/photo10.jpg" alt="Talksmith Dialogue integration settings" width="100%">
 </p>
 
 ## Quick start
@@ -328,7 +328,7 @@ All thirteen optional integrations are disabled by default. Administrators enabl
 
 Join the server with the required permissions and open Studio in any of these ways:
 
-- **Spawnmenu → Utilities → Talksmith → Studio**;
+- **Spawnmenu → Utilities → Talksmith Dialogue → Talksmith Dialogue Studio**;
 - enter `!talksmith_menu` in chat;
 - run `talksmith_menu` in the client developer console.
 
@@ -364,10 +364,10 @@ Approach the Actor and press `E`.
 
 ### Workshop installation
 
-1. Add Talksmith to the server collection.
+1. Add Talksmith Dialogue to the server collection.
 2. Make sure the addon is downloaded by the server and clients.
 3. Restart the server.
-4. Open Studio from **Spawnmenu → Utilities → Talksmith → Studio**, with `!talksmith_menu` in chat, or with `talksmith_menu` in the client console.
+4. Open Studio from **Spawnmenu → Utilities → Talksmith Dialogue → Talksmith Dialogue Studio**, with `!talksmith_menu` in chat, or with `talksmith_menu` in the client console.
 
 ### Manual installation
 
@@ -387,7 +387,7 @@ Restart the server completely after installation. No additional database or mand
 
 ## Permissions and security
 
-Talksmith is designed for use on public servers:
+Talksmith Dialogue is designed for use on public servers:
 
 - player choices are validated again by the server;
 - the client cannot grant itself a reward;
@@ -412,12 +412,12 @@ Group-based permissions default to `superadmin`. With sAdmin, ULX/ULib, or a CAM
 Access sources work in parallel. A player is allowed when at least one of these checks succeeds:
 
 - Garry's Mod reports the player as a native `superadmin`;
-- the player is in Talksmith's individual superadmin list;
+- the player is in Talksmith Dialogue's individual superadmin list;
 - the player's admin-mod group meets the configured minimum group for that specific permission.
 
-Group members receive only the Talksmith permissions configured for their group. An individual Talksmith superadmin receives every Talksmith permission, even without an admin-mod group. This does not change the player's real ULX, sAdmin, or CAMI group and grants no permissions outside Talksmith.
+Group members receive only the Talksmith Dialogue permissions configured for their group. An individual Talksmith Dialogue superadmin receives every Talksmith Dialogue permission, even without an admin-mod group. This does not change the player's real ULX, sAdmin, or CAMI group and grants no permissions outside Talksmith Dialogue.
 
-Because `talksmith.settings.manage` can modify the individual list, treat it as full Talksmith access-delegation permission.
+Because `talksmith.settings.manage` can modify the individual list, treat it as full Talksmith Dialogue access-delegation permission.
 
 ### Individual access and RCON recovery
 
@@ -449,7 +449,7 @@ data/talksmith/settings.json
 The JSON field is named `superadmins`. Changes are saved before they become active; if saving fails, the previous access list remains in effect.
 
 <p align="center">
-  <img src="https://hm258634.webhm.pro/talksmith/photo11.jpg" alt="Talksmith permission settings" width="100%">
+  <img src="https://hm258634.webhm.pro/talksmith/photo11.jpg" alt="Talksmith Dialogue permission settings" width="100%">
 </p>
 
 ## Import, export, and migration
@@ -463,16 +463,16 @@ Export provides:
 - a ready-made Lua snippet for placing the Actor from code;
 - a local file in `data/talksmith/exports/`.
 
-Import always opens the document as an unpublished draft. Talksmith validates it before saving, so pasting JSON never executes actions automatically.
+Import always opens the document as an unpublished draft. Talksmith Dialogue validates it before saving, so pasting JSON never executes actions automatically.
 ## Frequently asked questions
 
 ### Do I need to program to create a dialogue?
 
-No. Normal dialogues, branches, conditions, actions, Actors, and themes are configured entirely through Talksmith Studio.
+No. Normal dialogues, branches, conditions, actions, Actors, and themes are configured entirely through Talksmith Dialogue Studio.
 
 ### Is DarkRP required?
 
-No. Talksmith works as a standalone addon. Additional conditions and actions become available when DarkRP is installed.
+No. Talksmith Dialogue works as a standalone addon. Additional conditions and actions become available when DarkRP is installed.
 
 ### Can I test a dialogue without granting real rewards?
 
@@ -488,7 +488,7 @@ Yes. The Russian and English interfaces update immediately in all open Studio wi
 
 ### Why is an integration action unavailable?
 
-Make sure the target addon is installed and its integration is enabled in Talksmith settings. Some operations also require publishing permission.
+Make sure the target addon is installed and its integration is enabled in Talksmith Dialogue settings. Some operations also require publishing permission.
 
 ### Can multiple players talk to the same Actor?
 
@@ -500,22 +500,22 @@ Include reproduction steps, a screenshot, console or server log errors, the map 
 
 ## License
 
-Talksmith is free source-available software.
+Talksmith Dialogue is free source-available software.
 
-You may use and modify Talksmith on personal, public and commercial Garry’s Mod servers. GitHub forks, pull requests and independent integrations are welcome.
+You may use and modify Talksmith Dialogue on personal, public and commercial Garry’s Mod servers. GitHub forks, pull requests and independent integrations are welcome.
 
-You may not re-upload, redistribute, resell, rebrand or publish the original or modified Talksmith addon as a separate product.
+You may not re-upload, redistribute, resell, rebrand or publish the original or modified Talksmith Dialogue addon as a separate product.
 
 See [LICENSE.md](LICENSE.md) for the complete terms.
 
 ## Developer documentation
 
-For architecture, API, integration lifecycle, parameters, permissions, hooks, and complete server adapter examples, open the [Talksmith developer documentation](https://ramzkeks.github.io/talksmith-docs/).
+For architecture, API, integration lifecycle, parameters, permissions, hooks, and complete server adapter examples, open the [Talksmith Dialogue developer documentation](https://ramzkeks.github.io/talksmith-docs/).
 
 ---
 
-**Talksmith turns an ordinary NPC into a complete participant in the game world.**
+**Talksmith Dialogue turns an ordinary NPC into a complete participant in the game world.**
 
 <p align="center">
-  <img src="https://hm258634.webhm.pro/talksmith/photo13.jpg" alt="Talksmith conversation in the game world" width="100%">
+  <img src="https://hm258634.webhm.pro/talksmith/photo13.jpg" alt="Talksmith Dialogue conversation in the game world" width="100%">
 </p>

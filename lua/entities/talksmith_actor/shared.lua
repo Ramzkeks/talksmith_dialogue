@@ -2,8 +2,8 @@ AddCSLuaFile()
 
 ENT.Type = "anim"
 ENT.Base = "base_anim"
-ENT.PrintName = "Talksmith Actor"
-ENT.Category = "Talksmith"
+ENT.PrintName = "Talksmith Dialogue Actor"
+ENT.Category = "Talksmith Dialogue"
 ENT.Spawnable = false
 ENT.AdminOnly = true
 ENT.AutomaticFrameAdvance = true

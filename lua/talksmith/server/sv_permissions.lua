@@ -41,7 +41,7 @@ local superAdminConVar = CreateConVar(
     "talksmith_superadmin",
     "",
     bit.bor(FCVAR_ARCHIVE, FCVAR_PROTECTED),
-    "Comma-separated SteamIDs or SteamID64s granted superadmin permissions inside Talksmith. Empty clears."
+    "Comma-separated SteamIDs or SteamID64s granted superadmin permissions inside Talksmith Dialogue. Empty clears."
 )
 local superAdminSteamIDs = {}
 local superAdminLookup = {}
@@ -166,19 +166,19 @@ local function setSuperAdminFromConsole(caller, arguments, allowed)
         return
     end
     if not TS.Config.SetSuperAdmin then
-        print("[Talksmith] Superadmin settings are not ready yet.")
+        print("[Talksmith Dialogue] Superadmin settings are not ready yet.")
         return
     end
 
     local steamID64 = safeSteamID64(arguments[1])
     if not steamID64 then
-        print("[Talksmith] Invalid SteamID. Use a SteamID or SteamID64.")
+        print("[Talksmith Dialogue] Invalid SteamID. Use a SteamID or SteamID64.")
         return
     end
 
     local ok, code = TS.Config.SetSuperAdmin(steamID64, allowed)
     print(string.format(
-        "[Talksmith] Individual superadmin %s: %s (%s).",
+        "[Talksmith Dialogue] Individual superadmin %s: %s (%s).",
         allowed and "added" or "removed",
         steamID64,
         consoleResult(ok, code)
@@ -194,7 +194,7 @@ cvars.AddChangeCallback("talksmith_superadmin", function(_, _, value)
     local normalized = TS.Permissions.NormalizeSuperAdminList(value)
     if not normalized then
         TS.Permissions.ApplySuperAdmins(superAdminSteamIDs)
-        print("[Talksmith] Rejected talksmith_superadmin: invalid, duplicate, or too many SteamIDs.")
+        print("[Talksmith Dialogue] Rejected talksmith_superadmin: invalid, duplicate, or too many SteamIDs.")
         return
     end
 
@@ -202,35 +202,35 @@ cvars.AddChangeCallback("talksmith_superadmin", function(_, _, value)
         local ok, code = TS.Config.ReplaceSuperAdmins(normalized)
         if not ok then
             TS.Permissions.ApplySuperAdmins(superAdminSteamIDs)
-            print("[Talksmith] Could not save talksmith_superadmin: " .. tostring(code or "save_failed") .. ".")
+            print("[Talksmith Dialogue] Could not save talksmith_superadmin: " .. tostring(code or "save_failed") .. ".")
             return
         end
     else
         TS.Permissions.ApplySuperAdmins(normalized)
     end
-    print(string.format("[Talksmith] Individual superadmin list updated (%d/%d).", #normalized, MAX_SUPERADMINS))
+    print(string.format("[Talksmith Dialogue] Individual superadmin list updated (%d/%d).", #normalized, MAX_SUPERADMINS))
 end, "Talksmith.SuperAdmins")
 
 concommand.Add("talksmith_superadmin_add", function(caller, _, arguments)
     setSuperAdminFromConsole(caller, arguments, true)
-end, nil, "Adds a SteamID to Talksmith's individual superadmin list.")
+end, nil, "Adds a SteamID to Talksmith Dialogue's individual superadmin list.")
 
 concommand.Add("talksmith_superadmin_remove", function(caller, _, arguments)
     setSuperAdminFromConsole(caller, arguments, false)
-end, nil, "Removes a SteamID from Talksmith's individual superadmin list.")
+end, nil, "Removes a SteamID from Talksmith Dialogue's individual superadmin list.")
 
 concommand.Add("talksmith_superadmin_clear", function(caller)
     if not consoleOnly(caller) then
         return
     end
     if not TS.Config.ReplaceSuperAdmins then
-        print("[Talksmith] Superadmin settings are not ready yet.")
+        print("[Talksmith Dialogue] Superadmin settings are not ready yet.")
         return
     end
 
     local ok, code = TS.Config.ReplaceSuperAdmins({})
-    print("[Talksmith] Individual superadmin list: " .. consoleResult(ok, code) .. ".")
-end, nil, "Clears Talksmith's individual superadmin list.")
+    print("[Talksmith Dialogue] Individual superadmin list: " .. consoleResult(ok, code) .. ".")
+end, nil, "Clears Talksmith Dialogue's individual superadmin list.")
 
 concommand.Add("talksmith_superadmin_status", function(caller)
     if IsValid(caller) then
@@ -239,7 +239,7 @@ concommand.Add("talksmith_superadmin_status", function(caller)
 
     local configured = TS.Permissions.GetSuperAdmins()
     if #configured == 0 then
-        print("[Talksmith] Individual superadmin list is empty.")
+        print("[Talksmith Dialogue] Individual superadmin list is empty.")
         return
     end
 
@@ -248,22 +248,22 @@ concommand.Add("talksmith_superadmin_status", function(caller)
         online[target:SteamID64()] = target
     end
 
-    print(string.format("[Talksmith] Individual superadmins: %d/%d.", #configured, MAX_SUPERADMINS))
+    print(string.format("[Talksmith Dialogue] Individual superadmins: %d/%d.", #configured, MAX_SUPERADMINS))
     for index, steamID64 in ipairs(configured) do
         local target = online[steamID64]
         if IsValid(target) then
             print(string.format(
-                "[Talksmith] %d. %s (online as %q, %s).",
+                "[Talksmith Dialogue] %d. %s (online as %q, %s).",
                 index,
                 steamID64,
                 target:Nick(),
                 target:SteamID()
             ))
         else
-            print(string.format("[Talksmith] %d. %s (offline).", index, steamID64))
+            print(string.format("[Talksmith Dialogue] %d. %s (offline).", index, steamID64))
         end
     end
-end, nil, "Shows Talksmith's individual superadmin list.")
+end, nil, "Shows Talksmith Dialogue's individual superadmin list.")
 
 local function safeGroupName(group)
     if not isstring(group) then

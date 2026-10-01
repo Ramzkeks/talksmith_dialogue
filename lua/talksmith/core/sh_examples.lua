@@ -173,8 +173,8 @@ TS.Examples.Catalog = {
         integration = "ulx",
         title = localized("ULX", "ULX"),
         description = localized(
-            "Доступ к ULX-командам и CAMI-привилегии редактора Talksmith.",
-            "ULX command access and the Talksmith editor CAMI privilege."
+            "Доступ к ULX-командам и CAMI-привилегии редактора Talksmith Dialogue.",
+            "ULX command access and the Talksmith Dialogue editor CAMI privilege."
         ),
     },
     {

@@ -23,8 +23,8 @@ TS.Integrations.RegisterCondition(ID, "has_access", {
     end,
 })
 TS.Integrations.RegisterCondition(ID, "can_edit_dialogues", {
-    name = "ULX: can edit Talksmith",
-    description = "Uses Talksmith's server-side privilege policy.",
+    name = "ULX: can edit Talksmith Dialogue",
+    description = "Uses Talksmith Dialogue's server-side privilege policy.",
     params = {},
     run = function(context)
         return TS.Permissions.Has(context.player, "talksmith.editor.open")

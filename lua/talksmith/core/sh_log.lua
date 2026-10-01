@@ -15,5 +15,5 @@ function TS.Logging.Log(level, message, context)
 
     local color = level == 0 and Color(230, 90, 80) or Color(213, 151, 54)
 
-    MsgC(color, "[Talksmith] ", color_white, tostring(message) .. "\n")
+    MsgC(color, "[Talksmith Dialogue] ", color_white, tostring(message) .. "\n")
 end

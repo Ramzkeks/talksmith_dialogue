@@ -9,8 +9,12 @@ end
 
 concommand.Add("talksmith_menu", TS.Editor.RequestOpen)
 
+hook.Add("AddToolMenuCategories", "Talksmith.EditorToolCategory", function()
+    spawnmenu.AddToolCategory("Utilities", "Talksmith", "Talksmith Dialogue")
+end)
+
 hook.Add("PopulateToolMenu", "Talksmith.EditorToolMenu", function()
-    spawnmenu.AddToolMenuOption("Utilities", "Talksmith", "TalksmithStudio", "Studio", "", "", function(panel)
+    spawnmenu.AddToolMenuOption("Utilities", "Talksmith", "TalksmithStudio", TS.L("editor"), "", "", function(panel)
         local button = panel:Button(TS.L("open") .. " " .. TS.L("editor"))
         if IsValid(button) then
             button.DoClick = TS.Editor.RequestOpen

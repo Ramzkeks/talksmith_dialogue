@@ -360,7 +360,7 @@ hook.Add("Initialize", "Talksmith.Load", function()
                 actions = {},
             }
         end
-        local d = TS.Dialogues.New("welcome", "Talksmith")
+        local d = TS.Dialogues.New("welcome", "Talksmith Dialogue")
         d.meta.title = "Добро пожаловать"
         d.settings.actor_name = "Эмметт"
         d.settings.actor_subtitle = "Странник и картограф"
@@ -390,7 +390,7 @@ hook.Add("Initialize", "Talksmith.Load", function()
             actions = {},
             options = { sampleOption("До встречи.") },
         }
-        local saved, reason = TS.Dialogues.Save(d, "Talksmith", 0)
+        local saved, reason = TS.Dialogues.Save(d, "Talksmith Dialogue", 0)
         if not saved then
             TS.Logging.Log(0, "Could not create welcome dialogue: " .. tostring(reason))
         end

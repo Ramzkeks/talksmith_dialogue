@@ -3,9 +3,9 @@ local TS = Talksmith
 local PAGES = {
     ru = {
         {
-            head = "Что создаёт Talksmith",
+            head = "Что создаёт Talksmith Dialogue",
             body = {
-                { t = "Talksmith Studio создаёт интерактивные разговоры с Actor. Каждый диалог хранит граф реплик, логику, внешний вид и поведение своего Actor." },
+                { t = "Talksmith Dialogue Studio создаёт интерактивные разговоры с Actor. Каждый диалог хранит граф реплик, логику, внешний вид и поведение своего Actor." },
                 { t = "Узел — реплика Actor. В нём есть один или несколько ответов игрока; каждый ответ завершает разговор либо ведёт в следующий узел." },
                 { t = "Порядок выполнения таков: действия входа в узел → показ реплики и доступных ответов → действия выбранного ответа → переход или завершение." },
                 { t = "Слева находится библиотека диалогов, в центре — граф, справа — редактор выбранного узла, сверху — сохранение и инструменты, снизу — навигация и диагностика." },
@@ -39,7 +39,7 @@ local PAGES = {
                 { t = "«Стандартные» демонстрируют встроенные условия, действия, флаги, случайность, события и DarkRP. «Интеграционные» посвящены отдельным поддерживаемым дополнениям и показывают их текущее состояние на сервере." },
                 { t = "Нажмите «Добавить»: пример появится слева как черновик пресета с жёлтой точкой. Его можно открыть, менять и удалить через ПКМ; он хранится локально до конца текущей игровой сессии." },
                 { t = "Черновик не создаёт серверный документ сам по себе. Проверьте зависимости и граф, затем нажмите «Сохранить»: сервер снова проверит схему, интеграции, действия и ваши права, после чего черновик станет обычным диалогом." },
-                { t = "Если такой ID уже занят, Talksmith безопасно добавляет числовой суффикс. Можно добавлять один пресет несколько раз и адаптировать копии независимо." },
+                { t = "Если такой ID уже занят, Talksmith Dialogue безопасно добавляет числовой суффикс. Можно добавлять один пресет несколько раз и адаптировать копии независимо." },
             },
         },
         {
@@ -149,8 +149,8 @@ local PAGES = {
                 { t = "DarkRP Multi Character проверяет наличие выбранного персонажа, его имя, индекс и профессию. Если у нескольких записей одинаковое имя, проверка индекса безопасно возвращает false." },
                 { t = "Advanced Character Creator проверяет активного персонажа, имя, ID, профессию и фракцию и предоставляет переменные имени, фамилии, ID, профессии и фракции. Смена/удаление персонажа закрывает активный разговор." },
                 { t = "StormFox 2 проверяет день, ночь, дождь, снег, туман, тип погоды и границы температуры; переменные отдают погоду, температуру, время и интенсивность." },
-                { t = "ULib проверяет UCL-доступ и группу; ULX — доступ к команде и право редактировать Talksmith; sAdmin — право, группу и доступ к Studio." },
-                { t = "ULX, sAdmin и CAMI-совместимые админ-моды могут стать серверной системой прав Talksmith. Ultimate Logs не является логикой диалога: он только включает защищённый журнал на странице «Сервер»." },
+                { t = "ULib проверяет UCL-доступ и группу; ULX — доступ к команде и право редактировать Talksmith Dialogue; sAdmin — право, группу и доступ к Studio." },
+                { t = "ULX, sAdmin и CAMI-совместимые админ-моды могут стать серверной системой прав Talksmith Dialogue. Ultimate Logs не является логикой диалога: он только включает защищённый журнал на странице «Сервер»." },
             },
         },
         {
@@ -187,8 +187,8 @@ local PAGES = {
             head = "Размещение и сцена",
             body = {
                 { t = "«Разместить Actor перед собой» создаёт Actor выбранного диалога. Для одного ID существует только один Actor, поэтому новое размещение атомарно заменяет прежнее." },
-                { t = "«Обновить Actor под прицелом» привязывает выбранный диалог и его настройки к существующему Talksmith Actor." },
-                { t = "«Копировать позицию и модель под прицелом» создаёт Actor на месте подходящей сущности; «Удалить Actor под прицелом» удаляет Talksmith Actor." },
+                { t = "«Обновить Actor под прицелом» привязывает выбранный диалог и его настройки к существующему Talksmith Dialogue Actor." },
+                { t = "«Копировать позицию и модель под прицелом» создаёт Actor на месте подходящей сущности; «Удалить Actor под прицелом» удаляет Talksmith Dialogue Actor." },
                 { t = "Actor можно двигать физганом при наличии права; после отпускания он снова фиксируется. Гравипушка и урон для Actor заблокированы." },
                 { t = "«Сохранить/загрузить расстановку» работает с картой отдельно. Автосохранение размещений настраивается глобально; Lua-размещения живут отдельно и не дублируются в файле карты." },
             },
@@ -210,17 +210,17 @@ local PAGES = {
                 { t = "Если другой администратор уже сохранил новую ревизию, выберите: загрузить его версию или сохранить свою работу под новым ID как копию." },
                 { t = "На странице «Настройки → Сервер» задаётся число предыдущих версий каждого диалога; 0 отключает резервные копии." },
                 { t = "Там же раздел «Разрешённое оружие» управляет классами для выдачи и изъятия. Изменённый вручную Lua-список имеет приоритет и становится доступным только для просмотра." },
-                { t = "Там же включается автосохранение Actor и, при установленном Ultimate Logs, уровень серверного журнала Talksmith: выключен, только ошибки или ошибки и события." },
+                { t = "Там же включается автосохранение Actor и, при установленном Ultimate Logs, уровень серверного журнала Talksmith Dialogue: выключен, только ошибки или ошибки и события." },
                 { t = "Отмена/возврат хранит до 100 снимков текущей сессии Studio. Серверные резервные копии и Ctrl+Z — разные механизмы." },
             },
         },
         {
-            head = "Настройки Talksmith",
+            head = "Настройки Talksmith Dialogue",
             body = {
                 { t = "«Редактор»: размер сетки, привязка узлов, подтверждение удаления и язык. Эти параметры сохраняются только на текущем клиенте." },
                 { t = "«Диалоги»: глобальная скорость печати с живым примером и отдельные переключатели имени, описания и подсказки взаимодействия над Actor. Нужны серверные права на настройки." },
                 { t = "«Сервер»: автосохранение Actor, количество резервных копий и Ultimate Logs. Недоступные функции остаются заблокированными с объяснением." },
-                { t = "«Права»: индивидуальные Talksmith-superadmin и минимальные группы для операций. Страница появляется при поддерживаемой административной системе." },
+                { t = "«Права»: индивидуальные Talksmith Dialogue-superadmin и минимальные группы для операций. Страница появляется при поддерживаемой административной системе." },
                 { t = "Индивидуальный список и остальные серверные параметры сохраняются в data/talksmith/settings.json." },
                 { t = "«Интеграции»: серверный каталог дополнений и их состояние. Пользователь без права изменения может просматривать доступные возможности в режиме чтения." },
             },
@@ -228,10 +228,10 @@ local PAGES = {
         {
             head = "Права и безопасная публикация",
             body = {
-                { t = "Talksmith разделяет права на открытие Studio, создание, редактирование, удаление, публикацию, управление Actor, настройками, интеграциями и диагностикой." },
+                { t = "Talksmith Dialogue разделяет права на открытие Studio, создание, редактирование, удаление, публикацию, управление Actor, настройками, интеграциями и диагностикой." },
                 { t = "Отдельно назначаются права на опасные, экономические, инвентарные, прогрессирующие, карьерные, событийные и Wire-действия." },
                 { t = "При ULX, sAdmin или CAMI-совместимом админ-моде superadmin выбирает минимальную группу; наследование проверяется сервером при каждой чувствительной операции." },
-                { t = "Индивидуальные Talksmith-superadmin получают все права аддона параллельно с группами, но их настоящая группа и права вне Talksmith не меняются." },
+                { t = "Индивидуальные Talksmith Dialogue-superadmin получают все права аддона параллельно с группами, но их настоящая группа и права вне Talksmith Dialogue не меняются." },
                 { t = "Без административной системы групповые настройки недоступны; native superadmin и индивидуальный список продолжают работать." },
                 { t = "Клиент выбирает только уже проверенный видимый ответ: условия, суммы, ID действий, лимиты, белые списки и права всегда проверяет сервер." },
             },
@@ -269,9 +269,9 @@ local PAGES = {
     },
     en = {
         {
-            head = "What Talksmith builds",
+            head = "What Talksmith Dialogue builds",
             body = {
-                { t = "Talksmith Studio builds interactive conversations with Actors. Each dialogue stores a line graph, logic, appearance, and behaviour for its Actor." },
+                { t = "Talksmith Dialogue Studio builds interactive conversations with Actors. Each dialogue stores a line graph, logic, appearance, and behaviour for its Actor." },
                 { t = "A node is one Actor line. It contains one or more player responses; each response ends the conversation or leads to another node." },
                 { t = "Execution order is: node-entry actions → line and available responses → selected-response actions → transition or finish." },
                 { t = "The library is on the left, graph in the centre, selected-node editor on the right, save and tools at the top, navigation and diagnostics at the bottom." },
@@ -305,7 +305,7 @@ local PAGES = {
                 { t = '"Standard" demonstrates built-in conditions, actions, flags, randomness, events, and DarkRP. "Integrations" targets individual supported addons and shows their current server status.' },
                 { t = 'Press "Add" and the example appears on the left as a preset draft with a yellow dot. You may open, edit, or remove it from the right-click menu; it stays local for the current game session.' },
                 { t = 'A draft does not create a server document by itself. Review its dependencies and graph, then press "Save": the server revalidates the schema, integrations, actions, and your permissions before it becomes a regular dialogue.' },
-                { t = "If its ID is already in use, Talksmith safely adds a numeric suffix. You can add the same preset more than once and adapt each copy independently." },
+                { t = "If its ID is already in use, Talksmith Dialogue safely adds a numeric suffix. You can add the same preset more than once and adapt each copy independently." },
             },
         },
         {
@@ -415,8 +415,8 @@ local PAGES = {
                 { t = "DarkRP Multi Character checks that a character is selected, then its name, index, and job. If several records share the same name, the index check safely returns false." },
                 { t = "Advanced Character Creator checks active character, name, ID, job, and faction and supplies name, surname, ID, job, and faction variables. Switching/removing the character closes an active conversation." },
                 { t = "StormFox 2 checks day, night, rain, snow, fog, weather type, and temperature ranges; variables return weather, temperature, time, and intensity." },
-                { t = "ULib checks UCL access and group; ULX checks command access and Talksmith editing; sAdmin checks permission, group, and Studio access." },
-                { t = 'ULX, sAdmin, and CAMI-compatible admin mods can back Talksmith server permissions. Ultimate Logs is not dialogue logic; it only enables protected logging on the "Server" page.' },
+                { t = "ULib checks UCL access and group; ULX checks command access and Talksmith Dialogue editing; sAdmin checks permission, group, and Studio access." },
+                { t = 'ULX, sAdmin, and CAMI-compatible admin mods can back Talksmith Dialogue server permissions. Ultimate Logs is not dialogue logic; it only enables protected logging on the "Server" page.' },
             },
         },
         {
@@ -453,8 +453,8 @@ local PAGES = {
             head = "Placement and scene",
             body = {
                 { t = '"Place Actor in front of you" spawns the selected dialogue. Only one Actor can own an ID, so a new placement atomically replaces the old one.' },
-                { t = '"Update aimed Actor" binds the selected dialogue and its settings to an existing Talksmith Actor.' },
-                { t = '"Copy aimed position and model" creates an Actor at a suitable entity; "Remove aimed Actor" removes a Talksmith Actor.' },
+                { t = '"Update aimed Actor" binds the selected dialogue and its settings to an existing Talksmith Dialogue Actor.' },
+                { t = '"Copy aimed position and model" creates an Actor at a suitable entity; "Remove aimed Actor" removes a Talksmith Dialogue Actor.' },
                 { t = "Users with permission can move an Actor with the physgun; it freezes again on drop. Gravgun pickup and damage are blocked." },
                 { t = '"Save/Load layout" is per map. Global settings control placement autosave; Lua-configured spawns remain separate and are not duplicated into the map file.' },
             },
@@ -476,17 +476,17 @@ local PAGES = {
                 { t = "If another administrator has already saved a newer revision, choose to load their version or preserve yours under a new ID as a copy." },
                 { t = '"Settings → Server" controls how many older versions are kept for each dialogue; 0 disables backups.' },
                 { t = "\"Settings → Server → Allowed weapons\" manages classes used by give and take actions. A manually changed Lua list takes priority and becomes read-only in the menu." },
-                { t = "The same page controls Actor autosave and, with Ultimate Logs installed, Talksmith logging: off, errors only, or errors and events." },
+                { t = "The same page controls Actor autosave and, with Ultimate Logs installed, Talksmith Dialogue logging: off, errors only, or errors and events." },
                 { t = "Undo/redo stores up to 100 snapshots for the current Studio session. Server backups and Ctrl+Z are separate systems." },
             },
         },
         {
-            head = "Talksmith settings",
+            head = "Talksmith Dialogue settings",
             body = {
                 { t = '"Editor": grid size, node snapping, delete confirmation, and language. These settings are stored only on the current client.' },
                 { t = '"Dialogues": global typing speed with a live sample and separate Actor name, description, and interaction-prompt switches. Server-settings permission is required.' },
                 { t = '"Server": Actor autosave, backup count, and Ultimate Logs. Unavailable features remain locked with an explanation.' },
-                { t = '"Permissions": individual Talksmith superadmins and minimum groups for operations. This page appears with a supported administration system.' },
+                { t = '"Permissions": individual Talksmith Dialogue superadmins and minimum groups for operations. This page appears with a supported administration system.' },
                 { t = "The individual list and other server settings are stored in data/talksmith/settings.json." },
                 { t = '"Integrations": server addon catalog and status. Users without change permission may still inspect available capabilities in read-only mode.' },
             },
@@ -494,10 +494,10 @@ local PAGES = {
         {
             head = "Permissions and safe publishing",
             body = {
-                { t = "Talksmith separates privileges for opening Studio, creating, editing, deleting, publishing, Actor management, settings, integrations, and diagnostics." },
+                { t = "Talksmith Dialogue separates privileges for opening Studio, creating, editing, deleting, publishing, Actor management, settings, integrations, and diagnostics." },
                 { t = "Dangerous, economy, inventory, progression, job, event, and Wire actions each have an additional publishing privilege." },
                 { t = "With ULX, sAdmin, or a CAMI-compatible admin mod, a superadmin chooses minimum groups; inheritance is evaluated on the server for every sensitive operation." },
-                { t = "Individual Talksmith superadmins receive every addon permission alongside groups, without changing their real group or permissions outside Talksmith." },
+                { t = "Individual Talksmith Dialogue superadmins receive every addon permission alongside groups, without changing their real group or permissions outside Talksmith Dialogue." },
                 { t = "Without an administration system, group settings are unavailable; native superadmins and the individual list continue to work." },
                 { t = "The client selects only a validated visible response: conditions, amounts, action IDs, budgets, allowlists, and privileges are always enforced by the server." },
             },

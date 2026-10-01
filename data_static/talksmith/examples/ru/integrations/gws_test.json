@@ -26,7 +26,7 @@
   "start": "menu",
   "nodes": {
     "menu": {
-      "editor": { "x": 120, "y": 300, "note": "Оружие weapon_pistol входит в стандартный allowed_weapons Talksmith." },
+      "editor": { "x": 120, "y": 300, "note": "Оружие weapon_pistol входит в стандартный allowed_weapons Talksmith Dialogue." },
       "text": "Выберите группу проверок GWS Inventory System.",
       "sound": "",
       "gesture": "",

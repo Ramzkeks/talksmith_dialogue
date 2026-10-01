@@ -27,7 +27,7 @@
   "nodes": {
     "menu": {
       "editor": { "x": 120, "y": 260, "note": "Проверяются оба условия ULX. Для работы требуется также ULib." },
-      "text": "Этот терминал проверяет доступ к CAMI-привилегии редактора Talksmith через ULX и ULib.",
+      "text": "Этот терминал проверяет доступ к CAMI-привилегии редактора Talksmith Dialogue через ULX и ULib.",
       "sound": "",
       "gesture": "",
       "actions": [],

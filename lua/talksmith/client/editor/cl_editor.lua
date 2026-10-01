@@ -38,16 +38,17 @@ function TS.Editor.Open()
     titlebar.Paint = function(_, w, h)
         surface.SetDrawColor(T.line)
         surface.DrawLine(0, h - 1, w, h - 1)
+        TS.Editor.DrawIcon("flag", 18, math.floor((h - 22) / 2), 22, T.blue)
+        draw.SimpleText(TS.L("editor"), "Talksmith_E_Title", 51, 15, T.text, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
         draw.SimpleText(
             TS.L("workflow"),
             "Talksmith_E_Tiny",
-            16,
-            15,
+            51,
+            36,
             T.blue,
             TEXT_ALIGN_LEFT,
             TEXT_ALIGN_CENTER
         )
-        draw.SimpleText(TS.L("editor"), "Talksmith_E_Title", 16, 36, T.text, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
         if doc then
             draw.SimpleText(
                 doc.meta.title or doc.id,

@@ -26,7 +26,7 @@
   "start": "menu",
   "nodes": {
     "menu": {
-      "editor": { "x": 120, "y": 300, "note": "Talksmith Actor автоматически получает 8 ExternalValue-входов и 8 CustomOutput-выходов при активном Wiremod." },
+      "editor": { "x": 120, "y": 300, "note": "Talksmith Dialogue Actor автоматически получает 8 ExternalValue-входов и 8 CustomOutput-выходов при активном Wiremod." },
       "text": "Подключите Wiremod к этому Actor и выберите проверку входов или выходов.",
       "sound": "",
       "gesture": "",
@@ -68,7 +68,7 @@
         },
         {
           "text": "Отправить строку в CustomOutput3.", "next": "output_done", "next_random": [], "gesture": "", "conditions": [],
-          "actions": [ { "id": "wiremod.send_string", "params": { "output": 3, "text": "Talksmith Wiremod test" } } ]
+          "actions": [ { "id": "wiremod.send_string", "params": { "output": 3, "text": "Talksmith Dialogue Wiremod test" } } ]
         },
         {
           "text": "Передать индекс этого ответа в CustomOutput4.", "next": "output_done", "next_random": [], "gesture": "", "conditions": [],

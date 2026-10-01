@@ -445,7 +445,7 @@ function TS.Localization.IntegrationReference(id, kind, field, fallback)
     local addonName = manifest and manifest.name
         or integrationID == "inventory" and TS.Localization.Integration("generic_inventory")
         or integrationID == "currency" and TS.Localization.Integration("generic_currency")
-        or integrationID == "core" and "Talksmith"
+        or integrationID == "core" and "Talksmith Dialogue"
         or integrationID == "darkrp" and "DarkRP"
         or integrationID
 

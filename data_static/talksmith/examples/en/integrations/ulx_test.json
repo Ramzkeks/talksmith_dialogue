@@ -31,7 +31,7 @@
         "y": 260,
         "note": "Tests both ULX conditions. ULib is also required."
       },
-      "text": "This terminal checks access to the Talksmith editor CAMI privilege through ULX and ULib.",
+      "text": "This terminal checks access to the Talksmith Dialogue editor CAMI privilege through ULX and ULib.",
       "sound": "",
       "gesture": "",
       "actions": [],

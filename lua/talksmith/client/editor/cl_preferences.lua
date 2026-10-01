@@ -128,7 +128,7 @@ function TS.Editor.SetSetting(key, value)
 
     timer.Create(SAVE_TIMER, 0.2, 1, function()
         if not TS.Editor.SaveSettings() then
-            TS.Logging.Log(0, "Could not save Talksmith editor settings")
+            TS.Logging.Log(0, "Could not save Talksmith Dialogue editor settings")
         end
     end)
     hook.Run("Talksmith.EditorSettingChanged", key, value)
@@ -141,7 +141,7 @@ TS.Editor.LoadSettings()
 hook.Add("ShutDown", "Talksmith.SaveEditorSettings", function()
     if timer.Exists(SAVE_TIMER) then
         if not TS.Editor.SaveSettings() then
-            TS.Logging.Log(0, "Could not save Talksmith editor settings during shutdown")
+            TS.Logging.Log(0, "Could not save Talksmith Dialogue editor settings during shutdown")
         end
     end
 end)

@@ -29,7 +29,7 @@
       "editor": {
         "x": 120,
         "y": 300,
-        "note": "The weapon_pistol class is included in Talksmith's default allowed_weapons list."
+        "note": "The weapon_pistol class is included in Talksmith Dialogue's default allowed_weapons list."
       },
       "text": "Choose a group of GWS Inventory System tests.",
       "sound": "",

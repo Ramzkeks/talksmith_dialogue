@@ -35,7 +35,7 @@ function TS.Examples.LoadDocument(exampleID, language, author)
 
     local raw = file.Read(path, "GAME")
     if not isstring(raw) or raw == "" then
-        TS.Logging.Log(0, "Could not read Talksmith example " .. path)
+        TS.Logging.Log(0, "Could not read Talksmith Dialogue example " .. path)
         return nil, "not_found"
     end
     if #raw > TS.Config.max_document_bytes then
@@ -44,7 +44,7 @@ function TS.Examples.LoadDocument(exampleID, language, author)
 
     local decoded, document = pcall(util.JSONToTable, raw, false, true)
     if not decoded or not istable(document) then
-        TS.Logging.Log(0, "Could not decode Talksmith example " .. path)
+        TS.Logging.Log(0, "Could not decode Talksmith Dialogue example " .. path)
         return nil, "invalid_json"
     end
     document = TS.Dialogues.Normalize(document)
@@ -69,7 +69,7 @@ function TS.Examples.LoadDocument(exampleID, language, author)
     end
 
     local checked, valid, issues = TS.Utils.SafeCall(
-        "validate bundled Talksmith example",
+        "validate bundled Talksmith Dialogue example",
         TS.Validation.ValidateDialogue,
         document
     )
@@ -77,7 +77,7 @@ function TS.Examples.LoadDocument(exampleID, language, author)
         local first = istable(issues) and issues[1]
         TS.Logging.Log(
             0,
-            "Rejected bundled Talksmith example "
+            "Rejected bundled Talksmith Dialogue example "
                 .. path
                 .. ": "
                 .. tostring(first and first.message or "validation failed")
